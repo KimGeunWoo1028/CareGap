@@ -1,20 +1,21 @@
 export default function HomePage() {
   return (
     <main className="panel">
-      <p className="eyebrow">CareGap AI · Phase 0</p>
-      <h1>돌봄틈새 AI 프로젝트 골격</h1>
+      <p className="eyebrow">CareGap AI · Phase 1</p>
+      <h1>돌봄틈새 AI — 인증·사례 API</h1>
       <p className="lede">
-        Next.js App Router와 TypeScript 기반의 최소 실행 환경입니다. 로그인,
-        사례 관리, AI 분석, 사업 매칭은 아직 구현되지 않았습니다.
+        인증 로직과 사례/상담 기록 API가 준비 중입니다. 로그인 UI, AI 분석,
+        사업 매칭 화면은 아직 없습니다. Supabase 테스트 프로젝트가 연결되기
+        전까지 실제 연동 검사는 차단됩니다.
       </p>
       <ul className="checklist">
         <li>합성 상담 기록만 사용하는 해커톤 MVP 범위</li>
         <li>실제 개인정보·진단·자격 확정·자동 신청 없음</li>
-        <li>환경 변수는 `.env.example`을 참고해 `.env.local`에만 설정</li>
+        <li>API: /api/cases 및 상담 기록 생성 엔드포인트</li>
       </ul>
       <div className="status-box">
-        <strong>현재 상태:</strong> 0단계 골격 준비. 다음 단계는 인증과 데이터
-        접근(1단계)입니다.
+        <strong>현재 상태:</strong> 1단계 인증·데이터 접근 구현 중. 화면
+        흐름(2단계)은 아직 시작하지 않았습니다.
       </div>
     </main>
   );
