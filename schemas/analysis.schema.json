@@ -1,0 +1,110 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": [
+        "1.0"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string",
+            "enum": [
+              "meal",
+              "mobility",
+              "health",
+              "environment"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "worsened",
+              "improved",
+              "unchanged",
+              "unknown"
+            ]
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "evidence_previous": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "note_id": {
+                    "type": "string"
+                  },
+                  "quote": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "note_id",
+                  "quote"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence_current": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "note_id": {
+                    "type": "string"
+                  },
+                  "quote": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "note_id",
+                  "quote"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "domain",
+          "status",
+          "explanation",
+          "evidence_previous",
+          "evidence_current"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "summary",
+    "changes",
+    "questions"
+  ],
+  "additionalProperties": false
+}

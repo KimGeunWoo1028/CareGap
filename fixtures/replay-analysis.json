@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "summary": "최근 기록에서 식사 유지와 장보기에 어려움이 나타나 추가 확인이 필요합니다.",
+  "changes": [
+    {
+      "domain": "meal",
+      "status": "worsened",
+      "explanation": "이전에는 식사를 잘했으나 최근 자주 거른다는 기록이 있습니다.",
+      "evidence_previous": {
+        "note_id": "11111111-1111-4111-8111-111111111111",
+        "quote": "혼자 식사도 잘하시고"
+      },
+      "evidence_current": {
+        "note_id": "22222222-2222-4222-8222-222222222222",
+        "quote": "식사를 자주 거르심."
+      }
+    },
+    {
+      "domain": "mobility",
+      "status": "worsened",
+      "explanation": "이전에는 걸어서 장을 볼 수 있었으나 최근 다리 불편으로 장보기가 어렵다고 기록되었습니다.",
+      "evidence_previous": {
+        "note_id": "11111111-1111-4111-8111-111111111111",
+        "quote": "가까운 가게까지 걸어가 장을 볼 수 있음."
+      },
+      "evidence_current": {
+        "note_id": "22222222-2222-4222-8222-222222222222",
+        "quote": "다리가 불편해 장을 보기 어렵고"
+      }
+    },
+    {
+      "domain": "health",
+      "status": "unknown",
+      "explanation": "건강 상태의 변화를 비교할 정보가 충분하지 않습니다.",
+      "evidence_previous": null,
+      "evidence_current": null
+    },
+    {
+      "domain": "environment",
+      "status": "unknown",
+      "explanation": "생활환경의 변화를 비교할 정보가 충분하지 않습니다.",
+      "evidence_previous": null,
+      "evidence_current": null
+    }
+  ],
+  "questions": [
+    "최근 식사를 거르는 빈도와 이유는 무엇인가요?",
+    "다리 불편이 언제 시작되었고 외출에 어떤 영향을 주나요?"
+  ]
+}
