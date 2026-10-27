@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { Noto_Sans_KR } from "next/font/google";
+import localFont from "next/font/local";
 import { AuthSessionProvider } from "@/lib/auth/session-context";
 import { StatusBanner } from "@/components/status-banner";
 import "./globals.css";
 
-const notoSansKr = Noto_Sans_KR({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-noto",
+const pretendard = localFont({
+  src: "./fonts/PretendardVariable.woff2",
+  variable: "--font-pretendard",
   display: "swap",
+  weight: "45 920",
+  fallback: ["Malgun Gothic", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -23,15 +24,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <body className={notoSansKr.variable}>
+    <html lang="ko" className={pretendard.variable}>
+      <body>
         {/*
           THESIS: Quiet case-file desk for comparing two notes — refuse metric dashboards and AI-purple chrome.
-          OWN-WORLD: Cool mist paper, pine actions, charcoal ink, Noto Sans KR only.
+          OWN-WORLD: Cool wash paper, teal actions, cool-gray ink, local Pretendard Variable (C+B).
           STORY: Sign in → own synthetic cases → add immutable notes → see analysis readiness.
           FIRST VIEWPORT: Persistent synthetic banner + branded top task chrome + primary work panel.
-          FORM: Operate / restrained case-file desk / seed operate-desk-2026-10.
-          FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+          FORM: Operate / restrained case-file desk / C+B redesign stage 1.
+          FINISH: Stage 1 shared tokens/chrome only; screen redesigns follow later stages.
         */}
         <AuthSessionProvider>
           <div className="app-root">
