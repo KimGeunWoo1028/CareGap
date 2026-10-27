@@ -217,10 +217,10 @@ export function CaseDetailInner() {
   }
 
   return (
-    <main className="page-frame detail-page">
+    <main className="page-frame work-deck detail-page">
       <AppHeader onSignOut={() => router.replace("/login")} />
 
-      <nav className="detail-breadcrumb" aria-label="사례 위치">
+      <nav className="detail-breadcrumb route-crumbs" aria-label="사례 위치">
         <Link href="/cases" className="detail-breadcrumb__back">
           ← 사례 목록
         </Link>
@@ -267,13 +267,13 @@ export function CaseDetailInner() {
 
       {!loading && !error && detail ? (
         <>
-          <header className="detail-title-row">
+          <header className="detail-title-row station-nameplate">
             <div>
-              <p className="detail-kicker">사례 상세</p>
               <h1 className="detail-title">{detail.case.alias}</h1>
               <p className="detail-lede">
                 생성 {formatSeoulDateTime(detail.case.created_at)} · 합성
-                상담 원문을 먼저 읽고 비교한 뒤 기록을 추가하세요.
+                상담 원문을 먼저 읽고, 이전·현재 노선이 만나는 지점에서 변화를
+                확인한 뒤 기록을 추가하세요.
               </p>
             </div>
             <span
@@ -286,10 +286,10 @@ export function CaseDetailInner() {
           </header>
 
           <section
-            className="panel detail-compare"
+            className="panel detail-compare interchange-plaza"
             aria-labelledby="compare-heading"
           >
-            <div className="detail-section-head">
+            <div className="detail-section-head interchange-plaza__head">
               <h2 id="compare-heading" className="panel__title">
                 {guidance.title}
               </h2>
@@ -305,7 +305,13 @@ export function CaseDetailInner() {
                 </Alert>
               </div>
             ) : comparePair ? (
-              <div className="compare-strip" aria-label="최신 두 상담 기록">
+              <div
+                className="compare-strip interchange-plaza__tracks"
+                aria-label="최신 두 상담 기록"
+              >
+                <div className="interchange-plaza__hub" aria-hidden="true">
+                  <span className="interchange-plaza__hub-core" />
+                </div>
                 <article className="compare-card compare-card--previous">
                   <p className="compare-card__role">이전 상담</p>
                   <h3 className="compare-card__heading">
@@ -329,7 +335,7 @@ export function CaseDetailInner() {
               </div>
             ) : null}
 
-            <div className="detail-analyze-row">
+            <div className="detail-analyze-row interchange-plaza__ops">
               <button
                 type="button"
                 className="btn btn--primary"
@@ -347,7 +353,7 @@ export function CaseDetailInner() {
             </div>
           </section>
 
-          <div className="detail-work-grid">
+          <div className="detail-work-grid detail-dock">
             <section
               className="panel detail-form-panel"
               aria-labelledby="consult-form-heading"
@@ -448,7 +454,7 @@ export function CaseDetailInner() {
                     onChange={(e) => setBody(e.target.value)}
                     disabled={saving}
                     required
-                    rows={8}
+                    rows={5}
                     aria-invalid={formErrorField === "body" ? true : undefined}
                     aria-describedby={
                       formErrorField === "body"
@@ -499,75 +505,79 @@ export function CaseDetailInner() {
               </form>
             </section>
 
-            <section
-              className="panel detail-notes-panel"
-              aria-labelledby="notes-heading"
-            >
-              <div className="detail-section-head detail-section-head--row">
-                <div>
-                  <h2 id="notes-heading" className="panel__title">
-                    상담 기록
-                  </h2>
-                  <p className="panel__desc">
-                    {consultationListCaption(detail.consultations.length)}
-                  </p>
+            <div className="detail-dock__stack">
+              <section
+                className="panel detail-notes-panel note-route"
+                aria-labelledby="notes-heading"
+              >
+                <div className="detail-section-head detail-section-head--row">
+                  <div>
+                    <h2 id="notes-heading" className="panel__title">
+                      상담 기록
+                    </h2>
+                    <p className="panel__desc">
+                      {consultationListCaption(detail.consultations.length)}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn--ghost"
+                    onClick={() => void loadDetail()}
+                  >
+                    다시 불러오기
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="btn btn--ghost"
-                  onClick={() => void loadDetail()}
-                >
-                  다시 불러오기
-                </button>
-              </div>
 
-              {detail.consultations.length === 0 ? (
-                <div className="empty">
-                  <p className="empty__title">아직 저장된 상담 기록이 없습니다.</p>
-                  <p>
-                    왼쪽(모바일에서는 위) 등록 폼에서 합성 원문을 저장하면 이
-                    목록에 나타납니다.
-                  </p>
-                </div>
-              ) : (
-                <ul className="note-list">
-                  {detail.consultations.map((note) => (
-                    <li key={note.id}>
-                      <article className="note-card">
-                        <div className="note-card__meta">
-                          <span>
-                            상담일 {formatSeoulDate(note.occurred_on)}
-                          </span>
-                          <span className="chip">
-                            {channelLabel(note.channel)}
-                          </span>
-                          <span>
-                            저장 {formatSeoulDateTime(note.created_at)}
-                          </span>
-                        </div>
-                        <p className="note-card__body">{note.body}</p>
-                      </article>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
+                {detail.consultations.length === 0 ? (
+                  <div className="empty">
+                    <p className="empty__title">
+                      아직 저장된 상담 기록이 없습니다.
+                    </p>
+                    <p>
+                      왼쪽(모바일에서는 위) 등록 폼에서 합성 원문을 저장하면 이
+                      목록에 나타납니다.
+                    </p>
+                  </div>
+                ) : (
+                  <ul className="note-list note-route__stops">
+                    {detail.consultations.map((note) => (
+                      <li key={note.id}>
+                        <article className="note-card">
+                          <div className="note-card__meta">
+                            <span>
+                              상담일 {formatSeoulDate(note.occurred_on)}
+                            </span>
+                            <span className="chip">
+                              {channelLabel(note.channel)}
+                            </span>
+                            <span>
+                              저장 {formatSeoulDateTime(note.created_at)}
+                            </span>
+                          </div>
+                          <p className="note-card__body">{note.body}</p>
+                        </article>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+
+              <section
+                className="panel detail-history-panel"
+                aria-labelledby="history-heading"
+              >
+                <h2 id="history-heading" className="panel__title">
+                  분석 이력
+                </h2>
+                <p className="panel__desc">
+                  {analysisListCaption(detail.analyses.length)}. 분석
+                  생성·결과·사업 후보·담당자 검토는 이후 단계에서 연결됩니다.
+                  서버가 반환한 요약만 읽기 전용으로 표시합니다.
+                </p>
+                <AnalysisHistory analyses={detail.analyses} />
+              </section>
+            </div>
           </div>
-
-          <section
-            className="panel detail-history-panel"
-            aria-labelledby="history-heading"
-          >
-            <h2 id="history-heading" className="panel__title">
-              분석 이력
-            </h2>
-            <p className="panel__desc">
-              {analysisListCaption(detail.analyses.length)}. 분석 생성·결과·사업
-              후보·담당자 검토는 이후 단계에서 연결됩니다. 서버가 반환한 요약만
-              읽기 전용으로 표시합니다.
-            </p>
-            <AnalysisHistory analyses={detail.analyses} />
-          </section>
         </>
       ) : null}
     </main>

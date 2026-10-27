@@ -147,246 +147,265 @@ export function CasesPageInner() {
   }
 
   return (
-    <main className="page-frame cases-page">
+    <main className="page-frame work-deck cases-page">
       <AppHeader onSignOut={() => router.replace("/login")} />
 
-      <div className="cases-title-row">
-        <div>
-          <h1 className="cases-title">사례 목록</h1>
-          <p className="cases-lede">
-            상담 기록을 확인할 합성 사례를 선택하세요.
-          </p>
-        </div>
-        <div className="cases-title-row__actions">
-          <button
-            ref={createToggleRef}
-            type="button"
-            className="btn btn--primary"
-            aria-expanded={createOpen}
-            aria-controls={createPanelId}
-            onClick={() => {
-              if (createOpen) closeCreatePanel();
-              else openCreatePanel();
-            }}
-          >
-            {createOpen ? "추가 닫기" : "사례 추가"}
-          </button>
-        </div>
-      </div>
+      <div className="line-board">
+        <div className="line-board__spine" aria-hidden="true" />
 
-      {createOpen ? (
-        <section
-          className="panel cases-create"
-          id={createPanelId}
-          aria-labelledby="create-title"
-        >
-          <h2 id="create-title" className="panel__title">
-            합성 사례 추가
-          </h2>
-          <p className="panel__desc">
-            사례명은 합성-007처럼 입력합니다. 서버에 저장되며 본인 소유
-            사례만 목록에 나타납니다.
-          </p>
-          <form className="cases-create__form" onSubmit={onCreate} noValidate>
-            <div className="field">
-              <label htmlFor="alias">사례명</label>
-              <input
-                ref={aliasInputRef}
-                id="alias"
-                name="alias"
-                value={alias}
-                onChange={(e) => setAlias(e.target.value)}
-                placeholder="합성-007"
-                autoComplete="off"
-                disabled={creating}
-                aria-invalid={formError ? true : undefined}
-                aria-describedby={
-                  formError ? `${aliasHintId} ${aliasErrorId}` : aliasHintId
-                }
-              />
-              <p id={aliasHintId} className="field__hint">
-                형식 합성-001 · 같은 별칭 중복 불가
-              </p>
-              {formError ? (
-                <p id={aliasErrorId} className="field__error" role="alert">
-                  {formError}
-                </p>
-              ) : null}
-            </div>
-            <div className="actions">
-              <button
-                type="submit"
-                className="btn btn--primary"
-                disabled={creating}
-                aria-busy={creating}
-              >
-                {creating ? "만드는 중…" : "사례 만들기"}
-              </button>
-              <button
-                type="button"
-                className="btn btn--ghost"
-                onClick={closeCreatePanel}
-                disabled={creating}
-              >
-                취소
-              </button>
-            </div>
-          </form>
-        </section>
-      ) : null}
-
-      <section className="panel cases-list" aria-labelledby="cases-heading">
-        <div className="cases-toolbar">
-          <div className="cases-toolbar__heading">
-            <h2 id="cases-heading" className="panel__title">
-              내 사례
-            </h2>
-            {!loading && !error ? (
-              <p className="cases-count" aria-live="polite">
-                표시 중 {filteredCases.length}건
-                {searchActive ? ` · 불러온 ${cases.length}건 중` : null}
-              </p>
-            ) : null}
+        <div className="cases-title-row line-board__head">
+          <div>
+            <h1 className="cases-title">사례 목록</h1>
+            <p className="cases-lede">
+              상담 기록을 확인할 합성 사례를 선택하세요. 각 행은 하나의 역(사례)
+              입니다.
+            </p>
           </div>
-          <div className="cases-toolbar__tools">
-            <div className="cases-search">
-              <label className="visually-hidden" htmlFor="case-search">
-                현재 불러온 사례에서 검색
-              </label>
-              <input
-                id="case-search"
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="표시된 사례 검색"
-                disabled={loading || !!error || cases.length === 0}
-                aria-describedby={searchHintId}
-              />
-              <p id={searchHintId} className="field__hint">
-                현재 불러온 사례에서 검색 · 등록일 최신순 · 최대 100건 조회(초과분은
-                보이지 않을 수 있음)
-              </p>
-            </div>
+          <div className="cases-title-row__actions">
             <button
+              ref={createToggleRef}
               type="button"
-              className="btn btn--ghost"
-              onClick={() => void loadCases()}
-              disabled={loading}
+              className="btn btn--primary"
+              aria-expanded={createOpen}
+              aria-controls={createPanelId}
+              onClick={() => {
+                if (createOpen) closeCreatePanel();
+                else openCreatePanel();
+              }}
             >
-              다시 불러오기
+              {createOpen ? "추가 닫기" : "사례 추가"}
             </button>
           </div>
         </div>
 
-        {error ? (
-          <div className="cases-state">
-            <Alert tone="error" live title="목록을 불러오지 못했습니다">
-              {error}
-            </Alert>
-            <div className="actions" style={{ marginTop: "0.75rem" }}>
-              <button
-                type="button"
-                className="btn btn--primary"
-                onClick={() => void loadCases()}
-              >
-                다시 시도
-              </button>
+        {createOpen ? (
+          <section
+            className="panel cases-create line-board__bay"
+            id={createPanelId}
+            aria-labelledby="create-title"
+          >
+            <h2 id="create-title" className="panel__title">
+              합성 사례 추가
+            </h2>
+            <p className="panel__desc">
+              사례명은 합성-007처럼 입력합니다. 서버에 저장되며 본인 소유
+              사례만 목록에 나타납니다.
+            </p>
+            <form className="cases-create__form" onSubmit={onCreate} noValidate>
+              <div className="field">
+                <label htmlFor="alias">사례명</label>
+                <input
+                  ref={aliasInputRef}
+                  id="alias"
+                  name="alias"
+                  value={alias}
+                  onChange={(e) => setAlias(e.target.value)}
+                  placeholder="합성-007"
+                  autoComplete="off"
+                  disabled={creating}
+                  aria-invalid={formError ? true : undefined}
+                  aria-describedby={
+                    formError ? `${aliasHintId} ${aliasErrorId}` : aliasHintId
+                  }
+                />
+                <p id={aliasHintId} className="field__hint">
+                  형식 합성-001 · 같은 별칭 중복 불가
+                </p>
+                {formError ? (
+                  <p id={aliasErrorId} className="field__error" role="alert">
+                    {formError}
+                  </p>
+                ) : null}
+              </div>
+              <div className="actions">
+                <button
+                  type="submit"
+                  className="btn btn--primary"
+                  disabled={creating}
+                  aria-busy={creating}
+                >
+                  {creating ? "만드는 중…" : "사례 만들기"}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  onClick={closeCreatePanel}
+                  disabled={creating}
+                >
+                  취소
+                </button>
+              </div>
+            </form>
+          </section>
+        ) : null}
+
+        <section
+          className="panel cases-list line-board__index"
+          aria-labelledby="cases-heading"
+        >
+          <div className="cases-toolbar">
+            <div className="cases-toolbar__heading">
+              <h2 id="cases-heading" className="panel__title">
+                내 사례
+              </h2>
+              {!loading && !error ? (
+                <p className="cases-count" aria-live="polite">
+                  표시 중 {filteredCases.length}건
+                  {searchActive ? ` · 불러온 ${cases.length}건 중` : null}
+                </p>
+              ) : null}
             </div>
-          </div>
-        ) : null}
-
-        {loading ? (
-          <div className="cases-state stack" aria-busy="true">
-            <div className="skeleton" />
-            <div className="skeleton" />
-            <div className="skeleton" />
-            <p className="muted">목록을 불러오는 중…</p>
-          </div>
-        ) : null}
-
-        {!loading && !error && cases.length === 0 ? (
-          <div className="empty cases-state">
-            <p>
-              <strong>아직 등록된 합성 사례가 없습니다.</strong>
-            </p>
-            <p className="muted">사례 추가로 새 합성 사례를 만들 수 있습니다.</p>
-            <div className="actions" style={{ marginTop: "0.75rem" }}>
-              <button
-                type="button"
-                className="btn btn--primary"
-                onClick={openCreatePanel}
-              >
-                사례 추가
-              </button>
-            </div>
-          </div>
-        ) : null}
-
-        {!loading && !error && cases.length > 0 && filteredCases.length === 0 ? (
-          <div className="empty cases-state">
-            <p>
-              <strong>일치하는 사례가 없습니다.</strong>
-            </p>
-            <p className="muted">
-              현재 불러온 사례명 안에서만 검색합니다. 검색어를 다시 확인해 주세요.
-            </p>
-            <div className="actions" style={{ marginTop: "0.75rem" }}>
+            <div className="cases-toolbar__tools">
+              <div className="cases-search">
+                <label className="visually-hidden" htmlFor="case-search">
+                  현재 불러온 사례에서 검색
+                </label>
+                <input
+                  id="case-search"
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="표시된 사례 검색"
+                  disabled={loading || !!error || cases.length === 0}
+                  aria-describedby={searchHintId}
+                />
+                <p id={searchHintId} className="field__hint">
+                  현재 불러온 사례에서 검색 · 등록일 최신순 · 최대 100건
+                  조회(초과분은 보이지 않을 수 있음)
+                </p>
+              </div>
               <button
                 type="button"
                 className="btn btn--ghost"
-                onClick={clearSearch}
+                onClick={() => void loadCases()}
+                disabled={loading}
               >
-                검색어 지우기
+                다시 불러오기
               </button>
             </div>
           </div>
-        ) : null}
 
-        {!loading && !error && filteredCases.length > 0 ? (
-          <div className="table-wrap cases-table-wrap">
-            <table className="data case-table">
-              <caption className="visually-hidden">
-                내 합성 사례 목록 · 등록일 최신순
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">사례명</th>
-                  <th scope="col">등록일</th>
-                  <th scope="col">
-                    <span className="visually-hidden">상세</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCases.map((item) => {
-                  const registeredOn = formatSeoulDateTime(item.created_at);
-                  return (
-                    <tr key={item.id}>
-                      <td>
-                        <Link
-                          href={`/cases/${item.id}`}
-                          className="case-link"
-                        >
-                          {item.alias}
-                          <span className="visually-hidden">
-                            {`, 등록일 ${registeredOn}, 상세 열기`}
-                          </span>
-                        </Link>
-                      </td>
-                      <td>
-                        <time dateTime={item.created_at}>{registeredOn}</time>
-                      </td>
-                      <td className="case-table__chevron" aria-hidden="true">
-                        <span className="case-row__arrow">→</span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        ) : null}
-      </section>
+          {error ? (
+            <div className="cases-state">
+              <Alert tone="error" live title="목록을 불러오지 못했습니다">
+                {error}
+              </Alert>
+              <div className="actions" style={{ marginTop: "0.75rem" }}>
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  onClick={() => void loadCases()}
+                >
+                  다시 시도
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          {loading ? (
+            <div className="cases-state stack" aria-busy="true">
+              <div className="skeleton" />
+              <div className="skeleton" />
+              <div className="skeleton" />
+              <p className="muted">목록을 불러오는 중…</p>
+            </div>
+          ) : null}
+
+          {!loading && !error && cases.length === 0 ? (
+            <div className="empty cases-state">
+              <p>
+                <strong>아직 등록된 합성 사례가 없습니다.</strong>
+              </p>
+              <p className="muted">사례 추가로 새 합성 사례를 만들 수 있습니다.</p>
+              <div className="actions" style={{ marginTop: "0.75rem" }}>
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  onClick={openCreatePanel}
+                >
+                  사례 추가
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          {!loading &&
+          !error &&
+          cases.length > 0 &&
+          filteredCases.length === 0 ? (
+            <div className="empty cases-state">
+              <p>
+                <strong>일치하는 사례가 없습니다.</strong>
+              </p>
+              <p className="muted">
+                현재 불러온 사례명 안에서만 검색합니다. 검색어를 다시 확인해
+                주세요.
+              </p>
+              <div className="actions" style={{ marginTop: "0.75rem" }}>
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  onClick={clearSearch}
+                >
+                  검색어 지우기
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          {!loading && !error && filteredCases.length > 0 ? (
+            <div className="table-wrap cases-table-wrap station-index">
+              <table className="data case-table">
+                <caption className="visually-hidden">
+                  내 합성 사례 목록 · 등록일 최신순
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">사례명</th>
+                    <th scope="col">등록일</th>
+                    <th scope="col">
+                      <span className="visually-hidden">상세</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredCases.map((item) => {
+                    const registeredOn = formatSeoulDateTime(item.created_at);
+                    const detailHref = `/cases/${item.id}`;
+                    return (
+                      <tr key={item.id}>
+                        <td>
+                          <Link href={detailHref} className="case-link">
+                            <span className="station-tick" aria-hidden="true" />
+                            {item.alias}
+                            <span className="visually-hidden">
+                              {`, 등록일 ${registeredOn}, 상세 열기`}
+                            </span>
+                          </Link>
+                        </td>
+                        <td>
+                          <time dateTime={item.created_at}>{registeredOn}</time>
+                        </td>
+                        <td className="case-table__chevron">
+                          <Link
+                            href={detailHref}
+                            className="case-row__arrow-link"
+                            aria-label={`${item.alias} 행 상세 열기`}
+                          >
+                            <span className="case-row__arrow" aria-hidden="true">
+                              →
+                            </span>
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+        </section>
+      </div>
     </main>
   );
 }

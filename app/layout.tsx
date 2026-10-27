@@ -6,7 +6,7 @@ import "./globals.css";
 
 const pretendard = localFont({
   src: "./fonts/PretendardVariable.woff2",
-  variable: "--font-pretendard",
+  variable: "--font-ui",
   display: "swap",
   weight: "45 920",
   fallback: ["Malgun Gothic", "sans-serif"],
@@ -27,12 +27,12 @@ export default function RootLayout({
     <html lang="ko" className={pretendard.variable}>
       <body>
         {/*
-          THESIS: Quiet case-file desk for comparing two notes — refuse metric dashboards and AI-purple chrome.
-          OWN-WORLD: Cool wash paper, teal actions, cool-gray ink, local Pretendard Variable (C+B).
-          STORY: Sign in → own synthetic cases → add immutable notes → see analysis readiness.
-          FIRST VIEWPORT: Persistent synthetic banner + branded top task chrome + primary work panel.
-          FORM: Operate / restrained case-file desk / C+B redesign stage 1.
-          FINISH: Stage 1 shared tokens/chrome only; screen redesigns follow later stages.
+          THESIS: Two consultation routes meet at an evidence interchange — not KPI dashboards or decorative maps.
+          OWN-WORLD: Midnight enamel shell, porcelain work plates, scarlet/cobalt route accents only where previous↔current connect.
+          STORY: Sign in on the night map → readable case deck → dual-route compare of synthetic notes.
+          FIRST VIEWPORT: Synthetic strip + brand-forward night login (or porcelain app shell + primary work plate).
+          FORM: Operate / Midnight Transit Diagram / seed 3ded0ac4 / challenger wayfinding-cartography-signage-midnight-transit-diagram.
+          FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
         */}
         <AuthSessionProvider>
           <div className="app-root">

@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Alert } from "@/components/alert";
+import { BrandMark } from "@/components/brand-mark";
 import { useAuthSession } from "@/lib/auth/session-context";
 
 /** Fixed synthetic illustration for the login intro only — not live case data. */
@@ -18,34 +19,6 @@ function safeNextPath(raw: string | null): string {
   return raw;
 }
 
-function BrandMark() {
-  return (
-    <svg
-      className="auth-brand__mark"
-      width="28"
-      height="28"
-      viewBox="0 0 28 28"
-      fill="none"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        d="M6 9.5h7.5M14.5 9.5H22M14.5 9.5v9"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-      />
-      <path
-        d="M6 18.5h7.5M14.5 18.5H22"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-/** Split text around an exact quote without HTML string injection. */
 function HighlightedQuote({
   text,
   quote,
@@ -66,44 +39,54 @@ function HighlightedQuote({
 
 function LoginIntro() {
   return (
-    <aside className="auth-intro" aria-labelledby="auth-intro-title">
-      <h2 id="auth-intro-title" className="auth-intro__title">
-        기록 사이의 변화,
-        <br />
-        <span>판단을 돕는 근거.</span>
-      </h2>
-      <p className="auth-intro__lede">
-        두 상담 기록의 차이를 읽고, 변화가 나타난 원문 근거를 확인하도록 돕는
-        담당자 보조 도구입니다. AI가 자격이나 진단을 확정하지 않습니다.
-      </p>
-      <div className="auth-pair" aria-label="합성 원문 예시">
-        <article className="auth-record">
-          <header>
-            <strong>이전 상담</strong>
-            <time dateTime="2026-09-10">2026.09.10</time>
-          </header>
-          <blockquote>
-            <HighlightedQuote
-              text={SAMPLE_PREVIOUS}
-              quote={SAMPLE_PREVIOUS_QUOTE}
-            />
-          </blockquote>
-        </article>
-        <article className="auth-record">
-          <header>
-            <strong>현재 상담</strong>
-            <time dateTime="2026-10-10">2026.10.10</time>
-          </header>
-          <blockquote>
-            <HighlightedQuote
-              text={SAMPLE_CURRENT}
-              quote={SAMPLE_CURRENT_QUOTE}
-            />
-          </blockquote>
-        </article>
+    <aside className="auth-intro map-corridor" aria-labelledby="auth-intro-title">
+      <div className="map-corridor__head">
+        <h2 id="auth-intro-title" className="auth-intro__title">
+          두 기록이 만나는 지점,
+          <br />
+          <span>판단을 돕는 근거.</span>
+        </h2>
+        <p className="auth-intro__lede">
+          이전·현재 상담을 나란히 두고, 변화가 나타난 원문 근거를 연결해 읽도록
+          돕는 담당자 보조 도구입니다. AI가 자격이나 진단을 확정하지 않습니다.
+        </p>
       </div>
+
+      <div className="interchange-demo" aria-label="합성 원문 예시">
+        <div className="interchange-demo__rail" aria-hidden="true">
+          <span className="interchange-demo__hub" />
+        </div>
+        <div className="auth-pair interchange-demo__platforms">
+          <article className="auth-record station-card station-card--previous">
+            <header>
+              <strong>이전 상담</strong>
+              <time dateTime="2026-09-10">2026.09.10</time>
+            </header>
+            <blockquote>
+              <HighlightedQuote
+                text={SAMPLE_PREVIOUS}
+                quote={SAMPLE_PREVIOUS_QUOTE}
+              />
+            </blockquote>
+          </article>
+          <article className="auth-record station-card station-card--current">
+            <header>
+              <strong>현재 상담</strong>
+              <time dateTime="2026-10-10">2026.10.10</time>
+            </header>
+            <blockquote>
+              <HighlightedQuote
+                text={SAMPLE_CURRENT}
+                quote={SAMPLE_CURRENT_QUOTE}
+              />
+            </blockquote>
+          </article>
+        </div>
+      </div>
+
       <p className="auth-caption">
-        강조된 문장은 식사 변화의 근거 예시입니다.
+        강조된 문장은 식사 변화의 근거 예시입니다. 노선 연결은 설명용 은유이며
+        분석 결과를 만들지 않습니다.
         <br />
         합성 원문 예시 · 실제 분석이 실행된 결과가 아니며, 담당자 사례를 불러온
         것도 아닙니다.
@@ -149,18 +132,46 @@ function LoginForm() {
   }
 
   return (
-    <main className="auth-shell">
-      <section className="panel auth-form" aria-labelledby="login-heading">
-        <div className="auth-brand">
-          <div className="auth-brand__row">
-            <BrandMark />
-            <h1 id="login-heading" className="auth-brand__title">
-              돌봄틈새 AI
-            </h1>
+    <main className="auth-shell auth-map">
+      <div className="auth-map__backdrop" aria-hidden="true">
+        <svg className="auth-map__svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+          <path
+            d="M80 220 H420 L560 400 H1120"
+            stroke="#e23b2f"
+            strokeWidth="6"
+            fill="none"
+            strokeLinecap="round"
+            opacity="0.18"
+          />
+          <path
+            d="M80 580 H420 L560 400 H1120"
+            stroke="#2f6fed"
+            strokeWidth="6"
+            fill="none"
+            strokeLinecap="round"
+            opacity="0.2"
+          />
+          <circle cx="560" cy="400" r="18" fill="#071221" stroke="#f4f7fb" strokeWidth="3" opacity="0.35" />
+          <circle cx="560" cy="400" r="6" fill="#f0a202" opacity="0.4" />
+        </svg>
+      </div>
+
+      <section className="panel auth-form map-platform" aria-labelledby="login-heading">
+        <div className="map-platform__ticket">
+          <span className="map-platform__code" aria-hidden="true">
+            GATE
+          </span>
+          <div className="auth-brand">
+            <div className="auth-brand__row">
+              <BrandMark className="auth-brand__mark" size={34} />
+              <h1 id="login-heading" className="auth-brand__title">
+                돌봄틈새 AI
+              </h1>
+            </div>
+            <p className="auth-brand__hint">
+              사전 발급된 테스트 계정으로 로그인하세요.
+            </p>
           </div>
-          <p className="auth-brand__hint">
-            사전 발급된 테스트 계정으로 로그인하세요.
-          </p>
         </div>
 
         <form className="stack auth-form__fields" onSubmit={onSubmit} noValidate method="post">
@@ -216,7 +227,8 @@ function LoginForm() {
 
         <p className="auth-form__fine">
           상단의 합성 데이터 전용 · 담당자 판단 보조 안내가 모든 화면에
-          유지됩니다. 세션·가입 정책은 아래 소개에서 확인할 수 있습니다.
+          유지됩니다. 세션·가입 정책은 옆(모바일에서는 아래) 소개에서 확인할 수
+          있습니다.
         </p>
       </section>
 

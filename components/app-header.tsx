@@ -1,38 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 import { useAuthSession } from "@/lib/auth/session-context";
 
 type AppHeaderProps = {
   onSignOut?: () => void;
 };
-
-function BrandMark() {
-  return (
-    <svg
-      className="app-header__mark"
-      width="28"
-      height="28"
-      viewBox="0 0 28 28"
-      fill="none"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        d="M6 9.5h7.5M14.5 9.5H22M14.5 9.5v9"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-      />
-      <path
-        d="M6 18.5h7.5M14.5 18.5H22"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 export function AppHeader({ onSignOut }: AppHeaderProps) {
   const { user, signOut } = useAuthSession();
@@ -43,24 +17,32 @@ export function AppHeader({ onSignOut }: AppHeaderProps) {
   }
 
   return (
-    <header className="app-header">
-      <div className="app-header__brand">
-        <Link href="/cases" className="app-header__title">
-          <BrandMark />
-          돌봄틈새 AI
+    <header className="map-chrome">
+      <div className="map-chrome__line" aria-hidden="true" />
+      <div className="map-chrome__inner">
+        <Link href="/cases" className="map-chrome__brand">
+          <BrandMark className="map-chrome__mark" size={30} />
+          <span className="map-chrome__titles">
+            <span className="map-chrome__name">돌봄틈새 AI</span>
+            <span className="map-chrome__line-id">상담 기록 비교 보조</span>
+          </span>
         </Link>
-        <span className="app-header__subtitle">상담 기록 비교 보조</span>
-      </div>
-      <div className="app-header__meta">
-        {user?.email ? (
-          <p className="app-header__account">
-            <span className="visually-hidden">로그인 계정 </span>
-            {user.email}
-          </p>
-        ) : null}
-        <button type="button" className="btn btn--ghost" onClick={handleSignOut}>
-          로그아웃
-        </button>
+        <div className="map-chrome__ops">
+          {user?.email ? (
+            <p className="map-chrome__account">
+              <span className="visually-hidden">로그인 계정 </span>
+              <span className="map-chrome__station-dot" aria-hidden="true" />
+              {user.email}
+            </p>
+          ) : null}
+          <button
+            type="button"
+            className="btn btn--ghost map-chrome__logout"
+            onClick={handleSignOut}
+          >
+            로그아웃
+          </button>
+        </div>
       </div>
     </header>
   );

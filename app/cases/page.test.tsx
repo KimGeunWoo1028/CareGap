@@ -307,17 +307,21 @@ describe("CasesPageInner", () => {
     expect(signOut).toHaveBeenCalled();
   });
 
-  it("uses one focusable detail link per row and keeps the chevron decorative", async () => {
+  it("exposes name and arrow links to the same case detail per row", async () => {
     mockListOk(sampleCases());
     root.render(<CasesPageInner />);
-    await waitFor(() => container.querySelectorAll(".case-table tbody a").length === 2);
+    await waitFor(
+      () => container.querySelectorAll(".case-table tbody a").length === 4,
+    );
 
-    const links = container.querySelectorAll(".case-table tbody a");
+    const row = container.querySelector(".case-table tbody tr") as HTMLElement;
+    const links = row.querySelectorAll("a");
+    expect(links).toHaveLength(2);
     expect(links[0].getAttribute("href")).toBe("/cases/case-1");
     expect(links[0].textContent).toContain("등록일");
     expect(links[0].textContent).toContain("상세 열기");
-
-    const chevrons = container.querySelectorAll(".case-table__chevron");
-    expect(chevrons[0].getAttribute("aria-hidden")).toBe("true");
+    expect(links[1].getAttribute("href")).toBe("/cases/case-1");
+    expect(links[1].getAttribute("aria-label")).toContain("행 상세 열기");
+    expect(row.querySelector(".case-table__chevron")?.getAttribute("aria-hidden")).toBeNull();
   });
 });

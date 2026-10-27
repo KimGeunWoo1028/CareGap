@@ -33,11 +33,13 @@ async function expectSingleDetailLinkPerRow(page: Page): Promise<void> {
   const count = await rows.count();
   for (let i = 0; i < count; i += 1) {
     const row = rows.nth(i);
-    await expect(row.locator("a")).toHaveCount(1);
-    await expect(row.locator(".case-table__chevron")).toHaveAttribute(
-      "aria-hidden",
-      "true",
-    );
+    const links = row.locator("a");
+    await expect(links).toHaveCount(2);
+    const nameHref = await links.nth(0).getAttribute("href");
+    const arrowHref = await links.nth(1).getAttribute("href");
+    expect(nameHref).toBeTruthy();
+    expect(arrowHref).toBe(nameHref);
+    await expect(row.locator(".case-row__arrow-link")).toBeVisible();
   }
 }
 
@@ -67,7 +69,7 @@ test.describe("cases list UI with mocked auth/API only", () => {
     await expect(page.getByLabel("현재 불러온 사례에서 검색")).toBeVisible();
     await expect(page.getByRole("columnheader", { name: "사례명" })).toBeVisible();
     await expect(page.getByRole("columnheader", { name: "등록일" })).toBeVisible();
-    await expect(page.getByRole("link", { name: /합성-001/ })).toBeVisible();
+    await expect(page.locator("a.case-link", { hasText: "합성-001" })).toBeVisible();
     await expectSingleDetailLinkPerRow(page);
     await expectNoFirstRowEmphasis(page);
 
@@ -79,7 +81,7 @@ test.describe("cases list UI with mocked auth/API only", () => {
       await page.setViewportSize({ width: size.width, height: size.height });
       await expectNoPageHorizontalOverflow(page);
       await expect(page.getByRole("heading", { name: "사례 목록" })).toBeVisible();
-      await expect(page.getByRole("link", { name: /합성-001/ })).toBeVisible();
+      await expect(page.locator("a.case-link", { hasText: "합성-001" })).toBeVisible();
       await shot(page, `list-6-${size.name}`);
     }
   });
@@ -119,7 +121,7 @@ test.describe("cases list UI with mocked auth/API only", () => {
 
     await page.getByRole("button", { name: "검색어 지우기" }).click();
     await expect(page.getByLabel("현재 불러온 사례에서 검색")).toHaveValue("");
-    await expect(page.getByRole("link", { name: /합성-001/ })).toBeVisible();
+    await expect(page.locator("a.case-link", { hasText: "합성-001" })).toBeVisible();
     await expect(page.getByText("표시 중 6건")).toBeVisible();
   });
 
@@ -180,7 +182,7 @@ test.describe("cases list UI with mocked auth/API only", () => {
 
     api.listError = undefined;
     await page.getByRole("button", { name: "다시 시도" }).click();
-    await expect(page.getByRole("link", { name: /합성-001/ })).toBeVisible({
+    await expect(page.locator("a.case-link", { hasText: "합성-001" })).toBeVisible({
       timeout: 10_000,
     });
     await expect(page.getByText("표시 중 6건")).toBeVisible();

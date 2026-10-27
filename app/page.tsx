@@ -14,8 +14,11 @@ export default function HomePage() {
   }, [ready, accessToken, router]);
 
   return (
-    <main className="page-frame">
-      <p className="muted">화면을 준비하는 중…</p>
+    <main className="page-frame" aria-busy="true">
+      <div className="skeleton" style={{ maxWidth: "16rem" }} />
+      <p className="muted" style={{ marginTop: "0.85rem" }}>
+        화면을 준비하는 중…
+      </p>
     </main>
   );
 }
