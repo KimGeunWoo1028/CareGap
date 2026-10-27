@@ -30,6 +30,10 @@ export function jsonCreated<T>(data: T, requestId?: string): Response {
   return jsonOk(data, { status: 201, requestId });
 }
 
+export function jsonAccepted<T>(data: T, requestId?: string): Response {
+  return jsonOk(data, { status: 202, requestId });
+}
+
 export function jsonError(
   code: ApiErrorCode,
   options?: {
@@ -69,6 +73,8 @@ export function jsonFromUnknownError(
       message: error.message,
       details: error.details,
       requestId,
+      headers:
+        error.code === "RATE_LIMITED" ? { "Retry-After": "60" } : undefined,
     });
   }
   return jsonError("SERVICE_UNAVAILABLE", { requestId });

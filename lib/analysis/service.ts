@@ -1,0 +1,199 @@
+import { ApiError, type ApiErrorCode } from "@/lib/api/errors";
+import type {
+  AnalysisDetail,
+  AnalysisReview,
+} from "@/lib/analysis/analysis-types";
+import { runAnalysis } from "@/lib/analysis/run-analysis";
+import {
+  ANALYSIS_FAILURE_CODES,
+  toStoredFailureCode,
+} from "@/lib/analysis/rpc";
+import {
+  callStartAnalysis,
+  finalizeAnalysisFailure,
+  finalizeAnalysisSuccess,
+  getAnalysisDetail,
+  getAnalysisRowForOwner,
+  getCaseAlias,
+  getConsultationPair,
+  insertReview,
+  listActiveWelfarePrograms,
+} from "@/lib/analysis/repository";
+import type { AuthenticatedRequest } from "@/lib/auth/request-auth";
+import { getServerEnv } from "@/lib/env";
+
+export type CreateAnalysisOutcome = {
+  httpStatus: 200 | 201 | 202;
+  detail: AnalysisDetail;
+};
+
+/**
+ * Reserve via start_analysis, run Phase 3 engine only for newly created rows,
+ * and conditionally persist with the service role.
+ */
+export async function createOrResumeAnalysis(
+  auth: AuthenticatedRequest,
+  caseId: string,
+  idempotencyKey: string,
+): Promise<CreateAnalysisOutcome> {
+  const env = getServerEnv();
+  const mode = env.ANALYSIS_MODE;
+  const reservation = await callStartAnalysis(
+    auth.db,
+    caseId,
+    idempotencyKey,
+    mode,
+  );
+
+  if (!reservation.created) {
+    if (reservation.status === "failed") {
+      const failed = await getAnalysisRowForOwner(
+        auth.db,
+        reservation.analysis_id,
+      );
+      throw new ApiError("ANALYSIS_FAILED", undefined, {
+        analysis_id: failed.id,
+        failure_code: failed.failure_code,
+      });
+    }
+
+    const detail = await getAnalysisDetail(auth.db, reservation.analysis_id);
+    if (reservation.status === "processing") {
+      return { httpStatus: 202, detail };
+    }
+    return { httpStatus: 200, detail };
+  }
+
+  // New reservation — execute engine once.
+  const row = await getAnalysisRowForOwner(auth.db, reservation.analysis_id);
+  if (row.owner_id !== auth.user.id || row.case_id !== caseId) {
+    throw new ApiError("NOT_FOUND");
+  }
+
+  const [caseAlias, notes, programs] = await Promise.all([
+    getCaseAlias(auth.db, caseId),
+    getConsultationPair(
+      auth.db,
+      caseId,
+      row.previous_note_id,
+      row.current_note_id,
+    ),
+    listActiveWelfarePrograms(auth.db),
+  ]);
+
+  let engine;
+  try {
+    engine = await runAnalysis({
+      mode,
+      caseAlias,
+      previous: notes.previous,
+      current: notes.current,
+      programs,
+      openai:
+        mode === "live"
+          ? {
+              apiKey: env.OPENAI_API_KEY ?? "",
+              model: env.OPENAI_MODEL ?? "",
+            }
+          : undefined,
+    });
+  } catch (error) {
+    const failureCode = toStoredFailureCode(error);
+    const priorDetails =
+      error &&
+      typeof error === "object" &&
+      "details" in error &&
+      error.details &&
+      typeof error.details === "object"
+        ? (error.details as Record<string, unknown>)
+        : {};
+
+    let persisted = false;
+    try {
+      persisted = await finalizeAnalysisFailure({
+        analysisId: reservation.analysis_id,
+        ownerId: auth.user.id,
+        caseId,
+        failureCode,
+      });
+    } catch {
+      throw new ApiError("SERVICE_UNAVAILABLE", undefined, {
+        ...priorDetails,
+        analysis_id: reservation.analysis_id,
+      });
+    }
+
+    if (!persisted) {
+      throw new ApiError("SERVICE_UNAVAILABLE", undefined, {
+        ...priorDetails,
+        analysis_id: reservation.analysis_id,
+      });
+    }
+
+    throw new ApiError(failureCode, undefined, {
+      ...priorDetails,
+      analysis_id: reservation.analysis_id,
+    });
+  }
+
+  const saved = await finalizeAnalysisSuccess({
+    analysisId: row.id,
+    ownerId: auth.user.id,
+    caseId,
+    model: engine.model,
+    result: {
+      analysis: engine.analysis,
+      recommendations: engine.recommendations,
+    },
+  });
+
+  if (!saved) {
+    // Stale processing was terminalized (e.g. 60s TIMEOUT) — discard late result.
+    const current = await getAnalysisDetail(auth.db, row.id);
+    if (current.status === "failed") {
+      const stored = current.failure_code;
+      const code: ApiErrorCode =
+        stored && ANALYSIS_FAILURE_CODES.has(stored as ApiErrorCode)
+          ? (stored as ApiErrorCode)
+          : "TIMEOUT";
+      throw new ApiError(code, undefined, { analysis_id: current.id });
+    }
+    if (current.status === "succeeded") {
+      return { httpStatus: 200, detail: current };
+    }
+    throw new ApiError("SERVICE_UNAVAILABLE", undefined, {
+      analysis_id: row.id,
+    });
+  }
+
+  return {
+    httpStatus: 201,
+    detail: await getAnalysisDetail(auth.db, row.id),
+  };
+}
+
+export async function createAnalysisReview(
+  auth: AuthenticatedRequest,
+  analysisId: string,
+  decision: AnalysisReview["decision"],
+  note: string,
+): Promise<AnalysisReview> {
+  const row = await getAnalysisRowForOwner(auth.db, analysisId);
+
+  if (row.status === "processing") {
+    throw new ApiError("ANALYSIS_IN_PROGRESS");
+  }
+  if (row.status === "failed") {
+    throw new ApiError("ANALYSIS_FAILED", undefined, {
+      analysis_id: row.id,
+      failure_code: row.failure_code,
+    });
+  }
+
+  const existing = await getAnalysisDetail(auth.db, analysisId);
+  if (existing.review) {
+    throw new ApiError("REVIEW_EXISTS");
+  }
+
+  return insertReview(auth.db, auth.user.id, analysisId, decision, note);
+}
