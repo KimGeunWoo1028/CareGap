@@ -39,7 +39,9 @@ test.describe("case detail UI with mocked auth/API only", () => {
       page.getByRole("heading", { name: "비교할 기록이 없습니다" }),
     ).toBeVisible();
     await expect(page.getByText(/서로 다른 날짜의 상담 기록이 2건/)).toBeVisible();
-    await expect(page.getByRole("button", { name: "새 분석 (준비 중)" })).toBeDisabled();
+    await expect(
+      page.getByRole("button", { name: /새 분석 \(기록 2건 필요\)/ }),
+    ).toBeDisabled();
     await expect(
       page.getByText(/표시 중 0건 · 최신 날짜 순 · 최대 50건 조회/),
     ).toBeVisible();
@@ -96,10 +98,10 @@ test.describe("case detail UI with mocked auth/API only", () => {
         {
           id: "00000000-0000-4000-8000-00000000a002",
           case_id: MOCK_CASE_ID,
-          status: "processing",
+          status: "succeeded",
           mode: "live",
           created_at: "2026-10-11T00:00:00.000Z",
-          completed_at: null,
+          completed_at: "2026-10-11T00:01:00.000Z",
           is_current: true,
         },
         {
@@ -131,7 +133,7 @@ test.describe("case detail UI with mocked auth/API only", () => {
       page.getByText("새 상담 기록이 추가된 이전 분석"),
     ).toBeVisible();
     await expect(page.getByText(/replay · 사전 준비 시연/)).toBeVisible();
-    await expect(page.getByRole("button", { name: "새 분석 (준비 중)" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "새 분석" })).toBeEnabled();
 
     const roles = page.locator(".compare-card__role");
     await expect(roles.nth(0)).toHaveText("이전 상담");

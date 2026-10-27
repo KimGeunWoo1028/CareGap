@@ -23,6 +23,7 @@ type RequestOptions = {
   method?: "GET" | "POST";
   token: string | null;
   body?: unknown;
+  headers?: Record<string, string>;
 };
 
 export async function apiRequest<T>(
@@ -49,6 +50,7 @@ export async function apiRequest<T>(
         ...(options.body !== undefined
           ? { "Content-Type": "application/json" }
           : {}),
+        ...(options.headers ?? {}),
       },
       body:
         options.body === undefined ? undefined : JSON.stringify(options.body),
@@ -111,6 +113,27 @@ export function userMessageForApiError(failure: ApiFailure): string {
       return "요청한 자료를 찾을 수 없거나 접근할 수 없습니다.";
     case "VALIDATION_ERROR":
       return failure.message || "입력값을 확인해 주세요.";
+    case "NOT_ENOUGH_RECORDS":
+      return "다른 날짜의 상담 기록이 두 건 필요합니다.";
+    case "REPLAY_UNAVAILABLE":
+      return "이 시연 모드는 준비된 합성 사례에서만 사용할 수 있습니다.";
+    case "ANALYSIS_IN_PROGRESS":
+      return "분석이 진행 중입니다. 잠시 후 상태를 확인해 주세요.";
+    case "ANALYSIS_FAILED":
+      return "이전 분석이 실패로 끝났습니다. 새 분석으로 다시 시도해 주세요.";
+    case "IDEMPOTENCY_CONFLICT":
+      return "같은 요청 키로 다른 분석이 이미 있습니다. 새 분석을 시작해 주세요.";
+    case "REVIEW_EXISTS":
+      return "이미 검토가 저장된 분석입니다.";
+    case "RATE_LIMITED":
+      return "분석 요청이 많습니다. 잠시 후 다시 시도해 주세요.";
+    case "INVALID_AI_OUTPUT":
+      return "결과의 근거를 확인하지 못해 분석을 저장하지 않았습니다.";
+    case "AI_UNAVAILABLE":
+    case "TIMEOUT":
+      return "분석을 완료하지 못했습니다. 원문은 그대로 보관됩니다.";
+    case "SERVICE_UNAVAILABLE":
+      return "서비스 연결을 확인할 수 없습니다.";
     case "NETWORK_ERROR":
       return failure.message;
     default:

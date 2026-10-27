@@ -368,6 +368,54 @@ export function buildMockDetail(options?: {
   };
 }
 
+export type MockAnalysisDetail = {
+  id: string;
+  case_id: string;
+  previous_note_id: string;
+  current_note_id: string;
+  status: MockAnalysis["status"];
+  mode: MockAnalysis["mode"];
+  schema_version: "1.0";
+  model: string | null;
+  result: {
+    analysis: {
+      schema_version: "1.0";
+      summary: string;
+      changes: Array<{
+        domain: "meal" | "mobility" | "health" | "environment";
+        status: "worsened" | "improved" | "unchanged" | "unknown";
+        explanation: string;
+        evidence_previous: { note_id: string; quote: string } | null;
+        evidence_current: { note_id: string; quote: string } | null;
+      }>;
+      questions: string[];
+    };
+    recommendations: Array<{
+      program_id: string;
+      name: string;
+      matched_domains: Array<"meal" | "mobility" | "health" | "environment">;
+      summary: string;
+      eligibility_status: "unverified";
+      eligibility_checks: string[];
+      region: string;
+      source_url: string;
+      source_checked_on: string;
+      catalog_version: string;
+    }>;
+  } | null;
+  failure_code: string | null;
+  created_at: string;
+  completed_at: string | null;
+  is_current: boolean;
+  review: {
+    id: string;
+    analysis_id: string;
+    decision: "confirmed" | "needs_followup" | "rejected";
+    note: string;
+    created_at: string;
+  } | null;
+};
+
 export type CaseDetailApiMock = {
   /** Mutable detail returned by GET; tests may update after mocked POST. */
   detail: MockCaseDetail | (() => MockCaseDetail);
@@ -379,6 +427,15 @@ export type CaseDetailApiMock = {
     occurred_on: string;
     channel: string;
     body: string;
+  }) => { status: number; body: Record<string, unknown> };
+  analysisDetail?: MockAnalysisDetail | (() => MockAnalysisDetail);
+  createAnalysisHandler?: () => {
+    status: number;
+    body: Record<string, unknown>;
+  };
+  reviewHandler?: (payload: {
+    decision: string;
+    note: string;
   }) => { status: number; body: Record<string, unknown> };
 };
 
@@ -402,7 +459,10 @@ export async function installMockedAuthAndCaseDetailApi(
       const path = url.pathname;
       return (
         /^\/api\/cases\/[^/]+$/.test(path) ||
-        /^\/api\/cases\/[^/]+\/consultations$/.test(path)
+        /^\/api\/cases\/[^/]+\/consultations$/.test(path) ||
+        /^\/api\/cases\/[^/]+\/analyses$/.test(path) ||
+        /^\/api\/analyses\/[^/]+$/.test(path) ||
+        /^\/api\/analyses\/[^/]+\/reviews$/.test(path)
       );
     },
     async (route) => {
@@ -411,6 +471,70 @@ export async function installMockedAuthAndCaseDetailApi(
 
       if (method === "OPTIONS") {
         await route.fulfill({ status: 204, headers: corsHeaders() });
+        return;
+      }
+
+      if (method === "POST" && /^\/api\/cases\/[^/]+\/analyses$/.test(path)) {
+        if (api.createAnalysisHandler) {
+          const result = api.createAnalysisHandler();
+          await fulfillJson(route, result.status, result.body);
+          return;
+        }
+        await fulfillJson(route, 503, {
+          error: {
+            code: "SERVICE_UNAVAILABLE",
+            message: "mock analysis create not configured",
+            request_id: "mock-request-analysis",
+            details: {},
+          },
+        });
+        return;
+      }
+
+      if (method === "GET" && /^\/api\/analyses\/[^/]+$/.test(path)) {
+        if (api.analysisDetail) {
+          const data =
+            typeof api.analysisDetail === "function"
+              ? api.analysisDetail()
+              : api.analysisDetail;
+          await fulfillJson(route, 200, {
+            data,
+            meta: { request_id: "mock-request-analysis-get" },
+          });
+          return;
+        }
+        await fulfillJson(route, 404, {
+          error: {
+            code: "NOT_FOUND",
+            message: "not found",
+            request_id: "mock-request-analysis-get",
+            details: {},
+          },
+        });
+        return;
+      }
+
+      if (method === "POST" && /^\/api\/analyses\/[^/]+\/reviews$/.test(path)) {
+        const raw = route.request().postDataJSON() as {
+          decision?: string;
+          note?: string;
+        } | null;
+        if (api.reviewHandler) {
+          const result = api.reviewHandler({
+            decision: raw?.decision ?? "",
+            note: raw?.note ?? "",
+          });
+          await fulfillJson(route, result.status, result.body);
+          return;
+        }
+        await fulfillJson(route, 503, {
+          error: {
+            code: "SERVICE_UNAVAILABLE",
+            message: "mock review not configured",
+            request_id: "mock-request-review",
+            details: {},
+          },
+        });
         return;
       }
 

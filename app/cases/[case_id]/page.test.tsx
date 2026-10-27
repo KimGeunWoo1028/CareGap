@@ -189,10 +189,11 @@ describe("CaseDetailInner", () => {
     await waitFor(() => container.textContent?.includes("현재 원문") === true);
     expect(container.textContent).toContain("이전 상담");
     expect(container.textContent).toContain("현재(최신) 상담");
-    const analyze = container.querySelector(
-      'button[title="분석 생성 API는 아직 구현되지 않았습니다."]',
+    const analyze = Array.from(container.querySelectorAll("button")).find((b) =>
+      (b.textContent ?? "").includes("새 분석"),
     ) as HTMLButtonElement;
-    expect(analyze.disabled).toBe(true);
+    expect(analyze).toBeTruthy();
+    expect(analyze.disabled).toBe(false);
   });
 
   it("keeps body on duplicate-date failure and marks the date field", async () => {

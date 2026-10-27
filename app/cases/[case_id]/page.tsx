@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Alert } from "@/components/alert";
+import { AnalysisResultPanel } from "@/components/analysis/analysis-result-panel";
 import { AppHeader } from "@/components/app-header";
 import { RequireAuth } from "@/components/require-auth";
 import {
@@ -20,6 +21,12 @@ import {
   type ApiFailure,
 } from "@/lib/api/client";
 import { useAuthSession } from "@/lib/auth/session-context";
+import {
+  createCaseAnalysis,
+  fetchAnalysisDetail,
+  submitAnalysisReview,
+} from "@/lib/cases/analysis-api";
+import { POLL_INTERVAL_MS } from "@/lib/cases/analysis-labels";
 import {
   analysisCurrencyLabel,
   analysisListCaption,
@@ -31,6 +38,8 @@ import {
   type ConsultationFormField,
 } from "@/lib/cases/detail-view";
 import type {
+  AnalysisDetail,
+  AnalysisReviewRecord,
   AnalysisSummary,
   CaseDetail,
   ConsultationRecord,
@@ -75,6 +84,15 @@ export function CaseDetailInner() {
   const [channel, setChannel] = useState<"phone" | "visit" | "other">("phone");
   const [body, setBody] = useState("");
 
+  const [selectedAnalysis, setSelectedAnalysis] =
+    useState<AnalysisDetail | null>(null);
+  const [analysisBusy, setAnalysisBusy] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
+  const idempotencyKeyRef = useRef<string | null>(null);
+  const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const bodyLength = codePointLength(body);
   const today = seoulTodayIsoDate();
 
@@ -84,6 +102,10 @@ export function CaseDetailInner() {
   );
   const comparePair = useMemo(
     () => pickLatestComparePair(detail?.consultations ?? []),
+    [detail],
+  );
+  const hasProcessing = useMemo(
+    () => (detail?.analyses ?? []).some((item) => item.status === "processing"),
     [detail],
   );
 
@@ -115,6 +137,13 @@ export function CaseDetailInner() {
     [focusFormField],
   );
 
+  const stopPolling = useCallback(() => {
+    if (pollTimerRef.current) {
+      clearInterval(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+  }, []);
+
   const loadDetail = useCallback(async () => {
     setError(null);
     setLoading(true);
@@ -131,6 +160,125 @@ export function CaseDetailInner() {
     setDetail(result.data);
     setLoading(false);
   }, [accessToken, caseId, handleAuthFailure]);
+
+  const applyAnalysisDetail = useCallback((data: AnalysisDetail) => {
+    setSelectedAnalysis(data);
+    if (data.status !== "processing") {
+      stopPolling();
+      setAnalysisBusy(false);
+      idempotencyKeyRef.current = null;
+    }
+  }, [stopPolling]);
+
+  const loadAnalysisById = useCallback(
+    async (analysisId: string) => {
+      if (!accessToken) return;
+      setAnalysisError(null);
+      const result = await fetchAnalysisDetail(analysisId, accessToken);
+      if (!result.ok) {
+        setAnalysisError(userMessageForApiError(result));
+        await handleAuthFailure(result);
+        return;
+      }
+      applyAnalysisDetail(result.data);
+    },
+    [accessToken, applyAnalysisDetail, handleAuthFailure],
+  );
+
+  const startPolling = useCallback(
+    (analysisId: string) => {
+      stopPolling();
+      pollTimerRef.current = setInterval(() => {
+        void loadAnalysisById(analysisId);
+        void loadDetail();
+      }, POLL_INTERVAL_MS);
+    },
+    [loadAnalysisById, loadDetail, stopPolling],
+  );
+
+  const onStartAnalysis = useCallback(async () => {
+    if (!accessToken || !guidance.ready || analysisBusy || hasProcessing) {
+      return;
+    }
+    setAnalysisError(null);
+    setReviewError(null);
+    setAnalysisBusy(true);
+
+    if (!idempotencyKeyRef.current) {
+      idempotencyKeyRef.current = crypto.randomUUID();
+    }
+    const key = idempotencyKeyRef.current;
+    const result = await createCaseAnalysis(caseId, accessToken, key);
+    if (!result.ok) {
+      setAnalysisBusy(false);
+      if (
+        result.code === "ANALYSIS_FAILED" ||
+        result.code === "IDEMPOTENCY_CONFLICT" ||
+        result.code === "REPLAY_UNAVAILABLE" ||
+        result.code === "INVALID_AI_OUTPUT" ||
+        result.code === "AI_UNAVAILABLE" ||
+        result.code === "TIMEOUT"
+      ) {
+        idempotencyKeyRef.current = null;
+      }
+      setAnalysisError(userMessageForApiError(result));
+      await handleAuthFailure(result);
+      if (typeof result.details.analysis_id === "string") {
+        await loadAnalysisById(result.details.analysis_id);
+      }
+      await loadDetail();
+      return;
+    }
+
+    applyAnalysisDetail(result.data);
+    await loadDetail();
+    if (result.data.status === "processing" || result.status === 202) {
+      startPolling(result.data.id);
+    } else {
+      setAnalysisBusy(false);
+      idempotencyKeyRef.current = null;
+    }
+  }, [
+    accessToken,
+    analysisBusy,
+    applyAnalysisDetail,
+    caseId,
+    guidance.ready,
+    handleAuthFailure,
+    hasProcessing,
+    loadAnalysisById,
+    loadDetail,
+    startPolling,
+  ]);
+
+  const onSubmitReview = useCallback(
+    async (decision: AnalysisReviewRecord["decision"], note: string) => {
+      if (!accessToken || !selectedAnalysis) return;
+      setReviewSubmitting(true);
+      setReviewError(null);
+      const result = await submitAnalysisReview(
+        selectedAnalysis.id,
+        accessToken,
+        decision,
+        note,
+      );
+      setReviewSubmitting(false);
+      if (!result.ok) {
+        setReviewError(userMessageForApiError(result));
+        await handleAuthFailure(result);
+        return;
+      }
+      await loadAnalysisById(selectedAnalysis.id);
+      await loadDetail();
+    },
+    [
+      accessToken,
+      handleAuthFailure,
+      loadAnalysisById,
+      loadDetail,
+      selectedAnalysis,
+    ],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -154,6 +302,41 @@ export function CaseDetailInner() {
       cancelled = true;
     };
   }, [accessToken, caseId, handleAuthFailure]);
+
+  useEffect(() => {
+    return () => {
+      stopPolling();
+    };
+  }, [stopPolling]);
+
+  useEffect(() => {
+    if (!detail || !accessToken) return;
+    const processing = detail.analyses.find(
+      (item) => item.status === "processing",
+    );
+    if (!processing) return;
+
+    const analysisId = processing.id;
+    const needsLoad = selectedAnalysis?.id !== analysisId;
+    // Defer so this effect only schedules external work (poll/fetch), not sync setState.
+    const handle = window.setTimeout(() => {
+      if (needsLoad) {
+        void loadAnalysisById(analysisId);
+      }
+      if (!pollTimerRef.current) {
+        startPolling(analysisId);
+      }
+    }, 0);
+    return () => {
+      window.clearTimeout(handle);
+    };
+  }, [
+    accessToken,
+    detail,
+    loadAnalysisById,
+    selectedAnalysis,
+    startPolling,
+  ]);
 
   async function onSaveNote(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -339,19 +522,50 @@ export function CaseDetailInner() {
               <button
                 type="button"
                 className="btn btn--primary"
-                disabled
-                aria-disabled="true"
-                title="분석 생성 API는 아직 구현되지 않았습니다."
+                disabled={
+                  !guidance.ready || analysisBusy || hasProcessing || saving
+                }
+                aria-disabled={
+                  !guidance.ready || analysisBusy || hasProcessing || saving
+                }
+                aria-busy={analysisBusy || hasProcessing}
+                onClick={() => {
+                  void onStartAnalysis();
+                }}
               >
-                새 분석 (준비 중)
+                {analysisBusy || hasProcessing
+                  ? "분석 진행 중…"
+                  : guidance.ready
+                    ? "새 분석"
+                    : "새 분석 (기록 2건 필요)"}
               </button>
               <p className="detail-analyze-note">
-                기록 수와 관계없이 분석 생성 API는 아직 연결되지 않았습니다.
-                시안의 재생 결과·근거·사업 후보·검토는 이 화면에 표시하지
-                않습니다.
+                {!guidance.ready
+                  ? "서로 다른 날짜의 상담 기록 2건이 필요합니다."
+                  : "분석 모드는 서버 설정을 따릅니다. Live 실패 시 Replay로 자동 전환되지 않습니다. 네트워크가 끊긴 재시도는 같은 요청 키를 유지합니다."}
               </p>
             </div>
+            {analysisError ? (
+              <Alert tone="error" live title="분석을 시작하지 못했습니다">
+                {analysisError}
+              </Alert>
+            ) : null}
           </section>
+
+          {selectedAnalysis ? (
+            <AnalysisResultPanel
+              analysis={selectedAnalysis}
+              consultations={detail.consultations}
+              reviewSubmitting={reviewSubmitting}
+              reviewError={reviewError}
+              onSubmitReview={
+                selectedAnalysis.status === "succeeded" &&
+                !selectedAnalysis.review
+                  ? onSubmitReview
+                  : undefined
+              }
+            />
+          ) : null}
 
           <div className="detail-work-grid detail-dock">
             <section
@@ -570,11 +784,17 @@ export function CaseDetailInner() {
                   분석 이력
                 </h2>
                 <p className="panel__desc">
-                  {analysisListCaption(detail.analyses.length)}. 분석
-                  생성·결과·사업 후보·담당자 검토는 이후 단계에서 연결됩니다.
-                  서버가 반환한 요약만 읽기 전용으로 표시합니다.
+                  {analysisListCaption(detail.analyses.length)}. 행을 선택하면
+                  위 결과 패널에서 상세·검토를 확인할 수 있습니다.
                 </p>
-                <AnalysisHistory analyses={detail.analyses} />
+                <AnalysisHistory
+                  analyses={detail.analyses}
+                  selectedId={selectedAnalysis?.id ?? null}
+                  onSelect={(id) => {
+                    setAnalysisError(null);
+                    void loadAnalysisById(id);
+                  }}
+                />
               </section>
             </div>
           </div>
@@ -584,12 +804,20 @@ export function CaseDetailInner() {
   );
 }
 
-function AnalysisHistory({ analyses }: { analyses: AnalysisSummary[] }) {
+function AnalysisHistory({
+  analyses,
+  selectedId,
+  onSelect,
+}: {
+  analyses: AnalysisSummary[];
+  selectedId: string | null;
+  onSelect: (analysisId: string) => void;
+}) {
   if (analyses.length === 0) {
     return (
       <div className="empty">
         <p className="empty__title">아직 분석 이력이 없습니다.</p>
-        <p>분석 생성 API가 연결되면 여기에 요약이 표시됩니다.</p>
+        <p>새 분석을 실행하면 여기에 요약이 표시됩니다.</p>
       </div>
     );
   }
@@ -608,34 +836,45 @@ function AnalysisHistory({ analyses }: { analyses: AnalysisSummary[] }) {
           </tr>
         </thead>
         <tbody>
-          {analyses.map((item) => (
-            <tr
-              key={item.id}
-              className={
-                item.is_current ? undefined : "detail-history-row--stale"
-              }
-            >
-              <td>{formatSeoulDateTime(item.created_at)}</td>
-              <td>
-                <span
-                  className={`chip chip--status-${item.status}`}
-                >
-                  {analysisStatusLabel(item.status)}
-                </span>
-              </td>
-              <td>{analysisModeLabel(item.mode)}</td>
-              <td>
-                {item.is_current ? (
-                  analysisCurrencyLabel(item)
-                ) : (
-                  <span className="detail-stale-flag">
-                    {analysisCurrencyLabel(item)}
+          {analyses.map((item) => {
+            const selected = item.id === selectedId;
+            const rowClass = [
+              item.is_current ? "" : "detail-history-row--stale",
+              selected ? "detail-history-row--selected" : "",
+            ]
+              .filter(Boolean)
+              .join(" ");
+            return (
+              <tr key={item.id} className={rowClass || undefined}>
+                <td>
+                  <button
+                    type="button"
+                    className="linkish detail-history-select"
+                    onClick={() => onSelect(item.id)}
+                    aria-current={selected ? "true" : undefined}
+                  >
+                    {formatSeoulDateTime(item.created_at)}
+                  </button>
+                </td>
+                <td>
+                  <span className={`chip chip--status-${item.status}`}>
+                    {analysisStatusLabel(item.status)}
                   </span>
-                )}
-              </td>
-              <td>{formatSeoulDateTime(item.completed_at)}</td>
-            </tr>
-          ))}
+                </td>
+                <td>{analysisModeLabel(item.mode)}</td>
+                <td>
+                  {item.is_current ? (
+                    analysisCurrencyLabel(item)
+                  ) : (
+                    <span className="detail-stale-flag">
+                      {analysisCurrencyLabel(item)}
+                    </span>
+                  )}
+                </td>
+                <td>{formatSeoulDateTime(item.completed_at)}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
