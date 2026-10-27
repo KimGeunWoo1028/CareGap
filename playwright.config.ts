@@ -1,8 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const PORT = Number(process.env.PLAYWRIGHT_PORT ?? 3001);
+const BASE_URL =
+  process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORT}`;
+
 /**
- * Minimal E2E harness for Phase 0 smoke checks.
- * Product flows (login/cases/analysis) belong in later phases.
+ * Minimal E2E harness for Phase 2 UI smoke checks.
+ * Uses a dedicated port so a local `npm run dev` on :3000 does not collide.
  */
 export default defineConfig({
   testDir: "./e2e",
@@ -11,15 +15,15 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: "list",
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000",
+    baseURL: BASE_URL,
     trace: "on-first-retry",
   },
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command: "npm run build && npm run start",
-        url: "http://127.0.0.1:3000",
-        reuseExistingServer: !process.env.CI,
+        command: `npm run build && npx next start -p ${PORT} -H 127.0.0.1`,
+        url: BASE_URL,
+        reuseExistingServer: false,
         timeout: 180_000,
       },
   projects: [

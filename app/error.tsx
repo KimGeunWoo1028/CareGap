@@ -12,21 +12,20 @@ export default function ErrorPage({
   return (
     <main className="error-page">
       <div className="error-card">
-        <p className="eyebrow">오류</p>
         <h1>화면을 표시하지 못했습니다</h1>
         <p className="muted">
-          잠시 후 다시 시도해 주세요. 합성 데모 환경이며, 실제 상담 데이터는
+          잠시 후 다시 시도해 주세요. 합성 데모 환경이며 실제 상담 데이터는
           처리하지 않습니다.
         </p>
         {error.digest ? (
           <p className="muted">참조 코드: {error.digest}</p>
         ) : null}
         <div className="error-actions">
-          <button type="button" onClick={reset}>
+          <button type="button" className="btn btn--primary" onClick={reset}>
             다시 시도
           </button>
-          <Link className="secondary" href="/">
-            처음으로
+          <Link className="btn btn--ghost" href="/login">
+            로그인으로
           </Link>
         </div>
       </div>
