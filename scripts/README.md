@@ -25,7 +25,22 @@ $env:CARE_GAP_ALLOW_LIVE_INTEGRATION="1"
 node scripts/phase1-integration.mjs
 ```
 
+The gate may be set in the shell **or** in `.env.local`. Do not commit the gate flag.
+
 Optional password path: set `TEST_USER_A_EMAIL`, `TEST_USER_A_PASSWORD`, `TEST_USER_B_EMAIL`, `TEST_USER_B_PASSWORD` in `.env.local`. Without them the harness bootstraps user sessions via admin magic-link for JWT/RLS checks only — that path does **not** prove password-login UI success.
+
+## `phase6-replay-rehearsal.mjs`
+
+Password-login A/B checks, Replay create→review×3 on `합성-001`, T06/T17/T18/T22 probes. Requires `ANALYSIS_MODE=replay` and `CARE_GAP_ALLOW_LIVE_INTEGRATION=1`. Does not call OpenAI.
+
+## Real password UI E2E
+
+```bash
+$env:CARE_GAP_REAL_AUTH_E2E="1"
+npx playwright test e2e/real-auth-flow.spec.ts
+```
+
+Requires `TEST_USER_A/B_*` in `.env.local`. Default `npm run test:e2e` skips these tests.
 
 ## `phase4-integration.mjs`
 

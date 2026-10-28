@@ -108,7 +108,10 @@ function codePointRepeat(ch, n) {
 }
 
 function assertTestHarnessAllowed(env, url) {
-  if (env.CARE_GAP_ALLOW_LIVE_INTEGRATION?.trim() !== "1") {
+  const allow =
+    process.env.CARE_GAP_ALLOW_LIVE_INTEGRATION?.trim() === "1" ||
+    env.CARE_GAP_ALLOW_LIVE_INTEGRATION?.trim() === "1";
+  if (!allow) {
     throw new Error(
       "Refusing to run: set CARE_GAP_ALLOW_LIVE_INTEGRATION=1 for the CareGap test project only.",
     );
@@ -511,7 +514,7 @@ async function main() {
       result(
         "T22_REVIEW_API",
         "BLOCKED",
-        "POST /api/analyses/{id}/reviews is Phase 4 scope; not implemented",
+        "review isolation covered by phase4/phase6 harnesses; skipped here",
       );
     }
   }

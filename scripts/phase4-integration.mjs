@@ -93,11 +93,17 @@ async function obtainUserSession({ url, publishableKey, secretKey, email }) {
 }
 
 async function main() {
-  if (process.env.CARE_GAP_ALLOW_LIVE_INTEGRATION?.trim() !== "1") {
-    console.log(
-      "PHASE4_GATE | BLOCKED | set CARE_GAP_ALLOW_LIVE_INTEGRATION=1 for the CareGap test project only.",
-    );
-    process.exit(2);
+  {
+    const envPreview = loadEnvLocal();
+    const allow =
+      process.env.CARE_GAP_ALLOW_LIVE_INTEGRATION?.trim() === "1" ||
+      envPreview.CARE_GAP_ALLOW_LIVE_INTEGRATION?.trim() === "1";
+    if (!allow) {
+      console.log(
+        "PHASE4_GATE | BLOCKED | set CARE_GAP_ALLOW_LIVE_INTEGRATION=1 for the CareGap test project only.",
+      );
+      process.exit(2);
+    }
   }
 
   const env = loadEnvLocal();
