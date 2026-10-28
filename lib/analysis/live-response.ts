@@ -5,12 +5,28 @@
  * convenience when present on the wire.
  */
 
+export type ResponsesUsage = {
+  input_tokens: number | null;
+  output_tokens: number | null;
+  total_tokens: number | null;
+  /** Subset of output_tokens when present — do not add again for billing. */
+  reasoning_tokens: number | null;
+  cached_input_tokens: number | null;
+};
+
 export type ResponsesApiPayload = {
   status?: string;
   output_text?: string;
   error?: { message?: string; code?: string };
   incomplete_details?: unknown;
   output?: unknown;
+  usage?: {
+    input_tokens?: number;
+    output_tokens?: number;
+    total_tokens?: number;
+    input_tokens_details?: { cached_tokens?: number };
+    output_tokens_details?: { reasoning_tokens?: number };
+  } | null;
 };
 
 export type ExtractedResponseText =
@@ -68,4 +84,33 @@ export function extractResponsesOutputText(
   }
 
   return { kind: "empty" };
+}
+
+/** Parse Responses `usage` — reasoning_tokens are included in output_tokens. */
+export function extractResponsesUsage(
+  payload: ResponsesApiPayload,
+): ResponsesUsage {
+  const u = payload.usage;
+  if (!u || typeof u !== "object") {
+    return {
+      input_tokens: null,
+      output_tokens: null,
+      total_tokens: null,
+      reasoning_tokens: null,
+      cached_input_tokens: null,
+    };
+  }
+  return {
+    input_tokens: typeof u.input_tokens === "number" ? u.input_tokens : null,
+    output_tokens: typeof u.output_tokens === "number" ? u.output_tokens : null,
+    total_tokens: typeof u.total_tokens === "number" ? u.total_tokens : null,
+    reasoning_tokens:
+      typeof u.output_tokens_details?.reasoning_tokens === "number"
+        ? u.output_tokens_details.reasoning_tokens
+        : null,
+    cached_input_tokens:
+      typeof u.input_tokens_details?.cached_tokens === "number"
+        ? u.input_tokens_details.cached_tokens
+        : null,
+  };
 }

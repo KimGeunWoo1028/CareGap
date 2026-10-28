@@ -129,3 +129,33 @@ export function assertWithinCostGuard(
     throw new Error("COST_GUARD: hard_max_usd would be exceeded");
   }
 }
+
+/**
+ * Cost from API usage counters.
+ * reasoning_tokens are a subset of output_tokens — bill output_tokens only.
+ * Cached input still counted at full input rate unless a separate cached rate is supplied.
+ */
+export function calculateUsageCostUsd(input: {
+  input_tokens: number;
+  output_tokens: number;
+  rate_card?: ModelRateCard;
+}): number {
+  const rate = input.rate_card ?? DEFAULT_PILOT_RATE_CARD;
+  return (
+    (input.input_tokens / 1_000_000) * rate.input_usd_per_1m_tokens +
+    (input.output_tokens / 1_000_000) * rate.output_usd_per_1m_tokens
+  );
+}
+
+/** Conservative pre-call exposure using max_output_tokens cap. */
+export function estimateWorstCaseCallUsd(input: {
+  estimated_input_tokens: number;
+  max_output_tokens: number;
+  rate_card?: ModelRateCard;
+}): number {
+  return calculateUsageCostUsd({
+    input_tokens: input.estimated_input_tokens,
+    output_tokens: input.max_output_tokens,
+    rate_card: input.rate_card,
+  });
+}

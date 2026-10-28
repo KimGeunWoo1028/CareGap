@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { extractResponsesOutputText } from "@/lib/analysis/live-response";
+import {
+  extractResponsesOutputText,
+  extractResponsesUsage,
+} from "@/lib/analysis/live-response";
 import replayFixture from "@/fixtures/replay-analysis.json";
 
 describe("extractResponsesOutputText (Responses API REST shape)", () => {
@@ -84,5 +87,25 @@ describe("extractResponsesOutputText (Responses API REST shape)", () => {
         output: [{ type: "reasoning", content: [], summary: [] }],
       }),
     ).toEqual({ kind: "empty" });
+  });
+
+  it("extracts usage with reasoning as subset of output_tokens", () => {
+    expect(
+      extractResponsesUsage({
+        usage: {
+          input_tokens: 75,
+          output_tokens: 1186,
+          total_tokens: 1261,
+          input_tokens_details: { cached_tokens: 0 },
+          output_tokens_details: { reasoning_tokens: 1024 },
+        },
+      }),
+    ).toEqual({
+      input_tokens: 75,
+      output_tokens: 1186,
+      total_tokens: 1261,
+      reasoning_tokens: 1024,
+      cached_input_tokens: 0,
+    });
   });
 });

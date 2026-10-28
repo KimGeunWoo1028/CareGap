@@ -101,13 +101,34 @@ Failures stay in the report; do not score only successes and call that model qua
 
 Calibration baselines (`fixtures/eval/reports/calibration-baselines.v1.json`) remain the offline reference. A Live model that only exceeds always-unknown accuracy is **not** auto-approved.
 
+## Live Smoke runner (implemented)
+
+| Piece | Path |
+|---|---|
+| Responses call + error classes | `lib/eval/live-smoke-call.ts` |
+| Gates, checkpoint, metrics, artifacts | `lib/eval/live-smoke-runner.ts` |
+| Dry-run CLI | `npm run eval:pilot:smoke:dry-run` |
+| Live CLI (gated) | `npm run eval:pilot:smoke:live -- --i-approve-live-spend` |
+
+Without `--i-approve-live-spend`, the Live CLI stays in dry-run and executes **0** OpenAI calls.
+
+Retry policy: one extra attempt only for HTTP 429 / 5xx / transient network. **Timeout is not retried** (billing may still have occurred). Refusal, incomplete, invalid JSON, schema/evidence failures are not retried.
+
+Reasoning tokens are recorded from `usage.output_tokens_details.reasoning_tokens` and are **not** added on top of `output_tokens` for cost (they are a subset).
+
 ## User actions before paid 5-case smoke Live
 
 1. Confirm `OPENAI_API_KEY` and model access for `gpt-5.4-mini-2026-03-17`.
-2. Confirm OpenAI project billing / spend limit separately (local `$1` guard ≠ account cap).
-3. Set `CAREGAP_LIVE_EVAL_OPT_IN=I_ACCEPT_PAID_SYNTHETIC_EVAL`.
+2. Confirm OpenAI project billing / spend limit separately (local `$1` guard ≠ account cap or invoice).
+3. Set `CAREGAP_LIVE_EVAL_OPT_IN=I_ACCEPT_PAID_SYNTHETIC_EVAL` for that shell only (do not commit).
 4. Approve in writing: **5 cases**, max **10** calls, hard max **$1**, model above.
-5. Only then enable the Live smoke runner (not executed in dry-run prep).
+5. Run only after approval:
+
+```bash
+# PowerShell example (session env only)
+$env:CAREGAP_LIVE_EVAL_OPT_IN="I_ACCEPT_PAID_SYNTHETIC_EVAL"
+npm run eval:pilot:smoke:live -- --i-approve-live-spend
+```
 
 ## Absolute preserves
 
