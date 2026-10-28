@@ -5,7 +5,8 @@
 1. 합성 데이터 전용 테스트 프로젝트를 만든다. Supabase Auth에서 공개 가입을 끄고 팀용 테스트 계정 A·B를 각각 만든다. 테스트 비밀번호와 키는 문서·저장소에 넣지 않는다.
 2. SQL Editor에서 [sql/001_schema.sql](sql/001_schema.sql) 전체를 **새 프로젝트에 한 번만** 실행한다. 이 파일은 재실행용 마이그레이션이 아니다. 운영 중 DB에 무심코 실행하지 않는다.
 3. [sql/002_programs.sql](sql/002_programs.sql)을 실행한다. 사업 시드는 ID 기준 갱신 가능하다. [sql/003_demo_seed.sql](sql/003_demo_seed.sql)에서 이메일을 A의 테스트 이메일로 바꾸고 실행한다. B에도 자료가 필요하면 별도 이메일로 반복한다.
-4. 각 로그인 토큰으로 API와 Supabase 직접 호출을 시험한다. A의 사례를 B가 읽을 수 없고 분석 행 직접 쓰기가 거부되는지 [TEST_PLAN.md](TEST_PLAN.md)대로 확인한다. 스키마 적용이나 공급자 권한은 실제 프로젝트마다 확인해야 한다.
+4. 후속 확인 대기함이 필요하면 [sql/004_follow_up_tasks.sql](sql/004_follow_up_tasks.sql)을 이어서 실행한다(기존 001이 적용된 프로젝트에만).
+5. 각 로그인 토큰으로 API와 Supabase 직접 호출을 시험한다. A의 사례를 B가 읽을 수 없고 분석 행 직접 쓰기가 거부되는지 [TEST_PLAN.md](TEST_PLAN.md)대로 확인한다. 스키마 적용이나 공급자 권한은 실제 프로젝트마다 확인해야 한다.
 
 ## 엔터티
 
@@ -16,6 +17,7 @@
 | `welfare_programs` | 텍스트 ID, `name`, `tags`, `summary`, `eligibility_checks`, `region`, `source_url`, `source_checked_on`, `catalog_version`, `active` | 관리자 시드만, 인증 사용자 읽기 |
 | `analyses` | `id`, `case_id`, `owner_id`, 두 기록 ID, `idempotency_key`, `mode`, `status`, `schema_version`, `model`, `result`, `failure_code`, 시각 | 예약 함수 + 서버 서비스 키, 사용자는 자신의 행 조회만 |
 | `reviews` | `id`, `analysis_id`(유일), `owner_id`, `decision`, `note`, `created_at` | 인증 사용자, 자신의 성공 분석만 |
+| `follow_up_tasks` | `id`, `owner_id`, `case_id`, `analysis_id?`, `kind`, `status`, `due_on?`, `note`, 시각; open+(analysis_id,kind) 유일 | 인증 사용자(본인 사례·본인 분석). 사람이 완료/취소. **004는 CareGap Test 승인 후 1회 적용** |
 
 UUID/날짜/채널과 상태 값은 API_SPEC을 따른다. 기록은 불변이며 결과의 인용은 저장된 원문의 부분 문자열이다. JSONB는 `{"analysis": <AI_SPEC의 객체>, "recommendations": [...]}`를 포함한다. JSON 내부 스키마·인용 및 사업 매칭은 서버가 검증한다. DB 자체가 JSON 의미까지 확인해 주지는 않는다.
 

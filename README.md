@@ -1,30 +1,75 @@
-# 돌봄틈새 AI (CareGap AI) — 해커톤 MVP 문서 패키지
+# 돌봄틈새 AI (CareGap AI) — 해커톤 MVP
 
-기준일: 2026-10-27 (한국시간) · 문서 버전: 1.0 · 상태: **구현 명세 및 계획**. 완성된 앱이 아니다.
+기준일: 2026-10-28 (한국시간) · 상태: **구현된 해커톤 MVP (Replay 시연 경로)**. 실서비스·실제 상담 기록·자동 자격 판정은 범위 밖이다.
 
-## 무엇을 만드나
+담당자가 **합성** 상담 기록 두 건을 비교해 식사·거동·건강·생활환경 변화와 원문 근거를 보고, 고정 복지사업 후보를 검토하는 보조 웹 앱이다. 진단·수급 자격 확정·자동 신청은 하지 않는다.
 
-가상의 복지 상담 기록 두 건을 비교하여 식사·거동·건강·생활환경에서 확인할 변화를 근거 원문과 함께 제시하고, 기존 복지사업의 연계 후보를 보여 주는 담당자 보조 웹 앱이다. 진단, 위험도 판정, 수급 자격 결정, 자동 신청·기관 연동은 하지 않는다. 실제 개인정보나 실제 상담 기록을 넣지 않는다.
+## 설치·실행
 
-## 지금 바로 시작
+사전 조건: Node.js ≥ 22.12, npm, Git. Live를 쓰지 않으면 OpenAI 키가 필요 없다.
 
-1. [INDEX.md](INDEX.md)에서 담당 역할에 필요한 문서를 고른다. 먼저 [PRD.md](PRD.md), [SRS.md](SRS.md), [ARCHITECTURE.md](ARCHITECTURE.md)를 읽는다.
-2. 이 폴더 전체를 새 프로젝트 저장소의 루트에 복사한다. 여기에는 앱 소스가 없으므로 Node.js를 설치해도 바로 서비스가 실행되지 않는다.
-3. [PROMPTS/IMPLEMENTATION_PHASES.md](PROMPTS/IMPLEMENTATION_PHASES.md) 0단계부터 코딩 도구에 붙여 넣고 각 단계의 확인 조건을 통과한다. [AGENTS.md](AGENTS.md)는 프로젝트 공통 지침이다. Cursor·Codex·Claude별 첫 지시문은 `PROMPTS/`에 있다.
-4. 개발자가 Supabase 테스트 프로젝트와 사전 생성한 테스트 계정을 준비하고 [DATABASE.md](DATABASE.md)의 순서로 [sql/001_schema.sql](sql/001_schema.sql), [sql/002_programs.sql](sql/002_programs.sql), [sql/003_demo_seed.sql](sql/003_demo_seed.sql)을 적용한다. 마지막 파일의 이메일을 본인의 테스트 계정 이메일로 바꿔야 한다.
-5. 구현한 앱의 환경 변수를 `ENVIRONMENT.md`에 따라 로컬에 설정한다. `ANALYSIS_MODE=live`에는 서버 전용 OpenAI API 키 및 해당 모델 이용 권한이 필요하다. `replay`는 정해진 합성 예시에서만 동작하며 AI 실시간 분석이 아니다.
-6. [TEST_PLAN.md](TEST_PLAN.md)의 필수 검사를 수행하고, [DEMO_GUIDE.md](DEMO_GUIDE.md)에 따라 사전 리허설한다.
+```bash
+npm ci
+cp .env.example .env.local
+# .env.local에 본인 테스트 Supabase URL·공개키·서버 비밀키를 채운다. ANALYSIS_MODE=replay 권장.
+npm run dev
+```
 
-## 공유할 기준
+브라우저에서 `http://localhost:3000` → 로그인 → 사례 → 기록 → 분석 → 검토.
 
-- 비교 대상: 한 대상자의 가장 최근 서로 다른 날짜 기록 두 건. 하루 한 건만 저장. 날짜가 최신인 것을 현재로 한다.
-- 주요 범주: `meal`, `mobility`, `health`, `environment`. 상태 값은 `worsened`, `improved`, `unchanged`, `unknown`.
-- 근거: 이전/현재 기록 ID와 해당 원문에 **정확히 포함된 연속 문자열**. 사실이 없으면 근거와 변화 판단을 추측하지 않는다.
-- 프로그램은 `senior_care`와 `daegu_integrated` 두 건으로 시작한다. AI가 사업명을 만들지 않고 서버가 고정 목록에서 규칙으로 후보를 산출한다. 조건·중복·지역 여부는 담당자가 확인한다.
-- 인증 사용자는 자신의 가상 사례만 본다. 브라우저는 공개키와 사용자 토큰만 사용한다. 서비스 비밀키와 AI 키는 서버 전용이다.
-- live와 replay 전환은 서버의 환경 설정으로만 한다. 호출 장애가 발생해도 몰래 replay로 전환하지 않는다.
-- 자료·버전 확인 내역은 [SOURCES.md](SOURCES.md)에 있다. 서비스 정책, 모델 접근·비용, 의존성 호환성은 대회 직전 재확인한다.
+SQL은 [DATABASE.md](DATABASE.md) 순서대로 `sql/001_schema.sql` → `002_programs.sql` → `003_demo_seed.sql`(시드 이메일을 본인 테스트 계정으로 교체)을 적용한다.
 
-## 이 패키지의 범위와 한계
+## 검사
 
-문서, SQL 초안, JSON 스키마 및 합성 시연 자료를 제공한다. 앱 구현, 클라우드 자원 생성, 실서비스 배포, 실제 데이터 검증 및 기관 승인까지 수행한 것은 아니다. 이 패키지의 지표와 일정은 목표치이며 측정 결과가 아니다. 실제 기관 도입 시 [SECURITY.md](SECURITY.md)의 후속 항목을 별도 수행해야 한다.
+| 명령 | 내용 |
+|---|---|
+| `npm run typecheck` | TypeScript |
+| `npm run lint` | ESLint |
+| `npm run test` | Vitest 단위·컴포넌트 테스트 |
+| `npm run build` | Next.js 프로덕션 빌드 |
+| `npm run test:e2e` | Playwright **모의** E2E (아래 공개 placeholder 필요) |
+
+### 모의 E2E 환경값 (비밀 아님)
+
+`npm run test:e2e`는 실제 Auth/DB를 치지 않고 브라우저·API를 가로챈다. 앱 기동용으로 **공개 placeholder**만 있으면 된다. 실제 키·암호를 넣지 말 것.
+
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e2e-mock-publishable
+SUPABASE_SECRET_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e2e-mock-secret
+ANALYSIS_MODE=replay
+```
+
+브라우저 바이너리(최초 1회):
+
+```bash
+npx playwright install chromium
+```
+
+실제 비밀번호 로그인 UI E2E는 옵트인이다: `CARE_GAP_REAL_AUTH_E2E=1`과 `.env.local`의 `TEST_USER_*`(커밋 금지). 기본 `test:e2e`에는 포함되지 않거나 skip된다.
+
+## Replay vs Live
+
+| 모드 | 동작 | 이번 MVP에서 |
+|---|---|---|
+| `ANALYSIS_MODE=replay` | 정해진 합성 문장·날짜가 일치할 때만 fixture 결과. OpenAI 미호출 | 시연·기본 검증 경로 |
+| `ANALYSIS_MODE=live` | 서버가 Responses API로 합성 두 기록만 전송. 실패 시 **자동 replay 전환 없음** | 유료 실호출은 이번 작업에서 **미검증** |
+
+Live 단위 테스트는 REST 응답을 **모의**한다. 실제 OpenAI 호출·운영 DB 변경·배포는 포함하지 않는다.
+
+## 신뢰성 (P0)
+
+- Live REST: `output` 배열에서 `reasoning` 이후 `message`의 `output_text`를 추출한다. 최상위 `output_text`만 의존하지 않는다.
+- Auth: 메모리 세션(`persistSession: false`) 유지. 열린 탭에서 토큰 갱신 시 React `accessToken`이 `onAuthStateChange`로 동기화된다. 새로고침 시 재로그인.
+- 분석: 예약 이후 준비 조회·엔진·결과 저장 실패를 `failed`로 정리한다. 전체 벽시계 **45초** 한도를 서버가 강제한다. 멱등·동시성·늦게 도착한 성공 폐기는 유지한다.
+
+## 계약 요약
+
+- API JSON: snake_case. 최근 서로 다른 날짜 두 기록만 비교.
+- 범주: `meal` / `mobility` / `health` / `environment`. 상태: `worsened` / `improved` / `unchanged` / `unknown`.
+- 인용은 선택 기록의 **정확한 부분 문자열**. 스키마·서버 검증 전 성공 저장 금지. `unknown`은 안전 판정이 아니다.
+- 사업 후보는 DB 고정 목록 + 서버 규칙. AI가 사업명·자격을 결정하지 않는다. UI는 `unverified`·담당자 최종 판단을 표시한다.
+
+고도화 추적: [docs/ROADMAP.md](docs/ROADMAP.md), [docs/PROJECT_PROGRESS.md](docs/PROJECT_PROGRESS.md). 후속 확인 UI: `/follow-ups`(SQL `004` 적용 필요).
+
+상세 계약: [SRS.md](SRS.md), [API_SPEC.md](API_SPEC.md), [AI_SPEC.md](AI_SPEC.md), [DATABASE.md](DATABASE.md), [ARCHITECTURE.md](ARCHITECTURE.md), [ENVIRONMENT.md](ENVIRONMENT.md). 공통 지침: [AGENTS.md](AGENTS.md).

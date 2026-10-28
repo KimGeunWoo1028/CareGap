@@ -1,6 +1,10 @@
 import analysisSchema from "@/schemas/analysis.schema.json";
 import { ApiError } from "@/lib/api/errors";
 import {
+  extractResponsesOutputText,
+  type ResponsesApiPayload,
+} from "@/lib/analysis/live-response";
+import {
   ANALYSIS_SYSTEM_INSTRUCTION,
   buildAnalysisUserPayload,
 } from "@/lib/analysis/prompt";
@@ -24,13 +28,6 @@ export type LiveOpenAiConfig = {
   fetchImpl?: typeof fetch;
 };
 
-type ResponsesApiJson = {
-  status?: string;
-  output_text?: string;
-  error?: { message?: string; code?: string };
-  incomplete_details?: unknown;
-};
-
 function isRetryableStatus(status: number): boolean {
   return status === 429 || status >= 500;
 }
@@ -39,19 +36,34 @@ async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function extractOutputText(payload: ResponsesApiJson): string {
-  if (typeof payload.output_text === "string" && payload.output_text.length > 0) {
-    return payload.output_text;
-  }
-  invalidProvider("empty_output");
-}
-
-function invalidProvider(reason: string, details: Record<string, unknown> = {}): never {
+function invalidProvider(
+  reason: string,
+  details: Record<string, unknown> = {},
+): never {
   throw new ApiError("AI_UNAVAILABLE", undefined, { reason, ...details });
 }
 
 function timeoutError(details: Record<string, unknown> = {}): never {
   throw new ApiError("TIMEOUT", undefined, details);
+}
+
+function parseAssistantPayload(payload: ResponsesApiPayload): unknown {
+  const extracted = extractResponsesOutputText(payload);
+  if (extracted.kind === "refusal") {
+    throw new ApiError("INVALID_AI_OUTPUT", undefined, {
+      reason: "refusal",
+    });
+  }
+  if (extracted.kind === "empty") {
+    invalidProvider("empty_output");
+  }
+  try {
+    return JSON.parse(extracted.text) as unknown;
+  } catch {
+    throw new ApiError("INVALID_AI_OUTPUT", undefined, {
+      reason: "json_parse",
+    });
+  }
 }
 
 async function callResponsesOnce(
@@ -100,15 +112,14 @@ async function callResponsesOnce(
 
     if (!response.ok) {
       const retryable = isRetryableStatus(response.status);
-      const err = new ApiError(
+      throw new ApiError(
         response.status === 429 ? "RATE_LIMITED" : "AI_UNAVAILABLE",
         undefined,
         { http_status: response.status, retryable },
       );
-      throw err;
     }
 
-    const payload = (await response.json()) as ResponsesApiJson;
+    const payload = (await response.json()) as ResponsesApiPayload;
 
     if (payload.status && payload.status !== "completed") {
       throw new ApiError("INVALID_AI_OUTPUT", undefined, {
@@ -117,14 +128,7 @@ async function callResponsesOnce(
       });
     }
 
-    const text = extractOutputText(payload);
-    try {
-      return JSON.parse(text) as unknown;
-    } catch {
-      throw new ApiError("INVALID_AI_OUTPUT", undefined, {
-        reason: "json_parse",
-      });
-    }
+    return parseAssistantPayload(payload);
   } catch (error) {
     if (error instanceof ApiError) throw error;
     if (

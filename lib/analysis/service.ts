@@ -21,11 +21,102 @@ import {
 } from "@/lib/analysis/repository";
 import type { AuthenticatedRequest } from "@/lib/auth/request-auth";
 import { getServerEnv } from "@/lib/env";
+import { createFollowUpFromReview } from "@/lib/follow-ups/service";
+
+/** Overall wall-clock budget after a new reservation (ARCHITECTURE.md). */
+export const ANALYSIS_OVERALL_TIMEOUT_MS = 45_000;
 
 export type CreateAnalysisOutcome = {
   httpStatus: 200 | 201 | 202;
   detail: AnalysisDetail;
 };
+
+function priorDetailsFrom(error: unknown): Record<string, unknown> {
+  if (
+    error &&
+    typeof error === "object" &&
+    "details" in error &&
+    error.details &&
+    typeof error.details === "object"
+  ) {
+    return error.details as Record<string, unknown>;
+  }
+  return {};
+}
+
+async function withOverallDeadline<T>(
+  work: Promise<T>,
+  analysisId: string,
+  startedAt: number,
+): Promise<T> {
+  const remaining = ANALYSIS_OVERALL_TIMEOUT_MS - (Date.now() - startedAt);
+  if (remaining <= 0) {
+    throw new ApiError("TIMEOUT", undefined, {
+      reason: "overall_deadline_ms",
+      ms: ANALYSIS_OVERALL_TIMEOUT_MS,
+      analysis_id: analysisId,
+    });
+  }
+
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      work,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => {
+          reject(
+            new ApiError("TIMEOUT", undefined, {
+              reason: "overall_deadline_ms",
+              ms: ANALYSIS_OVERALL_TIMEOUT_MS,
+              analysis_id: analysisId,
+            }),
+          );
+        }, remaining);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
+async function persistEngineFailure(input: {
+  analysisId: string;
+  ownerId: string;
+  caseId: string;
+  error: unknown;
+}): Promise<never> {
+  const failureCode = toStoredFailureCode(input.error);
+  const priorDetails = priorDetailsFrom(input.error);
+
+  let persisted = false;
+  try {
+    persisted = await finalizeAnalysisFailure({
+      analysisId: input.analysisId,
+      ownerId: input.ownerId,
+      caseId: input.caseId,
+      failureCode,
+    });
+  } catch {
+    throw new ApiError("SERVICE_UNAVAILABLE", undefined, {
+      ...priorDetails,
+      analysis_id: input.analysisId,
+      recovery: "failure_persist_unavailable",
+    });
+  }
+
+  if (!persisted) {
+    throw new ApiError("SERVICE_UNAVAILABLE", undefined, {
+      ...priorDetails,
+      analysis_id: input.analysisId,
+      recovery: "failure_persist_race",
+    });
+  }
+
+  throw new ApiError(failureCode, undefined, {
+    ...priorDetails,
+    analysis_id: input.analysisId,
+  });
+}
 
 /**
  * Reserve via start_analysis, run Phase 3 engine only for newly created rows,
@@ -64,88 +155,107 @@ export async function createOrResumeAnalysis(
     return { httpStatus: 200, detail };
   }
 
-  // New reservation — execute engine once.
+  const startedAt = Date.now();
+
+  // New reservation — execute engine once within the overall deadline.
   const row = await getAnalysisRowForOwner(auth.db, reservation.analysis_id);
   if (row.owner_id !== auth.user.id || row.case_id !== caseId) {
     throw new ApiError("NOT_FOUND");
   }
 
-  const [caseAlias, notes, programs] = await Promise.all([
-    getCaseAlias(auth.db, caseId),
-    getConsultationPair(
-      auth.db,
-      caseId,
-      row.previous_note_id,
-      row.current_note_id,
-    ),
-    listActiveWelfarePrograms(auth.db),
-  ]);
-
-  let engine;
+  let caseAlias: string;
+  let notes: Awaited<ReturnType<typeof getConsultationPair>>;
+  let programs: Awaited<ReturnType<typeof listActiveWelfarePrograms>>;
   try {
-    engine = await runAnalysis({
-      mode,
-      caseAlias,
-      previous: notes.previous,
-      current: notes.current,
-      programs,
-      openai:
-        mode === "live"
-          ? {
-              apiKey: env.OPENAI_API_KEY ?? "",
-              model: env.OPENAI_MODEL ?? "",
-            }
-          : undefined,
-    });
+    [caseAlias, notes, programs] = await withOverallDeadline(
+      Promise.all([
+        getCaseAlias(auth.db, caseId),
+        getConsultationPair(
+          auth.db,
+          caseId,
+          row.previous_note_id,
+          row.current_note_id,
+        ),
+        listActiveWelfarePrograms(auth.db),
+      ]),
+      reservation.analysis_id,
+      startedAt,
+    );
   } catch (error) {
-    const failureCode = toStoredFailureCode(error);
-    const priorDetails =
-      error &&
-      typeof error === "object" &&
-      "details" in error &&
-      error.details &&
-      typeof error.details === "object"
-        ? (error.details as Record<string, unknown>)
-        : {};
-
-    let persisted = false;
-    try {
-      persisted = await finalizeAnalysisFailure({
-        analysisId: reservation.analysis_id,
-        ownerId: auth.user.id,
-        caseId,
-        failureCode,
-      });
-    } catch {
-      throw new ApiError("SERVICE_UNAVAILABLE", undefined, {
-        ...priorDetails,
-        analysis_id: reservation.analysis_id,
-      });
-    }
-
-    if (!persisted) {
-      throw new ApiError("SERVICE_UNAVAILABLE", undefined, {
-        ...priorDetails,
-        analysis_id: reservation.analysis_id,
-      });
-    }
-
-    throw new ApiError(failureCode, undefined, {
-      ...priorDetails,
-      analysis_id: reservation.analysis_id,
+    // Prep/read failures (including overall TIMEOUT) must terminalize processing.
+    return await persistEngineFailure({
+      analysisId: reservation.analysis_id,
+      ownerId: auth.user.id,
+      caseId,
+      error:
+        error instanceof ApiError
+          ? error
+          : new ApiError("SERVICE_UNAVAILABLE", undefined, {
+              reason: "prep_lookup_failed",
+            }),
     });
   }
 
-  const saved = await finalizeAnalysisSuccess({
-    analysisId: row.id,
-    ownerId: auth.user.id,
-    caseId,
-    model: engine.model,
-    result: {
-      analysis: engine.analysis,
-      recommendations: engine.recommendations,
-    },
-  });
+  let engine: Awaited<ReturnType<typeof runAnalysis>>;
+  try {
+    engine = await withOverallDeadline(
+      runAnalysis({
+        mode,
+        caseAlias,
+        previous: notes.previous,
+        current: notes.current,
+        programs,
+        openai:
+          mode === "live"
+            ? {
+                apiKey: env.OPENAI_API_KEY ?? "",
+                model: env.OPENAI_MODEL ?? "",
+              }
+            : undefined,
+      }),
+      reservation.analysis_id,
+      startedAt,
+    );
+  } catch (error) {
+    return await persistEngineFailure({
+      analysisId: reservation.analysis_id,
+      ownerId: auth.user.id,
+      caseId,
+      error,
+    });
+  }
+
+  let saved: boolean;
+  try {
+    saved = await withOverallDeadline(
+      finalizeAnalysisSuccess({
+        analysisId: row.id,
+        ownerId: auth.user.id,
+        caseId,
+        model: engine.model,
+        result: {
+          analysis: engine.analysis,
+          recommendations: engine.recommendations,
+        },
+      }),
+      reservation.analysis_id,
+      startedAt,
+    );
+  } catch (error) {
+    // Conditional UPDATE threw (DB outage). Attempt failure mark; distinguish recovery.
+    return await persistEngineFailure({
+      analysisId: reservation.analysis_id,
+      ownerId: auth.user.id,
+      caseId,
+      error:
+        error instanceof ApiError
+          ? error
+          : new ApiError("SERVICE_UNAVAILABLE", undefined, {
+              reason: "success_persist_failed",
+              analysis_id: reservation.analysis_id,
+            }),
+    });
+  }
 
   if (!saved) {
     // Stale processing was terminalized (e.g. 60s TIMEOUT) — discard late result.
@@ -163,6 +273,7 @@ export async function createOrResumeAnalysis(
     }
     throw new ApiError("SERVICE_UNAVAILABLE", undefined, {
       analysis_id: row.id,
+      recovery: "success_persist_race",
     });
   }
 
@@ -195,5 +306,26 @@ export async function createAnalysisReview(
     throw new ApiError("REVIEW_EXISTS");
   }
 
-  return insertReview(auth.db, auth.user.id, analysisId, decision, note);
+  const review = await insertReview(
+    auth.db,
+    auth.user.id,
+    analysisId,
+    decision,
+    note,
+  );
+
+  // Human-owned follow-up queue — not an automated referral or eligibility decision.
+  if (decision === "needs_followup") {
+    try {
+      await createFollowUpFromReview(auth, {
+        caseId: row.case_id,
+        analysisId: row.id,
+        reviewNote: note,
+      });
+    } catch {
+      // Review already saved; follow-up can be added manually from the inbox.
+    }
+  }
+
+  return review;
 }

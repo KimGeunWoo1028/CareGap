@@ -20,6 +20,8 @@
 | 16 | [Cursor](PROMPTS/CURSOR.md) · [Codex](PROMPTS/CODEX.md) · [Claude](PROMPTS/CLAUDE.md) | 도구별 시작·검토 지시문 |
 | 17 | [SQL](sql/001_schema.sql) · [사업 시드](sql/002_programs.sql) · [합성 시드](sql/003_demo_seed.sql) | Supabase 적용용 초안 |
 | 18 | [분석 JSON 스키마](schemas/analysis.schema.json) · [시연 결과](fixtures/replay-analysis.json) · [전체 응답 예시](fixtures/success-response.json) · [평가 사례](fixtures/evaluation-cases.json) | 검증 및 재현 자료 |
+| 19 | [고도화 로드맵](docs/ROADMAP.md) · [진행 현황](docs/PROJECT_PROGRESS.md) | 검토 후 실행 추적 |
+| 20 | [후속 확인 SQL](sql/004_follow_up_tasks.sql) · CI `.github/workflows/ci.yml` | P1 업무 흐름·PR 검사 |
 
 ## 충돌을 방지하는 읽기 순서
 

@@ -172,4 +172,16 @@ describe("validateAnalysisOutput (T09–T11, T23, T25)", () => {
       validateAnalysisOutput(bad, previous, poisoned),
     ).not.toThrow();
   });
+
+  it("documents that opposite status with exact quotes still passes substring validation", () => {
+    // Citation existence ≠ semantic accuracy. Do not treat this as product quality.
+    const flipped = cloneFixture();
+    const meal = flipped.changes.find((c) => c.domain === "meal");
+    expect(meal?.status).toBe("worsened");
+    meal!.status = "improved";
+    meal!.explanation = "인용은 유지한 채 상태를 반대로 표기";
+    expect(() =>
+      validateAnalysisOutput(flipped, previous, current),
+    ).not.toThrow();
+  });
 });

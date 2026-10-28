@@ -5,7 +5,7 @@
 - Node.js 24 LTS(2026-10-27 Node 공식 지원표 확인), npm. Next.js 16의 문서상 최소 Node는 20.9.0이지만 Supabase SDK 제안 버전의 엔진 조건 `>=22`를 만족하도록 24를 사용한다.
 - 전용 Supabase 프로젝트, 로그인 가능한 테스트 계정 1개 이상(격리 시험은 2개), 프로젝트 URL과 publishable 키, 서버용 secret/service_role 키.
 - live 모드일 때 OpenAI API 결제/권한, 서버 전용 API 키와 모델 접근. 무료 접근 가능 여부는 보장하지 않는다. replay는 OpenAI 키가 없어도 된다.
-- Git·편집기, Chrome/Edge, 안정적인 네트워크. 다만 이 패키지는 앱 소스가 아니라 개발 문서이므로 아래 값은 구현할 앱의 설정이다.
+- Git·편집기, Chrome/Edge, 안정적인 네트워크. 이 저장소에는 Next.js 앱 소스가 포함되어 있다.
 
 ## 2. 제안 의존성
 
@@ -36,11 +36,24 @@ ANALYSIS_MODE=live
 
 ## 4. 개발 시작 순서
 
-1. 공통 문서와 프롬프트를 저장소 루트에 복사하고 0단계 프롬프트로 앱 골격을 생성한다. 명세 우선, 파일을 무조건 덮어쓰지 않는다.
-2. 새 Supabase 프로젝트에 SQL 001→002→003 순 적용. 003은 자신의 테스트 이메일로 수정한다. 공개 회원가입 해제와 A/B 계정 준비. 제공된 SQL은 관리자 컨텍스트에서 실행한다.
-3. `.env.local`을 만들고 필요한 값을 채운다. 키를 공유하거나 버전관리하지 않는다. replay부터 화면·API·DB 흐름을 확인한다.
-4. 구현된 프로젝트의 스크립트 `npm run dev`, `npm run build`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run test:e2e`를 개발자가 만든다. `npm ci`는 lockfile이 생긴 다음에만 작동한다.
-5. live 모드로 변경하여 사전 API 비용 한도·권한과 외부 전송되는 데이터가 합성인지 확인하고, 테스트 및 리허설을 수행한다.
+1. `npm ci`로 의존성을 설치한다 (`package-lock.json` 기준).
+2. 새 Supabase 테스트 프로젝트에 SQL 001→002→003 순 적용. 003은 자신의 테스트 이메일로 수정한다. 공개 회원가입 해제와 A/B 계정 준비.
+3. `.env.example`을 복사해 `.env.local`을 만들고 필요한 값을 채운다. 키를 공유하거나 버전관리하지 않는다. 시연·기본 검증은 `ANALYSIS_MODE=replay`.
+4. `npm run dev`로 로컬 실행. 검사는 `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build`, `npm run test:e2e`.
+5. live로 전환할 때는 비용 한도·모델 권한과 외부 전송 데이터가 합성인지 확인한다. **실제 OpenAI 유료 호출은 별도 승인·예산 없이는 수행하지 않는다.**
+
+### 모의 Playwright E2E용 공개 placeholder
+
+실제 비밀값 없이 앱이 기동·빌드되도록 아래처럼 **가짜** 값을 쓸 수 있다. 이 값으로 실 Auth/DB에 연결하지 않는다.
+
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e2e-mock-publishable
+SUPABASE_SECRET_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e2e-mock-secret
+ANALYSIS_MODE=replay
+```
+
+브라우저: `npx playwright install chromium`. 기본 `npm run test:e2e`는 API/Auth를 가로채는 모의 경로다. 실비밀번호 UI는 `CARE_GAP_REAL_AUTH_E2E=1` + 로컬 `TEST_USER_*`가 필요하며 커밋하지 않는다.
 
 ## 5. 배포
 

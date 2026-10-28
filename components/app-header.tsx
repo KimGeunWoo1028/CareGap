@@ -28,6 +28,9 @@ export function AppHeader({ onSignOut }: AppHeaderProps) {
           </span>
         </Link>
         <div className="map-chrome__ops">
+          <Link href="/follow-ups" className="btn btn--ghost">
+            후속 확인
+          </Link>
           {user?.email ? (
             <p className="map-chrome__account">
               <span className="visually-hidden">로그인 계정 </span>

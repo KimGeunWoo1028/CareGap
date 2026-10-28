@@ -80,6 +80,25 @@ describe("matchWelfarePrograms (T12–T13)", () => {
     );
   });
 
+  it("does not treat unchanged (healthy or ongoing) as a match signal", () => {
+    // Status alone cannot tell "세 끼 유지" from "거름 유지".
+    const analysis = allUnknown();
+    analysis.changes[0] = {
+      domain: "meal",
+      status: "unchanged",
+      explanation: "이전과 같이 식사를 자주 거름",
+      evidence_previous: {
+        note_id: "11111111-1111-4111-8111-111111111111",
+        quote: "식사를 자주 거름",
+      },
+      evidence_current: {
+        note_id: "22222222-2222-4222-8222-222222222222",
+        quote: "식사를 자주 거름",
+      },
+    };
+    expect(matchWelfarePrograms(analysis, DEMO_WELFARE_PROGRAMS)).toEqual([]);
+  });
+
   it("ignores inactive programs and non-matching tags", () => {
     const inactive: WelfareProgram = {
       ...DEMO_WELFARE_PROGRAMS[0],

@@ -245,6 +245,150 @@ describe("createOrResumeAnalysis", () => {
     });
   });
 
+  it("persists failure when post-reservation prep lookup fails", async () => {
+    const { createOrResumeAnalysis } = await import("./service");
+    callStartAnalysis.mockResolvedValue({
+      created: true,
+      analysis_id: processingRow.id,
+      status: "processing",
+    });
+    getAnalysisRowForOwner.mockResolvedValue(processingRow);
+    getCaseAlias.mockResolvedValue("합성-001");
+    getConsultationPair.mockRejectedValue(new Error("db_read_failed"));
+    listActiveWelfarePrograms.mockResolvedValue(DEMO_WELFARE_PROGRAMS);
+    finalizeAnalysisFailure.mockResolvedValue(true);
+
+    await expect(
+      createOrResumeAnalysis(
+        auth,
+        processingRow.case_id,
+        processingRow.idempotency_key,
+      ),
+    ).rejects.toMatchObject({
+      code: "SERVICE_UNAVAILABLE",
+      details: { analysis_id: processingRow.id },
+    });
+    expect(runAnalysis).not.toHaveBeenCalled();
+    expect(finalizeAnalysisFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        analysisId: processingRow.id,
+        failureCode: "SERVICE_UNAVAILABLE",
+      }),
+    );
+  });
+
+  it("returns SERVICE_UNAVAILABLE with recovery when failure cannot be persisted", async () => {
+    const { createOrResumeAnalysis } = await import("./service");
+    callStartAnalysis.mockResolvedValue({
+      created: true,
+      analysis_id: processingRow.id,
+      status: "processing",
+    });
+    getAnalysisRowForOwner.mockResolvedValue(processingRow);
+    getCaseAlias.mockResolvedValue("합성-001");
+    getConsultationPair.mockResolvedValue(notePair);
+    listActiveWelfarePrograms.mockResolvedValue(DEMO_WELFARE_PROGRAMS);
+    runAnalysis.mockRejectedValue(new ApiError("AI_UNAVAILABLE"));
+    finalizeAnalysisFailure.mockRejectedValue(new Error("db_down"));
+
+    await expect(
+      createOrResumeAnalysis(
+        auth,
+        processingRow.case_id,
+        processingRow.idempotency_key,
+      ),
+    ).rejects.toMatchObject({
+      code: "SERVICE_UNAVAILABLE",
+      details: {
+        analysis_id: processingRow.id,
+        recovery: "failure_persist_unavailable",
+      },
+    });
+  });
+
+  it("enforces overall 45s deadline and marks TIMEOUT", async () => {
+    vi.useFakeTimers();
+    try {
+      const { createOrResumeAnalysis, ANALYSIS_OVERALL_TIMEOUT_MS } =
+        await import("./service");
+      callStartAnalysis.mockResolvedValue({
+        created: true,
+        analysis_id: processingRow.id,
+        status: "processing",
+      });
+      getAnalysisRowForOwner.mockResolvedValue(processingRow);
+      getCaseAlias.mockImplementation(
+        () => new Promise(() => undefined),
+      );
+      getConsultationPair.mockResolvedValue(notePair);
+      listActiveWelfarePrograms.mockResolvedValue(DEMO_WELFARE_PROGRAMS);
+      finalizeAnalysisFailure.mockResolvedValue(true);
+
+      const pending = createOrResumeAnalysis(
+        auth,
+        processingRow.case_id,
+        processingRow.idempotency_key,
+      );
+      const expectation = expect(pending).rejects.toMatchObject({
+        code: "TIMEOUT",
+        details: { analysis_id: processingRow.id },
+      });
+      await vi.advanceTimersByTimeAsync(ANALYSIS_OVERALL_TIMEOUT_MS + 10);
+      await expectation;
+      expect(finalizeAnalysisFailure).toHaveBeenCalledWith(
+        expect.objectContaining({
+          analysisId: processingRow.id,
+          failureCode: "TIMEOUT",
+        }),
+      );
+      expect(runAnalysis).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("marks SERVICE_UNAVAILABLE when success persist throws", async () => {
+    const { createOrResumeAnalysis } = await import("./service");
+    callStartAnalysis.mockResolvedValue({
+      created: true,
+      analysis_id: processingRow.id,
+      status: "processing",
+    });
+    getAnalysisRowForOwner.mockResolvedValue(processingRow);
+    getCaseAlias.mockResolvedValue("합성-001");
+    getConsultationPair.mockResolvedValue(notePair);
+    listActiveWelfarePrograms.mockResolvedValue(DEMO_WELFARE_PROGRAMS);
+    runAnalysis.mockResolvedValue({
+      mode: "replay",
+      model: null,
+      analysis: replayFixture,
+      recommendations: [],
+      recommendations_message: "확인할 사업 후보가 없습니다. 원문을 검토해 주세요.",
+    });
+    finalizeAnalysisSuccess.mockRejectedValue(new Error("db_write_failed"));
+    finalizeAnalysisFailure.mockResolvedValue(true);
+
+    await expect(
+      createOrResumeAnalysis(
+        auth,
+        processingRow.case_id,
+        processingRow.idempotency_key,
+      ),
+    ).rejects.toMatchObject({
+      code: "SERVICE_UNAVAILABLE",
+      details: {
+        analysis_id: processingRow.id,
+        reason: "success_persist_failed",
+      },
+    });
+    expect(finalizeAnalysisFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        analysisId: processingRow.id,
+        failureCode: "SERVICE_UNAVAILABLE",
+      }),
+    );
+  });
+
   it("discards late success when processing row already terminal (T24)", async () => {
     const { createOrResumeAnalysis } = await import("./service");
     callStartAnalysis.mockResolvedValue({

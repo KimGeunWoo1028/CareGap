@@ -18,7 +18,12 @@ export const EMPTY_RECOMMENDATIONS_MESSAGE =
 
 const DAEGU_DISPLAY_CHECK = "대구 거주 및 구·군별 서비스 확인 필요";
 
-function worsenedDomains(analysis: ValidatedAnalysis): Set<AnalysisDomain> {
+/**
+ * Matching signal domains: worsened only.
+ * `unchanged` is not a signal — the same label covers healthy maintenance and
+ * ongoing unmet need; status alone cannot distinguish them (roadmap/hardening).
+ */
+export function signalDomains(analysis: ValidatedAnalysis): Set<AnalysisDomain> {
   const set = new Set<AnalysisDomain>();
   for (const change of analysis.changes) {
     if (change.status === "worsened") {
@@ -30,11 +35,11 @@ function worsenedDomains(analysis: ValidatedAnalysis): Set<AnalysisDomain> {
 
 function orderedIntersection(
   tags: string[],
-  worsened: Set<AnalysisDomain>,
+  signals: Set<AnalysisDomain>,
 ): AnalysisDomain[] {
   const tagSet = new Set(tags);
   return ANALYSIS_DOMAINS.filter(
-    (domain) => worsened.has(domain) && tagSet.has(domain),
+    (domain) => signals.has(domain) && tagSet.has(domain),
   );
 }
 
@@ -72,20 +77,21 @@ function eligibilityChecksFor(program: WelfareProgram): string[] {
 /**
  * Deterministic welfare-program matching from worsened domains only.
  * AI never invents programs; only active catalog rows are considered.
+ * Eligibility remains unverified — workers must confirm.
  */
 export function matchWelfarePrograms(
   analysis: ValidatedAnalysis,
   programs: readonly WelfareProgram[],
 ): ProgramRecommendation[] {
-  const worsened = worsenedDomains(analysis);
-  if (worsened.size === 0) {
+  const signals = signalDomains(analysis);
+  if (signals.size === 0) {
     return [];
   }
 
   const scored = programs
     .filter((program) => program.active)
     .map((program) => {
-      const matched_domains = orderedIntersection(program.tags, worsened);
+      const matched_domains = orderedIntersection(program.tags, signals);
       return {
         program,
         matched_domains,

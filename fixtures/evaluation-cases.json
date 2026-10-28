@@ -58,5 +58,89 @@
       "health": "unknown",
       "environment": "unknown"
     }
+  },
+  {
+    "id": "eval-06",
+    "description": "지속 식사 어려움(악화 없이 unchanged)",
+    "previous": "끼니를 자주 거르고 혼자 장을 보기 어렵다고 함.",
+    "current": "끼니를 자주 거르고 혼자 장을 보기 어렵다고 함.",
+    "expected_status": {
+      "meal": "unchanged",
+      "mobility": "unchanged",
+      "health": "unknown",
+      "environment": "unknown"
+    }
+  },
+  {
+    "id": "eval-07",
+    "description": "부정문·거동 유지",
+    "previous": "집 밖을 혼자 걷지 않는다고 함.",
+    "current": "여전히 집 밖을 혼자 걷지 않는다고 함.",
+    "expected_status": {
+      "meal": "unknown",
+      "mobility": "unchanged",
+      "health": "unknown",
+      "environment": "unknown"
+    }
+  },
+  {
+    "id": "eval-08",
+    "description": "건강 악화 신호",
+    "previous": "혈압약을 규칙적으로 복용한다고 함.",
+    "current": "최근 어지러워 약을 자주 거른다고 함.",
+    "expected_status": {
+      "meal": "unknown",
+      "mobility": "unknown",
+      "health": "worsened",
+      "environment": "unknown"
+    }
+  },
+  {
+    "id": "eval-09",
+    "description": "생활환경 개선",
+    "previous": "보일러가 고장나 방이 춥다고 함.",
+    "current": "보일러를 고쳐 방이 따뜻하다고 함.",
+    "expected_status": {
+      "meal": "unknown",
+      "mobility": "unknown",
+      "health": "unknown",
+      "environment": "improved"
+    }
+  },
+  {
+    "id": "eval-10",
+    "description": "타인 언급은 대상자 상태로 단정하지 않음",
+    "previous": "이웃이 병원에 다닌다고 이야기함.",
+    "current": "이웃이 또 병원에 갔다고 이야기함.",
+    "expected_status": {
+      "meal": "unknown",
+      "mobility": "unknown",
+      "health": "unknown",
+      "environment": "unknown"
+    }
+  },
+  {
+    "id": "eval-11",
+    "description": "상충 소지 — 정보 부족 또는 보류 가능",
+    "previous": "혼자 장을 볼 수 있다고 함.",
+    "current": "혼자 장을 보기 어렵다고도 하고 가끔은 간다고도 함.",
+    "expected_status": {
+      "meal": "unknown",
+      "mobility": "unknown",
+      "health": "unknown",
+      "environment": "unknown"
+    }
+  },
+  {
+    "id": "eval-12",
+    "description": "식사 개선",
+    "previous": "하루 한 끼만 겨우 먹는다고 함.",
+    "current": "최근 세 끼를 챙겨 먹는다고 함.",
+    "expected_status": {
+      "meal": "improved",
+      "mobility": "unknown",
+      "health": "unknown",
+      "environment": "unknown"
+    }
   }
 ]

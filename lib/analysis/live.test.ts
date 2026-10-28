@@ -28,13 +28,41 @@ function jsonResponse(status: number, body: unknown): Response {
   });
 }
 
-describe("runLiveAnalysis (T16 stub)", () => {
-  it("validates provider JSON and returns live mode without falling back to replay", async () => {
-    const fetchImpl = vi.fn(async () =>
-      jsonResponse(200, {
+/** Realistic Responses API REST body: reasoning item before message. */
+function completedWithMessageText(text: string) {
+  return {
+    id: "resp_test",
+    object: "response",
+    status: "completed",
+    output: [
+      {
+        id: "rs_test",
+        type: "reasoning",
+        content: [],
+        summary: [],
+      },
+      {
+        id: "msg_test",
+        type: "message",
         status: "completed",
-        output_text: JSON.stringify(replayFixture),
-      }),
+        role: "assistant",
+        content: [
+          {
+            type: "output_text",
+            text,
+            annotations: [],
+            logprobs: [],
+          },
+        ],
+      },
+    ],
+  };
+}
+
+describe("runLiveAnalysis (T16 stub)", () => {
+  it("parses message output after reasoning and returns live mode (no replay fallback)", async () => {
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse(200, completedWithMessageText(JSON.stringify(replayFixture))),
     );
 
     const result = await runLiveAnalysis({
@@ -65,10 +93,7 @@ describe("runLiveAnalysis (T16 stub)", () => {
     const bad = structuredClone(replayFixture);
     bad.changes[0].evidence_current.quote = "존재하지 않는 인용";
     const fetchImpl = vi.fn(async () =>
-      jsonResponse(200, {
-        status: "completed",
-        output_text: JSON.stringify(bad),
-      }),
+      jsonResponse(200, completedWithMessageText(JSON.stringify(bad))),
     );
 
     await expect(
@@ -86,15 +111,67 @@ describe("runLiveAnalysis (T16 stub)", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
-  it("retries once on 429 then succeeds", async () => {
+  it("rejects refusal content without retry or replay", async () => {
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse(200, {
+        status: "completed",
+        output: [
+          {
+            type: "message",
+            role: "assistant",
+            content: [{ type: "refusal", refusal: "declined" }],
+          },
+        ],
+      }),
+    );
+
+    await expect(
+      runLiveAnalysis({
+        previous,
+        current,
+        programs: DEMO_WELFARE_PROGRAMS,
+        openai: {
+          apiKey: "test-key",
+          model: "gpt-test",
+          fetchImpl: fetchImpl as unknown as typeof fetch,
+        },
+      }),
+    ).rejects.toMatchObject({
+      code: "INVALID_AI_OUTPUT",
+      details: { reason: "refusal" },
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects malformed JSON in message text without retry", async () => {
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse(200, completedWithMessageText("{not-json")),
+    );
+
+    await expect(
+      runLiveAnalysis({
+        previous,
+        current,
+        programs: DEMO_WELFARE_PROGRAMS,
+        openai: {
+          apiKey: "test-key",
+          model: "gpt-test",
+          fetchImpl: fetchImpl as unknown as typeof fetch,
+        },
+      }),
+    ).rejects.toMatchObject({
+      code: "INVALID_AI_OUTPUT",
+      details: { reason: "json_parse" },
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("retries once on 429 then succeeds with REST output shape", async () => {
     const fetchImpl = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse(429, { error: { message: "rate" } }))
       .mockResolvedValueOnce(
-        jsonResponse(200, {
-          status: "completed",
-          output_text: JSON.stringify(replayFixture),
-        }),
+        jsonResponse(200, completedWithMessageText(JSON.stringify(replayFixture))),
       );
 
     const result = await runLiveAnalysis({
@@ -112,9 +189,34 @@ describe("runLiveAnalysis (T16 stub)", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 
+  it("retries once on 503 then fails closed without replay", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse(503, { error: { message: "down" } }))
+      .mockResolvedValueOnce(jsonResponse(503, { error: { message: "down" } }));
+
+    await expect(
+      runLiveAnalysis({
+        previous,
+        current,
+        programs: DEMO_WELFARE_PROGRAMS,
+        openai: {
+          apiKey: "test-key",
+          model: "gpt-test",
+          fetchImpl: fetchImpl as unknown as typeof fetch,
+        },
+      }),
+    ).rejects.toMatchObject({ code: "AI_UNAVAILABLE" });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
   it("does not retry on incomplete model status", async () => {
     const fetchImpl = vi.fn(async () =>
-      jsonResponse(200, { status: "incomplete", output_text: "" }),
+      jsonResponse(200, {
+        status: "incomplete",
+        output: [],
+        incomplete_details: { reason: "max_output_tokens" },
+      }),
     );
 
     await expect(
@@ -129,6 +231,32 @@ describe("runLiveAnalysis (T16 stub)", () => {
         },
       }),
     ).rejects.toBeInstanceOf(ApiError);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails on empty completed output without retry", async () => {
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse(200, {
+        status: "completed",
+        output: [{ type: "reasoning", content: [], summary: [] }],
+      }),
+    );
+
+    await expect(
+      runLiveAnalysis({
+        previous,
+        current,
+        programs: DEMO_WELFARE_PROGRAMS,
+        openai: {
+          apiKey: "test-key",
+          model: "gpt-test",
+          fetchImpl: fetchImpl as unknown as typeof fetch,
+        },
+      }),
+    ).rejects.toMatchObject({
+      code: "AI_UNAVAILABLE",
+      details: { reason: "empty_output" },
+    });
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 

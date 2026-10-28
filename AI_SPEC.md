@@ -41,9 +41,9 @@ unknown을 제외한 각 범주에는 이전과 현재의 근거를 모두 제�
 
 ## 5. 결정적 복지사업 후보 매칭
 
-AI가 사업을 고르지 않는다. DB의 `active=true` 프로그램에서 각 프로그램 tags와 `status=worsened` 범주의 교집합이 1개 이상이면 후보로 삼는다. 개선·변화 없음·unknown은 매칭 신호가 아니다. 교집합 수 내림차순, 동점 `id` 사전순으로 최대 2개를 반환한다. 이 MVP는 거주지나 나이를 수집하지 않으므로 지역/연령/소득을 필터링하지 않고 모든 후보에 `eligibility_status: "unverified"`와 확인 항목을 붙인다. 단디돌봄 카드에는 `대구 거주 및 구·군별 서비스 확인 필요`를 표시한다. 확인 전 해당 여부를 추정하지 않는다.
+AI가 사업을 고르지 않는다. DB의 `active=true` 프로그램에서 각 프로그램 tags와 `status=worsened` 범주의 교집합이 1개 이상이면 후보로 삼는다. `improved`·`unchanged`·`unknown`은 매칭 신호가 아니다. (`unchanged`는 정상 유지와 지속 미충족을 구분하지 못하므로 상태값만으로 후보를 열지 않는다. 지속 필요는 별도 필드·전문가 평가 전까지 후보 자동 확장 금지.) 교집합 수 내림차순, 동점 `id` 사전순으로 최대 2개를 반환한다. 이 MVP는 거주지나 나이를 수집하지 않으므로 지역/연령/소득을 필터링하지 않고 모든 후보에 `eligibility_status: "unverified"`와 확인 항목을 붙인다. 단디돌봄 카드에는 `대구 거주 및 구·군별 서비스 확인 필요`를 표시한다. 확인 전 해당 여부를 추정하지 않는다.
 
-후보에는 `program_id`, `name`, `matched_domains`(고정 순서 meal, mobility, health, environment), `summary`, `eligibility_status`, `eligibility_checks`, `region`, `source_url`, `source_checked_on`, `catalog_version`을 저장한다. 매칭 이유 문구는 서버가 `matched_domains`로부터 “식사·거동 변화와 관련된 사업 후보”와 같이 생성한다. 0건이면 “확인할 사업 후보가 없습니다. 원문을 검토해 주세요.”를 표시한다. 정책 조건에 대한 개별 검증 결과는 없다.
+후보에는 `program_id`, `name`, `matched_domains`(고정 순서 meal, mobility, health, environment), `summary`, `eligibility_status`, `eligibility_checks`, `region`, `source_url`, `source_checked_on`, `catalog_version`을 저장한다. 매칭 이유 문구는 서버가 `matched_domains`로부터 “식사·거동 변화와 관련된 사업 후보”와 같이 생성한다. 0건이면 “확인할 사업 후보가 없습니다. 원문을 검토해 주세요.”를 표시한다. 정책 조건에 대한 개별 검증 결과는 없다. 인용 부분 문자열 검사는 해석의 의미적 정확도를 보장하지 않는다. 평가 fixture·status 일치 점수는 [fixtures/evaluation-cases.json](fixtures/evaluation-cases.json)과 `lib/analysis/evaluate-status.ts`를 참고한다.
 
 ## 6. Replay
 

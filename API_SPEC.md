@@ -88,7 +88,27 @@
 {"decision":"needs_followup","note":"식사 빈도와 이동 상황을 추가 확인할 예정"}
 ```
 
-`decision`은 confirmed/needs_followup/rejected. `note`는 필수 문자열이며 최대 500자, rejected는 공백 아닌 사유 필수, 나머지는 빈 문자열 허용. 직접 식별정보 의심 시 400. 성공 분석에 대해서만 한 번 작성; 이미 작성 시 409 REVIEW_EXISTS. 실패/진행 분석은 409 `ANALYSIS_IN_PROGRESS`(처리 중) 또는 `ANALYSIS_FAILED`(실패)로 거부. 응답 data는 `{id,analysis_id,decision,note,created_at}`. 검토 내용은 연계 완료나 지원 결정의 증거가 아니다.
+`decision`은 confirmed/needs_followup/rejected. `note`는 필수 문자열이며 최대 500자, rejected는 공백 아닌 사유 필수, 나머지는 빈 문자열 허용. 직접 식별정보 의심 시 400. 성공 분석에 대해서만 한 번 작성; 이미 작성 시 409 REVIEW_EXISTS. 실패/진행 분석은 409 `ANALYSIS_IN_PROGRESS`(처리 중) 또는 `ANALYSIS_FAILED`(실패)로 거부. 응답 data는 `{id,analysis_id,decision,note,created_at}`. 검토 내용은 연계 완료나 지원 결정의 증거가 아니다. `needs_followup` 저장 시 서버는 가능하면 `follow_up_tasks`에 `next_consultation` 대기 항목을 하나 만든다(실패해도 검토 저장은 유지).
+
+### `GET /follow-ups` → 200
+
+선택 쿼리 `status=open|done|cancelled`. 응답 data는 본인 소유 후속 확인 배열. 각 항목: `id`, `owner_id`, `case_id`, `analysis_id`, `kind`(`next_consultation`|`eligibility_check`|`referral_outcome`), `status`, `due_on`, `note`, `created_at`, `completed_at`. 자격·연계 완료의 자동 증거가 아니다.
+
+### `POST /follow-ups` → 201
+
+```json
+{"case_id":"…","analysis_id":null,"kind":"eligibility_check","note":"소득·거주 확인","due_on":"2026-11-05"}
+```
+
+본인 사례만. `kind`·`note`(≤500)·선택 `due_on`(YYYY-MM-DD)·선택 `analysis_id`. 같은 `analysis_id`+`kind`에 열린 행이 있으면 400 `VALIDATION_ERROR`(`follow_up_open_exists`). `analysis_id`가 있으면 해당 분석이 본인 소유이며 `case_id`와 일치해야 한다(RLS insert 정책).
+
+### `PATCH /follow-ups/{task_id}` → 200
+
+```json
+{"status":"done"}
+```
+
+`status`는 `done` 또는 `cancelled`만. 열린(`open`) 본인 행만 종결한다. 이미 종결·타인이면 404.
 
 ## 공급자 및 구현 주의
 
