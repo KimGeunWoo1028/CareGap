@@ -4,31 +4,31 @@
 
 ## Now
 
-Migration reconciliation on `fix/p0-reliability` @ `43ff50b`+: document 005/005b history, freeze CareGap Test schema/data (no DDL/DML this pass).
+Ready for AI quality / eval hardening. Migration gate closed; 14 orphan follow-ups deferred (list only).
 
 ## Done
 
-- P0 reliability, CI, eval harness, worsened-only matching
-- CareGap Test: 004 → 004a → 005 (mismatched payload) → 005b (correct); atomicity A/B previously PASS
-- Repo: canonical `sql/005`, corrective `sql/005b`, recovered mismatched payload under `sql/history/`
-- Read-only integrity: cases/consultations/programs preserved; 0 orphan FK; 0 dup open; pre-005 orphan `needs_followup` counted (no auto-backfill)
+- P0 reliability, CI, eval harness seed, worsened-only matching
+- CareGap Test: 004 → 004a → 005 (mismatched) → 005b (correct); data preserved
+- Isolated Docker new-install `001→005` PASS; audit in `docs/POST_MIGRATION_AUDIT.md`
+- 14 pre-005 `no_task` analysis IDs recorded as deferred candidates (no backfill)
 
 ## Next
 
-- Isolated Docker 001→005b reproducibility when Desktop daemon is available
-- Approved manual orphan follow-up backfill (optional)
-- Next hardening stage only after PARTIAL→PASS on reproducibility
+- Expand eval set (100–200) · semantic/citation metrics beyond status agreement
+- Controlled Live eval when budget approved (not free)
+- Roadmap #6 field interviews · #9/#10 institutional
 
 ## Tracks
 
 | Track | Status |
 |---|---|
 | Replay demo path | Stable (RC `107e9ec`) |
-| Live provider | Mock-only verified (no paid calls) |
+| Live provider | Implemented; paid calls not re-run this gate |
 | Follow-up + atomicity | Live on Test via 005b |
-| Schema reproducibility | BLOCKED (Docker daemon down) |
-| Field evidence | Not started |
+| Schema reproducibility | PASS (isolated Docker) |
+| AI eval depth | Seed only (12 fixtures, status labels) |
 
 ## Do-not
 
-실데이터·자동 자격·자동 신청·비밀/백업 커밋·CareGap Test 초기화·migration history 수동 편집·추측성 “검증 통과”·push/`main`·RC 변경.
+실데이터·자동 자격·자동 신청·비밀/백업 커밋·CareGap Test 초기화·migration history 수동 편집·무단 백필·추측성 “검증 통과”·push/`main`·RC 변경.
