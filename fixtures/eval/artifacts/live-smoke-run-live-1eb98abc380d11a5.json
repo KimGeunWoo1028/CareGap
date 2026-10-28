@@ -1,0 +1,203 @@
+{
+  "schema_version": "caregap.eval.live_smoke_run.v1",
+  "generated_at": "2026-10-28T23:16:35.391Z",
+  "mode": "live",
+  "live_calls_executed": 5,
+  "model_accuracy_measured": true,
+  "model_id": "gpt-5.4-mini-2026-03-17",
+  "prompt_version": "ai_spec_system_v1",
+  "dataset_version": "1.0.0",
+  "evaluation_version": "live-smoke-runner-v1",
+  "manifest_hash": "1eb98abc380d11a5",
+  "completion_status": "partial",
+  "gate": {
+    "ok": true,
+    "mode": "live",
+    "opt_in_env": true,
+    "explicit_approval": true,
+    "api_key_present": true,
+    "model_ok": true,
+    "manifest_ok": true,
+    "budget_ok": true,
+    "blockers": [],
+    "planner_estimate_usd": 0.045000000000000005,
+    "worst_case_per_call_usd": 0.019500000000000003
+  },
+  "results": [
+    {
+      "case_id": "eval-v1-001",
+      "split": "dev",
+      "family_id": "fam-meal-mob-worsen-01",
+      "request_attempts": 1,
+      "response_status": "schema_or_evidence_invalid",
+      "response_class": "schema_or_evidence_invalid",
+      "input_tokens": 516,
+      "output_tokens": 508,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.002673,
+      "latency_ms": 4262,
+      "validation_result": "failed",
+      "checkpoint_status": "new",
+      "execution_timestamp": "2026-10-28T23:16:26.623Z",
+      "predicted_status": null,
+      "error_code": "분석 결과를 검증하지 못했습니다.",
+      "billing_uncertain": false
+    },
+    {
+      "case_id": "eval-v1-003",
+      "split": "dev",
+      "family_id": "fam-mob-improve-01",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 515,
+      "output_tokens": 371,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.00205575,
+      "latency_ms": 2126,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:16:28.752Z",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "error_code": null,
+      "billing_uncertain": false
+    },
+    {
+      "case_id": "eval-v1-002",
+      "split": "dev",
+      "family_id": "fam-meal-unchanged-01",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 505,
+      "output_tokens": 296,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.0017107499999999998,
+      "latency_ms": 2572,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:16:31.326Z",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "error_code": null,
+      "billing_uncertain": false
+    },
+    {
+      "case_id": "eval-v1-004",
+      "split": "val",
+      "family_id": "fam-insufficient-01",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 499,
+      "output_tokens": 379,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.00207975,
+      "latency_ms": 1884,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:16:33.213Z",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unchanged",
+        "health": "unchanged",
+        "environment": "unchanged"
+      },
+      "error_code": null,
+      "billing_uncertain": false
+    },
+    {
+      "case_id": "eval-v1-016",
+      "split": "dev",
+      "family_id": "fam-worsen-environment-3",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 502,
+      "output_tokens": 307,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.001758,
+      "latency_ms": 2175,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:16:35.389Z",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      },
+      "error_code": null,
+      "billing_uncertain": false
+    }
+  ],
+  "metrics": {
+    "overall_status_accuracy": 0.75,
+    "macro_f1": 0.7878787878787878,
+    "worsened_precision": 1,
+    "worsened_recall": 1,
+    "false_worsening_rate": 0,
+    "missed_worsening_rate": 0,
+    "false_reassurance_rate": 0,
+    "unknown_usage_rate": 0.5625,
+    "unknown_detection_rate": 0.6923076923076923,
+    "per_status": {
+      "worsened": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 1
+      },
+      "improved": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 1
+      },
+      "unchanged": {
+        "precision": 0.2,
+        "recall": 1,
+        "f1": 0.33333333333333337,
+        "support": 1
+      },
+      "unknown": {
+        "precision": 1,
+        "recall": 0.6923076923076923,
+        "f1": 0.8181818181818181,
+        "support": 13
+      }
+    }
+  },
+  "citation_metrics": {
+    "citation_presence_rate": 1,
+    "citation_id_consistency_rate": 1,
+    "semantic_citation_review_items": 14
+  },
+  "totals": {
+    "api_attempts": 5,
+    "calculated_usage_cost_usd": 0.010277249999999998,
+    "estimated_planner_usd": 0.045000000000000005,
+    "success_cases": 4,
+    "failed_cases": 1
+  },
+  "metrics_note": "Small-n smoke metrics only; failures retained. Not field accuracy evidence. Evidence semantic review remains manual.",
+  "cost_disclaimer": "Local hard_max_usd is a process guard, not a guarantee of OpenAI invoice ceiling. Project $1 limit is a separate external control.",
+  "artifact_paths": {
+    "report": "C:\\Users\\jeung\\CareGap\\fixtures\\eval\\artifacts\\live-smoke-run-live-1eb98abc380d11a5.json",
+    "checkpoint": "C:\\Users\\jeung\\CareGap\\fixtures\\eval\\artifacts\\live-smoke-run-checkpoint-1eb98abc380d11a5.json"
+  }
+}

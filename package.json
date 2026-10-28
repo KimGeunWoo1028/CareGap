@@ -23,7 +23,7 @@
     "eval:pilot:dry-run": "node scripts/run-live-pilot-dry-run.mjs",
     "eval:pilot:smoke:manifest": "node scripts/generate-live-smoke-manifest.mjs",
     "eval:pilot:smoke:dry-run": "node scripts/run-live-smoke-dry-run.mjs",
-    "eval:pilot:smoke:live": "vite-node --config vitest.config.ts scripts/run-live-smoke-live.ts"
+    "eval:pilot:smoke:live": "npx vite-node --config vitest.config.ts scripts/run-live-smoke-live.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

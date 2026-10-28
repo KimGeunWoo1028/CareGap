@@ -32,6 +32,7 @@ import {
   SMOKE_PROMPT_VERSION,
   type SmokeCallResult,
 } from "@/lib/eval/live-smoke-call";
+import { syntheticNoteId } from "@/lib/eval/synthetic-note-ids";
 import type {
   EvalCase,
   EvalDataset,
@@ -61,6 +62,15 @@ export type SmokeGateCheck = {
   worst_case_per_call_usd: number;
 };
 
+export type SmokeEvidenceSnapshot = {
+  domain: string;
+  status: string;
+  previous_quote: string | null;
+  current_quote: string | null;
+  previous_note_id: string | null;
+  current_note_id: string | null;
+};
+
 export type SmokeCaseResult = {
   case_id: string;
   split: "dev" | "val";
@@ -78,6 +88,7 @@ export type SmokeCaseResult = {
   checkpoint_status: "new" | "completed" | "skipped_duplicate" | "aborted";
   execution_timestamp: string;
   predicted_status: ExpectedStatusMap | null;
+  evidence_snapshots: SmokeEvidenceSnapshot[] | null;
   error_code: string | null;
   billing_uncertain: boolean;
 };
@@ -218,15 +229,18 @@ export function checkSmokeGates(input: {
   };
 }
 
-function toNotes(c: EvalCase): { previous: AnalysisNote; current: AnalysisNote } {
+export function toNotes(c: EvalCase): {
+  previous: AnalysisNote;
+  current: AnalysisNote;
+} {
   return {
     previous: {
-      note_id: `${c.id}-previous`,
+      note_id: syntheticNoteId(c.id, "previous"),
       occurred_on: c.previous.occurred_on,
       body: c.previous.body,
     },
     current: {
-      note_id: `${c.id}-current`,
+      note_id: syntheticNoteId(c.id, "current"),
       occurred_on: c.current.occurred_on,
       body: c.current.body,
     },
@@ -284,6 +298,7 @@ export function runSmokeDryRun(input: {
       checkpoint_status: "new",
       execution_timestamp: now,
       predicted_status: null,
+      evidence_snapshots: null,
       error_code:
         !c
           ? "CASE_NOT_FOUND"
@@ -461,6 +476,7 @@ export async function runSmokeLive(input: {
               checkpoint_status: "skipped_duplicate",
               execution_timestamp: new Date().toISOString(),
               predicted_status: null,
+              evidence_snapshots: null,
               error_code: "CHECKPOINT_SKIP",
               billing_uncertain: false,
             },
@@ -497,6 +513,7 @@ export async function runSmokeLive(input: {
         checkpoint_status: "aborted",
         execution_timestamp: new Date().toISOString(),
         predicted_status: null,
+        evidence_snapshots: null,
         error_code: "CASE_NOT_FOUND",
         billing_uncertain: false,
       });
@@ -522,6 +539,7 @@ export async function runSmokeLive(input: {
         checkpoint_status: "aborted",
         execution_timestamp: new Date().toISOString(),
         predicted_status: null,
+        evidence_snapshots: null,
         error_code: synthetic.reasons.join(","),
         billing_uncertain: false,
       });
@@ -553,6 +571,7 @@ export async function runSmokeLive(input: {
         checkpoint_status: "aborted",
         execution_timestamp: new Date().toISOString(),
         predicted_status: null,
+        evidence_snapshots: null,
         error_code: e instanceof Error ? e.message : "COST_GUARD",
         billing_uncertain: false,
       });
@@ -604,6 +623,16 @@ export async function runSmokeLive(input: {
       checkpoint_status: result.ok ? "completed" : "new",
       execution_timestamp: new Date().toISOString(),
       predicted_status: result.ok ? result.predicted_status : null,
+      evidence_snapshots: result.ok
+        ? result.analysis.changes.map((ch) => ({
+            domain: ch.domain,
+            status: ch.status,
+            previous_quote: ch.evidence_previous?.quote ?? null,
+            current_quote: ch.evidence_current?.quote ?? null,
+            previous_note_id: ch.evidence_previous?.note_id ?? null,
+            current_note_id: ch.evidence_current?.note_id ?? null,
+          }))
+        : null,
       error_code: result.ok ? null : result.error_code,
       billing_uncertain: result.ok ? false : result.billing_uncertain,
     };
@@ -718,6 +747,7 @@ export function createDefaultSmokeExecuteCase(openai: {
           ok: false,
           response_class: "unexpected",
           error_code: "NO_REMAINING_CALLS",
+          validation_diagnosis: null,
           retryable: false,
           billing_uncertain: false,
           usage: null,

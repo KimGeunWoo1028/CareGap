@@ -1,0 +1,115 @@
+{
+  "fingerprint": "1eb98abc380d11a5",
+  "completed_case_ids": [
+    "eval-v1-003",
+    "eval-v1-002",
+    "eval-v1-004",
+    "eval-v1-016"
+  ],
+  "spent_usage_cost_usd": 0.010277249999999998,
+  "calls_made": 5,
+  "mode": "live",
+  "updated_at": "2026-10-28T23:16:35.389Z",
+  "results": [
+    {
+      "case_id": "eval-v1-003",
+      "split": "dev",
+      "family_id": "fam-mob-improve-01",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 515,
+      "output_tokens": 371,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.00205575,
+      "latency_ms": 2126,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:16:28.752Z",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "error_code": null,
+      "billing_uncertain": false
+    },
+    {
+      "case_id": "eval-v1-002",
+      "split": "dev",
+      "family_id": "fam-meal-unchanged-01",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 505,
+      "output_tokens": 296,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.0017107499999999998,
+      "latency_ms": 2572,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:16:31.326Z",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "error_code": null,
+      "billing_uncertain": false
+    },
+    {
+      "case_id": "eval-v1-004",
+      "split": "val",
+      "family_id": "fam-insufficient-01",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 499,
+      "output_tokens": 379,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.00207975,
+      "latency_ms": 1884,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:16:33.213Z",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unchanged",
+        "health": "unchanged",
+        "environment": "unchanged"
+      },
+      "error_code": null,
+      "billing_uncertain": false
+    },
+    {
+      "case_id": "eval-v1-016",
+      "split": "dev",
+      "family_id": "fam-worsen-environment-3",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 502,
+      "output_tokens": 307,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.001758,
+      "latency_ms": 2175,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:16:35.389Z",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      },
+      "error_code": null,
+      "billing_uncertain": false
+    }
+  ]
+}

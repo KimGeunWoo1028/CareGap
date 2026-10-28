@@ -1,0 +1,278 @@
+{
+  "schema_version": "caregap.eval.live_smoke_analysis.v1",
+  "source_report": "C:\\Users\\jeung\\CareGap\\fixtures\\eval\\artifacts\\live-smoke-run-live-1eb98abc380d11a5.json",
+  "source_preserved": true,
+  "generated_at": "2026-10-28T23:23:00.559Z",
+  "live_calls_in_this_script": 0,
+  "case_comparisons": [
+    {
+      "case_id": "eval-v1-001",
+      "response_class": "schema_or_evidence_invalid",
+      "predicted_status": null,
+      "gold": {
+        "meal": "worsened",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-003",
+      "response_class": "success",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "gold": {
+        "meal": "unknown",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-002",
+      "response_class": "success",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "gold": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-004",
+      "response_class": "success",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unchanged",
+        "health": "unchanged",
+        "environment": "unchanged"
+      },
+      "gold": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-016",
+      "response_class": "success",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      },
+      "gold": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      }
+    }
+  ],
+  "metrics_A_success_only": {
+    "overall_status_accuracy": 0.75,
+    "macro_f1": 0.7878787878787878,
+    "worsened_precision": 1,
+    "worsened_recall": 1,
+    "false_worsening_rate": 0,
+    "missed_worsening_rate": 0,
+    "false_reassurance_rate": 0,
+    "unknown_usage_rate": 0.5625,
+    "unknown_detection_rate": 0.6923076923076923,
+    "per_status": {
+      "worsened": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 1
+      },
+      "improved": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 1
+      },
+      "unchanged": {
+        "precision": 0.2,
+        "recall": 1,
+        "f1": 0.33333333333333337,
+        "support": 1
+      },
+      "unknown": {
+        "precision": 1,
+        "recall": 0.6923076923076923,
+        "f1": 0.8181818181818181,
+        "support": 13
+      }
+    }
+  },
+  "metrics_B_operational": {
+    "valid_response_rate": 0.8,
+    "validation_failure_rate": 0.2,
+    "api_failure_rate": 0,
+    "gold_worsened_cells": 3,
+    "gold_worsened_detected_on_valid": 1,
+    "gold_worsened_unevaluated_due_to_validation_failure": 2,
+    "false_reassurance_on_valid": 0
+  },
+  "root_cause_notes": {
+    "eval-v1-001": {
+      "observed": "schema_or_evidence_invalid after billed completion",
+      "likely_code": "note_id_mismatch",
+      "rationale": "Case bodies match replay fixture exactly. Smoke sent note_ids like eval-v1-001-previous while replay/demo UUIDs are common model habit; validator rejects non-exact note_id. Raw response was not persisted in this run, so code is inferred — future runs emit validation_diagnosis.",
+      "remediation": "Use deterministic UUID-shaped synthetic note ids; strengthen prompt to copy note_id verbatim; persist diagnosis codes."
+    },
+    "eval-v1-004": {
+      "observed": "all unknown gold → all unchanged pred (validated)",
+      "cause": "Identical non-domain weather/closing text at both times; model treated textual identity as status unchanged for meal/mobility/health/environment.",
+      "ai_spec": "unchanged requires comparable domain status at both times; absence or off-domain chatter must be unknown.",
+      "remediation": "Prompt hardening for unknown vs unchanged; no label hardcoding."
+    }
+  },
+  "semantic_citation_review": {
+    "structural_items_reported_in_source": 14,
+    "quotes_persisted_in_source": false,
+    "items": [
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 0"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 1"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 2"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 3"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 4"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 5"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 6"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 7"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 8"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 9"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 10"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 11"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 12"
+      },
+      {
+        "case_id": "unavailable_from_artifact",
+        "domain": "unavailable_from_artifact",
+        "predicted_status": "unavailable_from_artifact",
+        "evidence_source": "unavailable_from_artifact",
+        "evidence_quote": "",
+        "semantic_review_status": "pending_manual_review",
+        "reviewer_note": "Historical live artifact did not store evidence quotes; re-run after hardening required for item-level review. Index 13"
+      }
+    ],
+    "note": "Automatic exact-substring pass is not expert semantic approval."
+  },
+  "fingerprint": "8bf0cfa6bd34abaa"
+}

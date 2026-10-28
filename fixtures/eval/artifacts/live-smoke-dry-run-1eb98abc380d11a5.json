@@ -1,6 +1,6 @@
 {
   "schema_version": "caregap.eval.live_smoke.v1",
-  "generated_at": "2026-10-28T23:03:37.312Z",
+  "generated_at": "2026-10-28T23:24:08.748Z",
   "mode": "dry-run",
   "live_calls_executed": false,
   "model_id": "gpt-5.4-mini-2026-03-17",
@@ -17,7 +17,7 @@
   "gate": {
     "ok": true,
     "mode": "dry-run",
-    "opt_in_env": false,
+    "opt_in_env": true,
     "explicit_approval": false,
     "api_key_present": false,
     "model_id_confirmed": "gpt-5.4-mini-2026-03-17",
@@ -53,7 +53,6 @@
       "checkpoint resume skip already-completed case_ids"
     ],
     "blockers_for_live": [
-      "CAREGAP_LIVE_EVAL_OPT_IN unset",
       "explicitApproval required",
       "OPENAI_API_KEY missing in this process env"
     ]

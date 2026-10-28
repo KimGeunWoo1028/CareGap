@@ -14,3 +14,7 @@ export * from "@/lib/eval/live-pilot";
 export * from "@/lib/eval/smoke-select";
 export * from "@/lib/eval/live-smoke-call";
 export * from "@/lib/eval/live-smoke-runner";
+export * from "@/lib/eval/synthetic-note-ids";
+export * from "@/lib/eval/smoke-operational-metrics";
+export * from "@/lib/eval/semantic-citation-review";
+export * from "@/lib/analysis/diagnose";

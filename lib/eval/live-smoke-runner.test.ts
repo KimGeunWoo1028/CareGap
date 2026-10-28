@@ -158,7 +158,7 @@ describe("live smoke call classification (mock fetch)", () => {
     if (!r.ok) expect(r.response_class).toBe("incomplete");
   });
 
-  it("retries 429 once then returns", async () => {
+  it("retries transient 429 once then returns", async () => {
     const fetchImpl = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse(429, { error: { message: "rate" } }))
@@ -171,6 +171,30 @@ describe("live smoke call classification (mock fetch)", () => {
     expect(attempts).toBe(2);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.response_class).toBe("http_429");
+  });
+
+  it("does not retry 429 billing/quota limit errors", async () => {
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse(429, {
+        error: {
+          message: "You exceeded your current quota, please check your plan",
+          type: "insufficient_quota",
+          code: "insufficient_quota",
+        },
+      }),
+    );
+    const { result, attempts } = await callSmokeResponsesWithLimitedRetry({
+      previous,
+      current,
+      openai: { apiKey: "k", model: SMOKE_MODEL_ID, fetchImpl: fetchImpl as never },
+    });
+    expect(attempts).toBe(1);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    if (!result.ok) {
+      expect(result.response_class).toBe("http_429");
+      expect(result.retryable).toBe(false);
+      expect(result.error_code).toBe("HTTP_429_BILLING_OR_QUOTA");
+    }
   });
 
   it("does not retry auth errors", async () => {
@@ -371,6 +395,7 @@ describe("live smoke runner with injected mock (no network)", () => {
             checkpoint_status: "completed",
             execution_timestamp: new Date().toISOString(),
             predicted_status: first.expected_status,
+            evidence_snapshots: null,
             error_code: null,
             billing_uncertain: false,
           },
@@ -390,6 +415,7 @@ describe("live smoke runner with injected mock (no network)", () => {
           ok: false,
           response_class: "http_5xx",
           error_code: "HTTP_500",
+          validation_diagnosis: null,
           retryable: false,
           billing_uncertain: false,
           usage: null,

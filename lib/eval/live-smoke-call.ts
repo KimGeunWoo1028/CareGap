@@ -16,6 +16,11 @@ import {
   ANALYSIS_SYSTEM_INSTRUCTION,
   buildAnalysisUserPayload,
 } from "@/lib/analysis/prompt";
+import {
+  classifyValidationDetails,
+  formatDiagnosisCode,
+  type ValidationDiagnosis,
+} from "@/lib/analysis/diagnose";
 import type { AnalysisNote, ValidatedAnalysis } from "@/lib/analysis/types";
 import { validateAnalysisOutput } from "@/lib/analysis/validate";
 import {
@@ -30,7 +35,8 @@ import {
 import type { ExpectedStatusMap } from "@/lib/eval/types";
 import { ANALYSIS_DOMAINS } from "@/lib/analysis/types";
 
-export const SMOKE_PROMPT_VERSION = "ai_spec_system_v1";
+/** Bumped when AI_SPEC system instruction unknown/note_id hardening landed. */
+export const SMOKE_PROMPT_VERSION = "ai_spec_system_v2";
 
 export type SmokeResponseClass =
   | "success"
@@ -60,6 +66,7 @@ export type SmokeCallFailure = {
   ok: false;
   response_class: Exclude<SmokeResponseClass, "success">;
   error_code: string;
+  validation_diagnosis: ValidationDiagnosis | null;
   retryable: boolean;
   /** Timeout may still have been billed server-side — do not auto-retry. */
   billing_uncertain: boolean;
@@ -75,7 +82,27 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function classifyHttp(status: number): {
+/** Billing/quota 429 must never be retried (would burn remaining budget). */
+export function isBillingOrQuotaLimitError(bodyText: string): boolean {
+  const t = bodyText.toLowerCase();
+  return (
+    t.includes("insufficient_quota") ||
+    t.includes("billing_hard_limit") ||
+    t.includes("billing hard limit") ||
+    t.includes("exceeded your current quota") ||
+    (t.includes("budget") && t.includes("limit")) ||
+    t.includes("spending limit") ||
+    t.includes("spend limit") ||
+    (t.includes("credit") &&
+      (t.includes("exhausted") || t.includes("limit"))) ||
+    (t.includes("project") && t.includes("limit") && t.includes("reached"))
+  );
+}
+
+function classifyHttp(
+  status: number,
+  bodyText = "",
+): {
   response_class: SmokeCallFailure["response_class"];
   retryable: boolean;
   code: string;
@@ -95,6 +122,13 @@ function classifyHttp(status: number): {
     };
   }
   if (status === 429) {
+    if (isBillingOrQuotaLimitError(bodyText)) {
+      return {
+        response_class: "http_429",
+        retryable: false,
+        code: "HTTP_429_BILLING_OR_QUOTA",
+      };
+    }
     return { response_class: "http_429", retryable: true, code: "HTTP_429" };
   }
   if (status >= 500) {
@@ -176,12 +210,18 @@ function parseAndValidate(
     const analysis = validateAnalysisOutput(raw, previous, current);
     return { analysis, usage, provider_status };
   } catch (e) {
+    const diagnosis =
+      e instanceof ApiError && e.code === "INVALID_AI_OUTPUT"
+        ? classifyValidationDetails(e.details)
+        : null;
     throw Object.assign(
       e instanceof Error ? e : new Error("schema_or_evidence_invalid"),
       {
         smoke_class: "schema_or_evidence_invalid" as const,
         usage,
         provider_status,
+        validation_diagnosis: diagnosis,
+        diagnosis_code: diagnosis ? formatDiagnosisCode(diagnosis) : null,
       },
     );
   }
@@ -233,11 +273,18 @@ export async function callSmokeResponsesOnce(input: {
     const latency_ms = Date.now() - started;
 
     if (!response.ok) {
-      const c = classifyHttp(response.status);
+      let bodyText = "";
+      try {
+        bodyText = await response.text();
+      } catch {
+        bodyText = "";
+      }
+      const c = classifyHttp(response.status, bodyText);
       return {
         ok: false,
         response_class: c.response_class,
         error_code: c.code,
+        validation_diagnosis: null,
         retryable: c.retryable,
         billing_uncertain: false,
         usage: null,
@@ -270,13 +317,17 @@ export async function callSmokeResponsesOnce(input: {
         usage?: ResponsesUsage;
         provider_status?: string | null;
         message?: string;
+        validation_diagnosis?: ValidationDiagnosis | null;
+        diagnosis_code?: string | null;
       };
       const response_class = meta.smoke_class ?? "unexpected";
       const usage = meta.usage ?? extractResponsesUsage(payload);
       return {
         ok: false,
         response_class,
-        error_code: meta.message ?? "INVALID_AI_OUTPUT",
+        error_code:
+          meta.diagnosis_code ?? meta.message ?? "INVALID_AI_OUTPUT",
+        validation_diagnosis: meta.validation_diagnosis ?? null,
         retryable: false,
         billing_uncertain: false,
         usage,
@@ -295,6 +346,7 @@ export async function callSmokeResponsesOnce(input: {
         ok: false,
         response_class: "timeout",
         error_code: "TIMEOUT",
+        validation_diagnosis: null,
         retryable: false,
         billing_uncertain: true,
         usage: null,
@@ -307,6 +359,7 @@ export async function callSmokeResponsesOnce(input: {
       ok: false,
       response_class: "network",
       error_code: error instanceof Error ? error.message.slice(0, 120) : "network",
+      validation_diagnosis: null,
       retryable: true,
       billing_uncertain: true,
       usage: null,
@@ -347,6 +400,7 @@ export async function callSmokeResponsesWithLimitedRetry(input: {
         ok: false,
         response_class: "unexpected",
         error_code: "NO_ATTEMPT",
+        validation_diagnosis: null,
         retryable: false,
         billing_uncertain: false,
         usage: null,
