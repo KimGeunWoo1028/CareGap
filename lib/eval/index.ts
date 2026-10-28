@@ -8,3 +8,6 @@ export * from "@/lib/eval/live-prep";
 export * from "@/lib/eval/baselines";
 export * from "@/lib/eval/audit";
 export * from "@/lib/eval/live-dry-run";
+export * from "@/lib/eval/pilot-select";
+export * from "@/lib/eval/live-cost";
+export * from "@/lib/eval/live-pilot";

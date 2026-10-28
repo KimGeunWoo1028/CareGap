@@ -18,7 +18,9 @@
     "eval:generate": "node scripts/generate-eval-dataset.mjs",
     "eval:generate:v2-candidates": "node scripts/generate-eval-v2-candidates.mjs",
     "eval:test": "vitest run lib/eval",
-    "eval:run": "node scripts/run-eval.mjs"
+    "eval:run": "node scripts/run-eval.mjs",
+    "eval:pilot:manifest": "node scripts/generate-live-pilot-manifest.mjs",
+    "eval:pilot:dry-run": "node scripts/run-live-pilot-dry-run.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

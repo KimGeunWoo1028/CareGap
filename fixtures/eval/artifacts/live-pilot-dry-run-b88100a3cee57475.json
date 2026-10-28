@@ -1,0 +1,228 @@
+{
+  "schema_version": "caregap.eval.live_pilot.v1",
+  "generated_at": "2026-10-28T15:04:31.338Z",
+  "mode": "dry-run",
+  "live_calls_executed": false,
+  "dataset_version": "1.0.0",
+  "model_id": null,
+  "prompt_version": null,
+  "evaluation_version": "live-pilot-prep-v1",
+  "case_count": 30,
+  "gate": {
+    "ok": true,
+    "mode": "dry-run",
+    "opt_in_env": false,
+    "explicit_approval": false,
+    "api_key_present": false,
+    "cost_estimate": {
+      "model_id": "gpt-5.4-mini-2026-03-17",
+      "cases": 30,
+      "max_attempts_per_case": 2,
+      "estimated_input_tokens_per_call": 1200,
+      "estimated_output_tokens_per_call": 800,
+      "estimated_calls_including_retries": 60,
+      "estimated_usd": 0.114,
+      "hard_max_usd": 5,
+      "within_hard_max": true,
+      "estimate_vs_invoice_note": "estimated_usd is a planner upper bound, not the OpenAI invoice.",
+      "rate_card": {
+        "model_id": "gpt-5.4-mini-2026-03-17",
+        "input_usd_per_1m_tokens": 0.25,
+        "output_usd_per_1m_tokens": 2,
+        "source_note": "Placeholder planning rates — confirm OpenAI list prices before Live approval."
+      }
+    },
+    "blockers": []
+  },
+  "results": [
+    {
+      "case_id": "eval-v1-001",
+      "family_id": "fam-meal-mob-worsen-01",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-002",
+      "family_id": "fam-meal-unchanged-01",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-003",
+      "family_id": "fam-mob-improve-01",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-004",
+      "family_id": "fam-insufficient-01",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-005",
+      "family_id": "fam-injection-01",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-006",
+      "family_id": "fam-ongoing-01",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-007",
+      "family_id": "fam-negation-01",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-008",
+      "family_id": "fam-health-worsen-01",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-009",
+      "family_id": "fam-env-improve-01",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-012",
+      "family_id": "fam-meal-improve-01",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-013",
+      "family_id": "fam-worsen-meal-0",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-014",
+      "family_id": "fam-worsen-mobility-1",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-015",
+      "family_id": "fam-worsen-health-2",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-016",
+      "family_id": "fam-worsen-environment-3",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-019",
+      "family_id": "fam-improve-0",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-020",
+      "family_id": "fam-improve-1",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-021",
+      "family_id": "fam-improve-2",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-024",
+      "family_id": "fam-paraphrase-meal-01",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-026",
+      "family_id": "fam-ongoing-0",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-027",
+      "family_id": "fam-ongoing-1",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-028",
+      "family_id": "fam-ongoing-2",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-029",
+      "family_id": "fam-ongoing-3",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-030",
+      "family_id": "fam-prev-only-1",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-036",
+      "family_id": "fam-multi-2",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-037",
+      "family_id": "fam-style-1",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-039",
+      "family_id": "fam-f-m1",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-040",
+      "family_id": "fam-f-m2",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-041",
+      "family_id": "fam-f-mo1",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-056",
+      "family_id": "fam-f-po1",
+      "status": "dry_run_skipped",
+      "error_code": null
+    },
+    {
+      "case_id": "eval-v1-057",
+      "family_id": "fam-f-co1",
+      "status": "dry_run_skipped",
+      "error_code": null
+    }
+  ],
+  "metrics": null,
+  "metrics_note": "No Live model metrics — dry-run only. Do not invent accuracy from this report.",
+  "safety": {
+    "opt_in_env": "CAREGAP_LIVE_EVAL_OPT_IN=I_ACCEPT_PAID_SYNTHETIC_EVAL",
+    "explicit_flag": "--i-approve-live-spend",
+    "caregap_test_db_writes": false,
+    "synthetic_only": true,
+    "secrets_in_logs": false
+  }
+}

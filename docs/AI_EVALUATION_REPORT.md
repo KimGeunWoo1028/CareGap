@@ -27,6 +27,15 @@ Artifacts written by tests:
 - `fixtures/eval/reports/latest-identity.json`
 - `fixtures/eval/reports/latest-identity.md`
 
-## Next Live stage (not started)
+## Controlled Live pilot prep (no paid calls)
 
-Requires: budget approval, `CAREGAP_LIVE_EVAL_OPT_IN=I_ACCEPT_PAID_SYNTHETIC_EVAL`, case gates in `lib/eval/live-prep.ts`, capped calls, and versioned prediction files with `prediction_source=live`.
+See `docs/AI_LIVE_EVALUATION_PILOT.md`.
+
+| Item | Status |
+|---|---|
+| Manifest | `fixtures/eval/live-pilot.v1.manifest.json` (Dev/Val, no Test) |
+| Dry-run | `npm run eval:pilot:dry-run` → `fixtures/eval/artifacts/` |
+| Live OpenAI | **Not executed** — awaiting explicit user approval |
+| Invented Live accuracy | **Forbidden** until a gated paid run completes |
+
+Requires for paid Live: budget approval, `CAREGAP_LIVE_EVAL_OPT_IN=I_ACCEPT_PAID_SYNTHETIC_EVAL`, `--i-approve-live-spend`, case/cost gates in `lib/eval/live-pilot.ts`, and versioned artifacts with `prediction_source=live` (eval fixtures only — not CareGap Test DB).
