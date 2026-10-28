@@ -4,31 +4,31 @@
 
 ## Now
 
-로드맵 1단계 엔지니어링 연속: P0 신뢰성 + CI + 평가 시드 + 후속 확인 최소 슬라이스 (`fix/p0-reliability`, 미커밋).
+Migration reconciliation on `fix/p0-reliability` @ `43ff50b`+: document 005/005b history, freeze CareGap Test schema/data (no DDL/DML this pass).
 
 ## Done
 
-- P0: Live REST 파싱, 토큰 갱신 동기화, 예약 후 실패·45초, README/ENV/ARCH
-- CI workflow (mock E2E placeholder env)
-- 평가 fixture 12건 + status agreement 하네스 (의미 평가는 별도)
-- 지속 필요(`unchanged`) 매칭 신호
-- `follow_up_tasks` SQL/API/UI 대기함
+- P0 reliability, CI, eval harness, worsened-only matching
+- CareGap Test: 004 → 004a → 005 (mismatched payload) → 005b (correct); atomicity A/B previously PASS
+- Repo: canonical `sql/005`, corrective `sql/005b`, recovered mismatched payload under `sql/history/`
+- Read-only integrity: cases/consultations/programs preserved; 0 orphan FK; 0 dup open; pre-005 orphan `needs_followup` counted (no auto-backfill)
 
 ## Next
 
-- 합성 staging에 SQL 004 적용·실 Auth 회귀 (자격정보 필요)
-- 평가 세트 전문가 확장 (100~200) · 버전 기록
-- 기관 인터뷰(로드맵 #6) · SECURITY 후속(#9)
+- Isolated Docker 001→005b reproducibility when Desktop daemon is available
+- Approved manual orphan follow-up backfill (optional)
+- Next hardening stage only after PARTIAL→PASS on reproducibility
 
 ## Tracks
 
 | Track | Status |
 |---|---|
-| Replay demo path | Stable (prior RC) |
-| Live provider | Mock-only verified |
-| Follow-up workflow | Minimal slice |
+| Replay demo path | Stable (RC `107e9ec`) |
+| Live provider | Mock-only verified (no paid calls) |
+| Follow-up + atomicity | Live on Test via 005b |
+| Schema reproducibility | BLOCKED (Docker daemon down) |
 | Field evidence | Not started |
 
 ## Do-not
 
-실데이터·자동 자격·자동 신청·비밀 커밋·추측성 “검증 통과” 보고.
+실데이터·자동 자격·자동 신청·비밀/백업 커밋·CareGap Test 초기화·migration history 수동 편집·추측성 “검증 통과”·push/`main`·RC 변경.

@@ -14,6 +14,7 @@ const TABLES = [
   "welfare_programs",
   "analyses",
   "reviews",
+  "follow_up_tasks",
 ];
 
 function loadEnvLocal() {

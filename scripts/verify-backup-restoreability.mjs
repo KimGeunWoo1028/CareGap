@@ -1,6 +1,7 @@
 /**
  * Validate local JSON logical backup integrity without writing to CareGap Test.
- * Schema restore requires sql/001–004a (and 005 when approved); this checks data files only.
+ * Schema restore requires sql/001–005 (new install) or 001–004a+005b (CareGap Test path);
+ * this script checks data-file integrity only — it does not restore into CareGap Test.
  */
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, existsSync } from "node:fs";
@@ -40,7 +41,7 @@ try {
   }
 
   console.log(
-    "BACKUP_SCOPE | data-only JSON; schema restore needs sql/001-004a (+005 when approved)",
+    "BACKUP_SCOPE | data-only JSON; schema restore needs sql/001-005 (new) or +005b (Test upgrade path)",
   );
   console.log(
     "BACKUP_RESTORE_TO_CARE_GAP_TEST | NOT_RUN | would overwrite live data — blocked by policy",

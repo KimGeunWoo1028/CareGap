@@ -1,5 +1,15 @@
--- NEW migration (not yet applied to CareGap Test — requires explicit approval).
+-- Canonical intended migration for review→follow_up atomicity.
 -- Apply AFTER 004 + 004a. Do not re-run 001–004a.
+--
+-- CareGap Test history note:
+-- - Migration name `005_review_follow_up_atomicity` (20261028085923) was recorded with a
+--   mismatched apply_migration payload (wrong columns). See
+--   sql/history/005_review_follow_up_atomicity.mismatched-applied-payload.sql
+--   (recovered verbatim from the apply call; do not re-apply).
+-- - Live function/trigger were corrected by
+--   sql/005b_review_follow_up_atomicity_correct.sql (20261028090005).
+-- - This file body matches 005b (canonical behavior). New installs apply THIS file once
+--   after 004a and do NOT apply the mismatched payload or 005b.
 --
 -- Design choice: AFTER INSERT trigger on public.reviews (SECURITY INVOKER)
 -- vs SECURITY DEFINER RPC.
