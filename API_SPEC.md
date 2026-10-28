@@ -88,7 +88,7 @@
 {"decision":"needs_followup","note":"식사 빈도와 이동 상황을 추가 확인할 예정"}
 ```
 
-`decision`은 confirmed/needs_followup/rejected. `note`는 필수 문자열이며 최대 500자, rejected는 공백 아닌 사유 필수, 나머지는 빈 문자열 허용. 직접 식별정보 의심 시 400. 성공 분석에 대해서만 한 번 작성; 이미 작성 시 409 REVIEW_EXISTS. 실패/진행 분석은 409 `ANALYSIS_IN_PROGRESS`(처리 중) 또는 `ANALYSIS_FAILED`(실패)로 거부. 응답 data는 `{id,analysis_id,decision,note,created_at}`. 검토 내용은 연계 완료나 지원 결정의 증거가 아니다. `needs_followup` 저장 시 서버는 가능하면 `follow_up_tasks`에 `next_consultation` 대기 항목을 하나 만든다(실패해도 검토 저장은 유지).
+`decision`은 confirmed/needs_followup/rejected. `note`는 필수 문자열이며 최대 500자, rejected는 공백 아닌 사유 필수, 나머지는 빈 문자열 허용. 직접 식별정보 의심 시 400. 성공 분석에 대해서만 한 번 작성; 이미 작성 시 409 REVIEW_EXISTS. 실패/진행 분석은 409 `ANALYSIS_IN_PROGRESS`(처리 중) 또는 `ANALYSIS_FAILED`(실패)로 거부. 응답 data는 `{id,analysis_id,decision,note,created_at}`. 검토 내용은 연계 완료나 지원 결정의 증거가 아니다. `needs_followup`일 때 `follow_up_tasks` `next_consultation`은 DB 트리거(sql/005, 승인 적용 후)가 **검토 INSERT와 동일 트랜잭션**에서 만든다. 트리거 실패 시 검토도 롤백된다. `confirmed`/`rejected`는 자동 후속을 만들지 않는다.
 
 ### `GET /follow-ups` → 200
 

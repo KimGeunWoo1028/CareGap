@@ -21,7 +21,6 @@ import {
 } from "@/lib/analysis/repository";
 import type { AuthenticatedRequest } from "@/lib/auth/request-auth";
 import { getServerEnv } from "@/lib/env";
-import { createFollowUpFromReview } from "@/lib/follow-ups/service";
 
 /** Overall wall-clock budget after a new reservation (ARCHITECTURE.md). */
 export const ANALYSIS_OVERALL_TIMEOUT_MS = 45_000;
@@ -306,26 +305,8 @@ export async function createAnalysisReview(
     throw new ApiError("REVIEW_EXISTS");
   }
 
-  const review = await insertReview(
-    auth.db,
-    auth.user.id,
-    analysisId,
-    decision,
-    note,
-  );
-
-  // Human-owned follow-up queue — not an automated referral or eligibility decision.
-  if (decision === "needs_followup") {
-    try {
-      await createFollowUpFromReview(auth, {
-        caseId: row.case_id,
-        analysisId: row.id,
-        reviewNote: note,
-      });
-    } catch {
-      // Review already saved; follow-up can be added manually from the inbox.
-    }
-  }
-
-  return review;
+  // needs_followup → follow_up_tasks is created in the same DB transaction by
+  // AFTER INSERT trigger reviews_enqueue_follow_up (sql/005). App-level second
+  // insert is intentionally not used (avoids non-atomic success).
+  return insertReview(auth.db, auth.user.id, analysisId, decision, note);
 }

@@ -56,7 +56,8 @@ export async function createFollowUpTask(
 }
 
 /**
- * Opens a next_consultation task when the worker marks needs_followup.
+ * Recovery helper for pre-005 orphans (review saved without follow-up).
+ * Normal needs_followup path uses DB trigger reviews_enqueue_follow_up (sql/005).
  * Idempotent for the same analysis: returns existing open task if present.
  */
 export async function createFollowUpFromReview(

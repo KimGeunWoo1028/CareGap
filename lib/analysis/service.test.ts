@@ -480,6 +480,55 @@ describe("createAnalysisReview (T14, T26)", () => {
       "확인 예정",
     );
     expect(review.decision).toBe("needs_followup");
-    expect(insertReview).toHaveBeenCalled();
+    expect(insertReview).toHaveBeenCalledTimes(1);
+    expect(insertReview).toHaveBeenCalledWith(
+      auth.db,
+      "owner-1",
+      processingRow.id,
+      "needs_followup",
+      "확인 예정",
+    );
+  });
+
+  it("does not app-insert follow-ups (DB trigger owns needs_followup atomicity)", async () => {
+    const { createAnalysisReview } = await import("./service");
+    getAnalysisRowForOwner.mockResolvedValue({
+      ...processingRow,
+      status: "succeeded",
+      result: { analysis: replayFixture, recommendations: [] },
+      completed_at: "2026-10-27T08:30:01Z",
+    });
+    getAnalysisDetail.mockResolvedValue({
+      id: processingRow.id,
+      status: "succeeded",
+      review: null,
+    });
+    insertReview.mockResolvedValue({
+      id: "r2",
+      analysis_id: processingRow.id,
+      decision: "confirmed",
+      note: "",
+      created_at: "2026-10-27T09:00:00Z",
+    });
+    await createAnalysisReview(auth, processingRow.id, "confirmed", "");
+    expect(insertReview).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects duplicate review (REVIEW_EXISTS)", async () => {
+    const { createAnalysisReview } = await import("./service");
+    getAnalysisRowForOwner.mockResolvedValue({
+      ...processingRow,
+      status: "succeeded",
+      completed_at: "2026-10-27T08:30:01Z",
+    });
+    getAnalysisDetail.mockResolvedValue({
+      id: processingRow.id,
+      status: "succeeded",
+      review: { id: "existing" },
+    });
+    await expect(
+      createAnalysisReview(auth, processingRow.id, "confirmed", ""),
+    ).rejects.toMatchObject({ code: "REVIEW_EXISTS" });
+    expect(insertReview).not.toHaveBeenCalled();
   });
 });
