@@ -1,0 +1,147 @@
+{
+  "schema_version": "caregap.eval.live_smoke.v1",
+  "generated_at": "2026-10-28T15:22:43.717Z",
+  "mode": "dry-run",
+  "live_calls_executed": false,
+  "model_id": "gpt-5.4-mini-2026-03-17",
+  "prompt_version": null,
+  "evaluation_version": "live-smoke-prep-v1",
+  "case_count": 5,
+  "case_ids": [
+    "eval-v1-001",
+    "eval-v1-003",
+    "eval-v1-002",
+    "eval-v1-004",
+    "eval-v1-016"
+  ],
+  "gate": {
+    "ok": true,
+    "mode": "dry-run",
+    "opt_in_env": false,
+    "explicit_approval": false,
+    "api_key_present": false,
+    "model_id_confirmed": "gpt-5.4-mini-2026-03-17",
+    "cost_estimate": {
+      "model_id": "gpt-5.4-mini-2026-03-17",
+      "input_usd_per_1m_tokens": 0.75,
+      "output_usd_per_1m_tokens": 4.5,
+      "source_note": "User-confirmed OpenAI list rates (input $0.75 / output $4.50 per 1M).",
+      "cases": 5,
+      "max_attempts_per_case": 2,
+      "max_calls_including_retries": 10,
+      "estimated_input_tokens_per_call": 1200,
+      "estimated_output_tokens_per_call": 800,
+      "estimated_calls_including_retries": 10,
+      "estimated_input_tokens_total": 12000,
+      "estimated_output_tokens_total": 8000,
+      "estimated_usd": 0.045000000000000005,
+      "legacy_placeholder_estimated_usd": 0.019,
+      "rate_card_input_multiplier_vs_placeholder": 3,
+      "rate_card_output_multiplier_vs_placeholder": 2.25,
+      "hard_max_usd": 1,
+      "within_hard_max": true,
+      "estimate_vs_invoice_note": "estimated_usd is planner upper bound, not invoice. Account payment limits are separate."
+    },
+    "abort_conditions": [
+      "opt_in cleared",
+      "explicit approval missing",
+      "API key missing",
+      "calls_made >= 10",
+      "spent_usd_estimate would exceed hard_max_usd $1",
+      "non-retryable provider error after policy",
+      "non-synthetic or PII gate failure",
+      "checkpoint resume skip already-completed case_ids"
+    ],
+    "blockers_for_live": [
+      "CAREGAP_LIVE_EVAL_OPT_IN unset",
+      "explicitApproval required",
+      "OPENAI_API_KEY missing in this process env"
+    ]
+  },
+  "results": [
+    {
+      "case_id": "eval-v1-001",
+      "family_id": "fam-meal-mob-worsen-01",
+      "split": "dev",
+      "status": "dry_run_skipped",
+      "error_code": null,
+      "synthetic_ok": true,
+      "review_status": "internally_reviewed",
+      "expected_status": {
+        "meal": "worsened",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-003",
+      "family_id": "fam-mob-improve-01",
+      "split": "dev",
+      "status": "dry_run_skipped",
+      "error_code": null,
+      "synthetic_ok": true,
+      "review_status": "internally_reviewed",
+      "expected_status": {
+        "meal": "unknown",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-002",
+      "family_id": "fam-meal-unchanged-01",
+      "split": "dev",
+      "status": "dry_run_skipped",
+      "error_code": null,
+      "synthetic_ok": true,
+      "review_status": "internally_reviewed",
+      "expected_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-004",
+      "family_id": "fam-insufficient-01",
+      "split": "val",
+      "status": "dry_run_skipped",
+      "error_code": null,
+      "synthetic_ok": true,
+      "review_status": "internally_reviewed",
+      "expected_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-016",
+      "family_id": "fam-worsen-environment-3",
+      "split": "dev",
+      "status": "dry_run_skipped",
+      "error_code": null,
+      "synthetic_ok": true,
+      "review_status": "internally_reviewed",
+      "expected_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      }
+    }
+  ],
+  "metrics": null,
+  "metrics_note": "No Live model metrics — dry-run only. Do not invent accuracy.",
+  "safety": {
+    "caregap_test_db_writes": false,
+    "replay_contract_unchanged": true,
+    "synthetic_only": true,
+    "secrets_in_logs": false
+  },
+  "proposed_live_command": "CAREGAP_LIVE_EVAL_OPT_IN=I_ACCEPT_PAID_SYNTHETIC_EVAL npm run eval:pilot:smoke:live -- --i-approve-live-spend  (NOT ENABLED until approval; script may be wired after approve)"
+}

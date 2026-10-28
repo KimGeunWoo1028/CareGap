@@ -11,3 +11,4 @@ export * from "@/lib/eval/live-dry-run";
 export * from "@/lib/eval/pilot-select";
 export * from "@/lib/eval/live-cost";
 export * from "@/lib/eval/live-pilot";
+export * from "@/lib/eval/smoke-select";

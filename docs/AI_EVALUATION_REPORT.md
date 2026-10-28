@@ -36,6 +36,9 @@ See `docs/AI_LIVE_EVALUATION_PILOT.md`.
 | Manifest | `fixtures/eval/live-pilot.v1.manifest.json` (Dev/Val, no Test) |
 | Dry-run | `npm run eval:pilot:dry-run` → `fixtures/eval/artifacts/` |
 | Live OpenAI | **Not executed** — awaiting explicit user approval |
+| 5-case smoke prep | `fixtures/eval/live-smoke.v1.manifest.json` · dry-run only · hard max $1 |
+| Rate card | Official $0.75 / $4.50 per 1M (in/out); placeholder $0.25/$2.00 superseded |
 | Invented Live accuracy | **Forbidden** until a gated paid run completes |
+| OPENAI_API_KEY (local `.env.local`) | Present as variable but **empty** at last pre-flight — must be set before paid smoke |
 
 Requires for paid Live: budget approval, `CAREGAP_LIVE_EVAL_OPT_IN=I_ACCEPT_PAID_SYNTHETIC_EVAL`, `--i-approve-live-spend`, case/cost gates in `lib/eval/live-pilot.ts`, and versioned artifacts with `prediction_source=live` (eval fixtures only — not CareGap Test DB).

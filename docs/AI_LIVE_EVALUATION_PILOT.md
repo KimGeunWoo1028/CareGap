@@ -42,19 +42,41 @@ npx vitest run lib/eval/pilot-select.test.ts
 
 Mock/unit Live tests (`lib/analysis/live.test.ts`) stay separate from paid pilot execution.
 
+## Official rate card (planning)
+
+| Item | Value |
+|---|---|
+| Model | `gpt-5.4-mini-2026-03-17` |
+| Input | **$0.75 / 1M tokens** |
+| Output | **$4.50 / 1M tokens** |
+| Prior placeholder | $0.25 / $2.00 (input/output) — **3× / 2.25×** lower; superseded |
+
+`estimated_usd` ≠ invoice. Account payment / project spend caps are verified separately in the OpenAI dashboard.
+
+## 5-case smoke (before full 30)
+
+| Field | Value |
+|---|---|
+| Manifest | `fixtures/eval/live-smoke.v1.manifest.json` |
+| Cases | `eval-v1-001`, `003`, `002`, `004`, `016` |
+| Max calls (retries incl.) | **10** |
+| Local hard max | **$1** |
+| Dry-run | `npm run eval:pilot:smoke:dry-run` |
+
+Statuses covered: worsened · improved · unchanged · unknown. Full 30 remains unapproved until smoke results are reviewed.
+
 ## Cost & safety gates (all required for paid Live)
 
 1. Mode `live` (default remains `dry-run`)
 2. Env `CAREGAP_LIVE_EVAL_OPT_IN=I_ACCEPT_PAID_SYNTHETIC_EVAL`
 3. Explicit CLI/API approval (`--i-approve-live-spend` / `explicitApproval: true`)
 4. `OPENAI_API_KEY` present
-5. Planner `estimated_usd ≤ hard_max_usd` (default **$5**)
+5. Planner `estimated_usd ≤ hard_max_usd` (**$1** smoke / **$5** full 30 planner default)
 6. Runtime `assertWithinCostGuard` before each call
 7. Checkpoint skip of completed `case_id`s (no re-bill)
 8. Synthetic fixtures only; **no** CareGap Test DB writes
 9. Never log API keys or consultation body text
-
-`estimated_usd` ≠ invoice. Re-verify OpenAI list prices and account access before approval.
+10. Replay demo path and CareGap Test DB unchanged
 
 ## Dry-run
 
@@ -79,13 +101,13 @@ Failures stay in the report; do not score only successes and call that model qua
 
 Calibration baselines (`fixtures/eval/reports/calibration-baselines.v1.json`) remain the offline reference. A Live model that only exceeds always-unknown accuracy is **not** auto-approved.
 
-## User actions before paid Live
+## User actions before paid 5-case smoke Live
 
-1. Confirm `OPENAI_API_KEY` and model access for `gpt-5.4-mini-2026-03-17` (or chosen substitute).
-2. Re-check current input/output token prices; update rate card if needed.
+1. Confirm `OPENAI_API_KEY` and model access for `gpt-5.4-mini-2026-03-17`.
+2. Confirm OpenAI project billing / spend limit separately (local `$1` guard ≠ account cap).
 3. Set `CAREGAP_LIVE_EVAL_OPT_IN=I_ACCEPT_PAID_SYNTHETIC_EVAL`.
-4. Approve spend in writing (hard max, case count, model).
-5. Run the Live entrypoint only after that approval (not provided as default npm script).
+4. Approve in writing: **5 cases**, max **10** calls, hard max **$1**, model above.
+5. Only then enable the Live smoke runner (not executed in dry-run prep).
 
 ## Absolute preserves
 

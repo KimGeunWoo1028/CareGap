@@ -14,8 +14,8 @@ const require = createRequire(import.meta.url);
 // Cost estimate (mirrors lib/eval/live-cost.ts defaults)
 const RATE = {
   model_id: "gpt-5.4-mini-2026-03-17",
-  input_usd_per_1m_tokens: 0.25,
-  output_usd_per_1m_tokens: 2.0,
+  input_usd_per_1m_tokens: 0.75,
+  output_usd_per_1m_tokens: 4.5,
 };
 const HARD_MAX_USD = 5;
 const MAX_ATTEMPTS = 2;
@@ -91,7 +91,7 @@ const report = {
       rate_card: {
         ...RATE,
         source_note:
-          "Placeholder planning rates — confirm OpenAI list prices before Live approval.",
+          "User-confirmed OpenAI list rates (input $0.75 / output $4.50 per 1M).",
       },
     },
     blockers: [],

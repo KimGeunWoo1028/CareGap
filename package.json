@@ -20,7 +20,9 @@
     "eval:test": "vitest run lib/eval",
     "eval:run": "node scripts/run-eval.mjs",
     "eval:pilot:manifest": "node scripts/generate-live-pilot-manifest.mjs",
-    "eval:pilot:dry-run": "node scripts/run-live-pilot-dry-run.mjs"
+    "eval:pilot:dry-run": "node scripts/run-live-pilot-dry-run.mjs",
+    "eval:pilot:smoke:manifest": "node scripts/generate-live-smoke-manifest.mjs",
+    "eval:pilot:smoke:dry-run": "node scripts/run-live-smoke-dry-run.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

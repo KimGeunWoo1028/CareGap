@@ -1,0 +1,121 @@
+{
+  "smoke_id": "live-smoke-v1",
+  "smoke_version": "1.0.0",
+  "parent_pilot_id": "live-pilot-v1",
+  "parent_pilot_version": "1.0.0",
+  "parent_dataset_version": "1.0.0",
+  "created_for": "controlled_live_smoke_5",
+  "model_id": "gpt-5.4-mini-2026-03-17",
+  "splits_allowed": [
+    "dev",
+    "val"
+  ],
+  "test_split_used": false,
+  "max_calls_including_retries": 10,
+  "hard_max_usd": 1,
+  "cases": [
+    {
+      "case_id": "eval-v1-001",
+      "split": "dev",
+      "family_id": "fam-meal-mob-worsen-01",
+      "review_status": "internally_reviewed",
+      "scenarios": [
+        "clear_worsening",
+        "multi_domain"
+      ],
+      "expected_status": {
+        "meal": "worsened",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "label_rationale": "이전 식사·장보기 가능 → 현재 거름·장보기 어려움이 직접 대비되어 meal/mobility worsened.",
+      "ambiguous": false,
+      "label_approved_for_scoring": true,
+      "selection_reason": "internally_reviewed_balanced_pick"
+    },
+    {
+      "case_id": "eval-v1-003",
+      "split": "dev",
+      "family_id": "fam-mob-improve-01",
+      "review_status": "internally_reviewed",
+      "scenarios": [
+        "clear_improvement"
+      ],
+      "expected_status": {
+        "meal": "unknown",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "label_rationale": "혼자 보행 불가 → 가게까지 보행 가능으로 개선.",
+      "ambiguous": false,
+      "label_approved_for_scoring": true,
+      "selection_reason": "internally_reviewed_balanced_pick"
+    },
+    {
+      "case_id": "eval-v1-002",
+      "split": "dev",
+      "family_id": "fam-meal-unchanged-01",
+      "review_status": "internally_reviewed",
+      "scenarios": [
+        "stable_ok"
+      ],
+      "expected_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "label_rationale": "동일 식사 보고만 반복. 다른 영역은 비교 근거 없음 → unknown.",
+      "ambiguous": false,
+      "label_approved_for_scoring": true,
+      "selection_reason": "internally_reviewed_balanced_pick"
+    },
+    {
+      "case_id": "eval-v1-004",
+      "split": "val",
+      "family_id": "fam-insufficient-01",
+      "review_status": "internally_reviewed",
+      "scenarios": [
+        "both_insufficient"
+      ],
+      "expected_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "label_rationale": "네 범주 관련 사실 없음 → 전부 unknown.",
+      "ambiguous": false,
+      "label_approved_for_scoring": true,
+      "selection_reason": "internally_reviewed_balanced_pick"
+    },
+    {
+      "case_id": "eval-v1-016",
+      "split": "dev",
+      "family_id": "fam-worsen-environment-3",
+      "review_status": "internally_reviewed",
+      "scenarios": [
+        "clear_worsening"
+      ],
+      "expected_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      },
+      "label_rationale": "직접 대비되는 environment 악화.",
+      "ambiguous": false,
+      "label_approved_for_scoring": true,
+      "selection_reason": "internally_reviewed_balanced_pick"
+    }
+  ],
+  "selection_notes": [
+    "Subset of live-pilot.v1 only — not Test split.",
+    "Statuses: worsened, improved, unchanged, unknown represented.",
+    "Domains: meal, mobility, environment non-unknown plus all-unknown case.",
+    "Local hard_max_usd=$1; account billing caps must be verified separately.",
+    "No paid OpenAI calls until explicit user approval."
+  ]
+}
