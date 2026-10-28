@@ -1,6 +1,6 @@
 # AI Evaluation Metrics
 
-`evaluation_version`: **1.0.0** (`lib/eval/metrics.ts`)
+`evaluation_version`: **1.1.0** (`lib/eval/metrics.ts`)
 
 All rates use **N/A** when the denominator is 0 (never coerced to 0%).
 

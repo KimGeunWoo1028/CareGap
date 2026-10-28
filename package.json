@@ -16,6 +16,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "eval:generate": "node scripts/generate-eval-dataset.mjs",
+    "eval:generate:v2-candidates": "node scripts/generate-eval-v2-candidates.mjs",
     "eval:test": "vitest run lib/eval",
     "eval:run": "node scripts/run-eval.mjs"
   },

@@ -1,0 +1,297 @@
+{
+  "evaluation_version": "1.1.0",
+  "dataset_version": "1.0.0",
+  "executed_at": "2026-10-28T15:00:00.000Z",
+  "prediction_source": "synthetic_stub",
+  "note": "Calibration baselines only — not Live model accuracy.",
+  "audit": {
+    "case_count": 101,
+    "cell_count": 404,
+    "unknown_share": 0.7871287128712872,
+    "split_counts": {
+      "dev": 68,
+      "val": 18,
+      "test": 15
+    },
+    "review_status_counts": {
+      "internally_reviewed": 48,
+      "draft": 53
+    },
+    "family_split_violations": [],
+    "label_distribution": {
+      "overall": {
+        "worsened": 31,
+        "improved": 21,
+        "unchanged": 34,
+        "unknown": 318
+      },
+      "by_domain": {
+        "meal": {
+          "worsened": 11,
+          "improved": 7,
+          "unchanged": 11,
+          "unknown": 72
+        },
+        "mobility": {
+          "worsened": 9,
+          "improved": 5,
+          "unchanged": 11,
+          "unknown": 76
+        },
+        "health": {
+          "worsened": 6,
+          "improved": 4,
+          "unchanged": 6,
+          "unknown": 85
+        },
+        "environment": {
+          "worsened": 5,
+          "improved": 5,
+          "unchanged": 6,
+          "unknown": 85
+        }
+      },
+      "total_cells": 404,
+      "unknown_share": 0.7871287128712872
+    },
+    "interpretation_limits": [
+      "Labels are internal synthetic judgments, not expert_reviewed clinical truth.",
+      "High overall accuracy is trivial when unknown dominates gold labels.",
+      "Judge models primarily on worsened precision/recall, missed worsening, and false reassurance — not overall accuracy alone.",
+      "Identity-stub or baseline scores are calibration references, not Live model performance.",
+      "Replay single-case fixtures must never be reported as dataset-wide model accuracy."
+    ],
+    "ambiguity_flag_count": 57
+  },
+  "baselines": [
+    {
+      "name": "always_unknown",
+      "seed": null,
+      "overall_status_accuracy": 0.7871287128712872,
+      "macro_f1": 0.22022160664819945,
+      "worsened_precision": "N/A",
+      "worsened_recall": 0,
+      "missed_worsening_rate": 1,
+      "false_worsening_rate": 0,
+      "false_reassurance_rate": 0,
+      "unknown_detection_rate": 1,
+      "confusion_overall": {
+        "worsened": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 31
+        },
+        "improved": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 21
+        },
+        "unchanged": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 34
+        },
+        "unknown": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 318
+        }
+      },
+      "note": "Baseline stub only — not a Live model. High accuracy under unknown-heavy gold is expected and not a quality claim."
+    },
+    {
+      "name": "majority_class",
+      "seed": null,
+      "overall_status_accuracy": 0.7871287128712872,
+      "macro_f1": 0.22022160664819945,
+      "worsened_precision": "N/A",
+      "worsened_recall": 0,
+      "missed_worsening_rate": 1,
+      "false_worsening_rate": 0,
+      "false_reassurance_rate": 0,
+      "unknown_detection_rate": 1,
+      "confusion_overall": {
+        "worsened": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 31
+        },
+        "improved": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 21
+        },
+        "unchanged": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 34
+        },
+        "unknown": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 318
+        }
+      },
+      "note": "Baseline stub only — not a Live model. High accuracy under unknown-heavy gold is expected and not a quality claim."
+    },
+    {
+      "name": "majority_per_domain",
+      "seed": null,
+      "overall_status_accuracy": 0.7871287128712872,
+      "macro_f1": 0.22022160664819945,
+      "worsened_precision": "N/A",
+      "worsened_recall": 0,
+      "missed_worsening_rate": 1,
+      "false_worsening_rate": 0,
+      "false_reassurance_rate": 0,
+      "unknown_detection_rate": 1,
+      "confusion_overall": {
+        "worsened": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 31
+        },
+        "improved": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 21
+        },
+        "unchanged": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 34
+        },
+        "unknown": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 318
+        }
+      },
+      "note": "Baseline stub only — not a Live model. High accuracy under unknown-heavy gold is expected and not a quality claim."
+    },
+    {
+      "name": "stratified_random",
+      "seed": 42,
+      "overall_status_accuracy": 0.6460396039603961,
+      "macro_f1": 0.2363512526095453,
+      "worsened_precision": 0.07142857142857142,
+      "worsened_recall": 0.06451612903225806,
+      "missed_worsening_rate": 0.9354838709677419,
+      "false_worsening_rate": 0.06970509383378017,
+      "false_reassurance_rate": 0.0967741935483871,
+      "unknown_detection_rate": 0.8081761006289309,
+      "confusion_overall": {
+        "worsened": {
+          "worsened": 2,
+          "improved": 1,
+          "unchanged": 2,
+          "unknown": 26
+        },
+        "improved": {
+          "worsened": 2,
+          "improved": 1,
+          "unchanged": 2,
+          "unknown": 16
+        },
+        "unchanged": {
+          "worsened": 5,
+          "improved": 4,
+          "unchanged": 1,
+          "unknown": 24
+        },
+        "unknown": {
+          "worsened": 19,
+          "improved": 19,
+          "unchanged": 23,
+          "unknown": 257
+        }
+      },
+      "note": "Baseline stub only — not a Live model. High accuracy under unknown-heavy gold is expected and not a quality claim."
+    }
+  ],
+  "live_dry_run": {
+    "mode": "dry_run",
+    "would_call_openai": false,
+    "blocked_reasons": [
+      "opt_in_false"
+    ],
+    "selected_case_ids": [
+      "eval-v1-001",
+      "eval-v1-002",
+      "eval-v1-003",
+      "eval-v1-004",
+      "eval-v1-005",
+      "eval-v1-006",
+      "eval-v1-007",
+      "eval-v1-008",
+      "eval-v1-009",
+      "eval-v1-010",
+      "eval-v1-011",
+      "eval-v1-012",
+      "eval-v1-013",
+      "eval-v1-014",
+      "eval-v1-015",
+      "eval-v1-016",
+      "eval-v1-017",
+      "eval-v1-018",
+      "eval-v1-019",
+      "eval-v1-020",
+      "eval-v1-021",
+      "eval-v1-022",
+      "eval-v1-023",
+      "eval-v1-024",
+      "eval-v1-025",
+      "eval-v1-026",
+      "eval-v1-027",
+      "eval-v1-028",
+      "eval-v1-029",
+      "eval-v1-030"
+    ],
+    "skipped": [],
+    "estimated_calls": 30,
+    "estimated_usd": 0.6,
+    "within_call_budget": true,
+    "within_cost_budget": true,
+    "model_id": "gpt-5.4-mini-2026-03-17",
+    "prompt_version": "ai_spec_system_v1",
+    "dataset_version": "1.0.0",
+    "schema_version": "1.0",
+    "checkpoint_path": "fixtures/eval/checkpoints/example.json",
+    "resume_from": null,
+    "duplicate_prevention": "Skip case_ids listed in checkpoint completed_case_ids before any request.",
+    "secret_handling": "Never read or log API keys in dry-run; live path must use server env only.",
+    "data_boundary": "Eval fixtures only — never read/write CareGap Test application tables for scoring.",
+    "abort_conditions": [
+      "opt_in cleared mid-run",
+      "call or cost budget exceeded",
+      "non-retryable provider error after policy",
+      "non-synthetic or PII gate failure"
+    ]
+  },
+  "quality_gate_template": {
+    "overall_status_accuracy": "report but do not promote alone",
+    "macro_f1": "required",
+    "worsened_precision": "required",
+    "worsened_recall": "required",
+    "missed_worsening_rate": "required",
+    "false_worsening_rate": "required",
+    "false_reassurance_rate": "required",
+    "unknown_detection_rate": "required",
+    "citation_presence_rate": "structural only",
+    "citation_semantic_review": "manual — never auto PASS",
+    "model_failure_rate": "Live only",
+    "vs_baselines": "must beat worsened recall of always_unknown (0) and improve macro-F1 with evidence"
+  }
+}

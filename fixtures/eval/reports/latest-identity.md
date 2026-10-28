@@ -1,7 +1,7 @@
 # CareGap AI Evaluation Report
 
 - dataset_version: 1.0.0
-- evaluation_version: 1.0.0
+- evaluation_version: 1.1.0
 - prediction_source: synthetic_stub
 - model_id: null
 - prompt_version: null

@@ -4,18 +4,18 @@
 
 ## Now
 
-`feat/ai-evaluation-foundation`: offline eval dataset/metrics/pipeline foundation (no Live calls).
+`feat/ai-evaluation-calibration`: baselines + dry-run Live readiness (still no paid calls).
 
 ## Done
 
-- Migration gate closed (`efd3dd5` base); 14 orphan follow-ups deferred
-- Eval dataset v1 (~100 synthetic cases), validators, metrics, pipeline tests
-- Live prep gates documented; execution forbidden in this slice
+- Eval foundation (`3e1cd32`): dataset v1 101, metrics/pipeline
+- Calibration: unknown-imbalance audit, baselines, v2 candidates (24), dry-run planner
+- Quality gates documented; Live execution still forbidden
 
 ## Next
 
-- Controlled Live eval (opt-in + budget) when approved
-- Expert review of labels; expand toward 100–200 with richer citation gold
+- User-approved Live eval with budgets
+- Promote v2 candidates after review; expert labeling
 - Field interviews (roadmap #6)
 
 ## Tracks

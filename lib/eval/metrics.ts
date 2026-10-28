@@ -9,7 +9,7 @@ import type {
   MetricValue,
 } from "@/lib/eval/types";
 
-export const EVALUATION_VERSION = "1.0.0";
+export const EVALUATION_VERSION = "1.1.0";
 
 export const METRIC_DEFINITIONS: Record<string, string> = {
   overall_status_accuracy:
@@ -136,11 +136,15 @@ export function computeStatusMetrics(obs: PairObservation[]): {
     const fn = obs.filter((o) => o.gold === st && o.pred !== st).length;
     const precision = safeDiv(tp, tp + fp);
     const recall = safeDiv(tp, tp + fn);
+    const support = tp + fn;
+    // Supported class with no positive predictions → F1 0 (not dropped from macro).
+    let f1Value = f1(precision, recall);
+    if (f1Value === "N/A" && support > 0) f1Value = 0;
     per_status[st] = {
       precision,
       recall,
-      f1: f1(precision, recall),
-      support: tp + fn,
+      f1: f1Value,
+      support,
     };
   }
 
