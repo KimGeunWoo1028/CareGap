@@ -40,6 +40,9 @@ yarn-error.log*
 .env.*
 !.env.example
 
+# local DB logical backups (may contain synthetic case text)
+/backups/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

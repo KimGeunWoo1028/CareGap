@@ -5,7 +5,7 @@
 1. 합성 데이터 전용 테스트 프로젝트를 만든다. Supabase Auth에서 공개 가입을 끄고 팀용 테스트 계정 A·B를 각각 만든다. 테스트 비밀번호와 키는 문서·저장소에 넣지 않는다.
 2. SQL Editor에서 [sql/001_schema.sql](sql/001_schema.sql) 전체를 **새 프로젝트에 한 번만** 실행한다. 이 파일은 재실행용 마이그레이션이 아니다. 운영 중 DB에 무심코 실행하지 않는다.
 3. [sql/002_programs.sql](sql/002_programs.sql)을 실행한다. 사업 시드는 ID 기준 갱신 가능하다. [sql/003_demo_seed.sql](sql/003_demo_seed.sql)에서 이메일을 A의 테스트 이메일로 바꾸고 실행한다. B에도 자료가 필요하면 별도 이메일로 반복한다.
-4. 후속 확인 대기함이 필요하면 [sql/004_follow_up_tasks.sql](sql/004_follow_up_tasks.sql)을 이어서 실행한다(기존 001이 적용된 프로젝트에만).
+4. 후속 확인 대기함이 필요하면 [sql/004_follow_up_tasks.sql](sql/004_follow_up_tasks.sql)을 이어서 실행한다(기존 001이 적용된 프로젝트에만). CareGap Test에 초기 004만 먼저 올라간 경우에는 [sql/004a_follow_up_terminal_immutable.sql](sql/004a_follow_up_terminal_immutable.sql)로 종결 상태 불변 가드를 보강한다. 최신 004 파일은 004a 내용을 포함한다.
 5. 각 로그인 토큰으로 API와 Supabase 직접 호출을 시험한다. A의 사례를 B가 읽을 수 없고 분석 행 직접 쓰기가 거부되는지 [TEST_PLAN.md](TEST_PLAN.md)대로 확인한다. 스키마 적용이나 공급자 권한은 실제 프로젝트마다 확인해야 한다.
 
 ## 엔터티
