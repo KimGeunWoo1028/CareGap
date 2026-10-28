@@ -1,0 +1,208 @@
+{
+  "dataset_version": "1.0.0",
+  "evaluation_version": "1.0.0",
+  "model_id": null,
+  "prompt_version": null,
+  "schema_version": "1.0",
+  "executed_at": "2026-10-28T00:00:00.000Z",
+  "prediction_source": "synthetic_stub",
+  "total_cases": 101,
+  "evaluated_cases": 101,
+  "missing_predictions": [],
+  "duplicate_predictions": [],
+  "extra_predictions": [],
+  "metrics": {
+    "coverage": 1,
+    "overall_status_accuracy": 1,
+    "macro_f1": 1,
+    "worsened_precision": 1,
+    "worsened_recall": 1,
+    "false_worsening_rate": 0,
+    "missed_worsening_rate": 0,
+    "false_reassurance_rate": 0,
+    "unknown_usage_rate": 0.7871287128712872,
+    "unknown_detection_rate": 1,
+    "per_status": {
+      "worsened": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 31
+      },
+      "improved": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 21
+      },
+      "unchanged": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 34
+      },
+      "unknown": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 318
+      }
+    },
+    "confusion_overall": {
+      "worsened": {
+        "worsened": 31,
+        "improved": 0,
+        "unchanged": 0,
+        "unknown": 0
+      },
+      "improved": {
+        "worsened": 0,
+        "improved": 21,
+        "unchanged": 0,
+        "unknown": 0
+      },
+      "unchanged": {
+        "worsened": 0,
+        "improved": 0,
+        "unchanged": 34,
+        "unknown": 0
+      },
+      "unknown": {
+        "worsened": 0,
+        "improved": 0,
+        "unchanged": 0,
+        "unknown": 318
+      }
+    },
+    "confusion_by_domain": {
+      "meal": {
+        "worsened": {
+          "worsened": 11,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 0
+        },
+        "improved": {
+          "worsened": 0,
+          "improved": 7,
+          "unchanged": 0,
+          "unknown": 0
+        },
+        "unchanged": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 11,
+          "unknown": 0
+        },
+        "unknown": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 72
+        }
+      },
+      "mobility": {
+        "worsened": {
+          "worsened": 9,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 0
+        },
+        "improved": {
+          "worsened": 0,
+          "improved": 5,
+          "unchanged": 0,
+          "unknown": 0
+        },
+        "unchanged": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 11,
+          "unknown": 0
+        },
+        "unknown": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 76
+        }
+      },
+      "health": {
+        "worsened": {
+          "worsened": 6,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 0
+        },
+        "improved": {
+          "worsened": 0,
+          "improved": 4,
+          "unchanged": 0,
+          "unknown": 0
+        },
+        "unchanged": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 6,
+          "unknown": 0
+        },
+        "unknown": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 85
+        }
+      },
+      "environment": {
+        "worsened": {
+          "worsened": 5,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 0
+        },
+        "improved": {
+          "worsened": 0,
+          "improved": 5,
+          "unchanged": 0,
+          "unknown": 0
+        },
+        "unchanged": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 6,
+          "unknown": 0
+        },
+        "unknown": {
+          "worsened": 0,
+          "improved": 0,
+          "unchanged": 0,
+          "unknown": 85
+        }
+      }
+    },
+    "citation_presence_rate": "N/A",
+    "citation_id_consistency_rate": "N/A",
+    "semantic_citation_review_items": 0
+  },
+  "metric_definitions": {
+    "overall_status_accuracy": "Fraction of (case, domain) pairs where predicted status equals gold.",
+    "macro_f1": "Unweighted mean of per-status F1 over worsened/improved/unchanged/unknown.",
+    "worsened_precision": "TP_worsened / (TP_worsened + FP_worsened); N/A if denominator 0.",
+    "worsened_recall": "TP_worsened / (TP_worsened + FN_worsened); N/A if denominator 0.",
+    "false_worsening_rate": "Predictions of worsened when gold is not worsened, over non-worsened gold cells.",
+    "missed_worsening_rate": "Gold worsened predicted as something else (incl. unknown), over gold worsened cells.",
+    "false_reassurance_rate": "Gold worsened predicted as unchanged or improved (excludes unknown), over gold worsened.",
+    "unknown_usage_rate": "Share of predictions that are unknown.",
+    "unknown_detection_rate": "Recall of gold unknown (pred unknown / gold unknown); N/A if no gold unknown.",
+    "coverage": "evaluated_cases / total_cases in dataset after matching predictions.",
+    "citation_presence_rate": "Share of provided evidence quotes that are non-empty (structural only).",
+    "citation_id_consistency_rate": "Share of evidence items whose note_id matches the case side when note_id given.",
+    "semantic_citation_review_items": "Count of cases flagged for manual semantic citation review — never auto-PASS."
+  },
+  "error_cases": [],
+  "notes": [
+    "Internal synthetic evaluation only — not expert-reviewed clinical accuracy.",
+    "Citation presence/ID checks are structural; semantic citation fitness requires manual review.",
+    "prediction_source=synthetic_stub: no live model accuracy claim."
+  ]
+}

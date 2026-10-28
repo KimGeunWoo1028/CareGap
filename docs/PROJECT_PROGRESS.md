@@ -4,31 +4,30 @@
 
 ## Now
 
-Ready for AI quality / eval hardening. Migration gate closed; 14 orphan follow-ups deferred (list only).
+`feat/ai-evaluation-foundation`: offline eval dataset/metrics/pipeline foundation (no Live calls).
 
 ## Done
 
-- P0 reliability, CI, eval harness seed, worsened-only matching
-- CareGap Test: 004 → 004a → 005 (mismatched) → 005b (correct); data preserved
-- Isolated Docker new-install `001→005` PASS; audit in `docs/POST_MIGRATION_AUDIT.md`
-- 14 pre-005 `no_task` analysis IDs recorded as deferred candidates (no backfill)
+- Migration gate closed (`efd3dd5` base); 14 orphan follow-ups deferred
+- Eval dataset v1 (~100 synthetic cases), validators, metrics, pipeline tests
+- Live prep gates documented; execution forbidden in this slice
 
 ## Next
 
-- Expand eval set (100–200) · semantic/citation metrics beyond status agreement
-- Controlled Live eval when budget approved (not free)
-- Roadmap #6 field interviews · #9/#10 institutional
+- Controlled Live eval (opt-in + budget) when approved
+- Expert review of labels; expand toward 100–200 with richer citation gold
+- Field interviews (roadmap #6)
 
 ## Tracks
 
 | Track | Status |
 |---|---|
-| Replay demo path | Stable (RC `107e9ec`) |
-| Live provider | Implemented; paid calls not re-run this gate |
-| Follow-up + atomicity | Live on Test via 005b |
-| Schema reproducibility | PASS (isolated Docker) |
-| AI eval depth | Seed only (12 fixtures, status labels) |
+| Replay demo | Stable (RC `107e9ec`) |
+| Schema / follow-ups | Stable on CareGap Test |
+| AI eval foundation | Dataset+metrics offline PASS |
+| Live model accuracy | Not measured this slice |
+| Field evidence | Not started |
 
 ## Do-not
 
-실데이터·자동 자격·자동 신청·비밀/백업 커밋·CareGap Test 초기화·migration history 수동 편집·무단 백필·추측성 “검증 통과”·push/`main`·RC 변경.
+실데이터·유료 Live 무단 호출·expert_reviewed 허위 표시·SQL/Test 데이터 변경·push/`main`·RC 변경.

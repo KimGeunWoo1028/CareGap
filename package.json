@@ -14,7 +14,10 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "eval:generate": "node scripts/generate-eval-dataset.mjs",
+    "eval:test": "vitest run lib/eval",
+    "eval:run": "node scripts/run-eval.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

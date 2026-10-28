@@ -1,0 +1,918 @@
+{
+  "prediction_source": "synthetic_stub",
+  "model_id": null,
+  "prompt_version": null,
+  "schema_version": "1.0",
+  "dataset_version": "1.0.0",
+  "predictions": [
+    {
+      "case_id": "eval-v1-001",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-002",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-003",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-004",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-005",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-006",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unchanged",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-007",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unchanged",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-008",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "worsened",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-009",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "improved"
+      }
+    },
+    {
+      "case_id": "eval-v1-010",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-011",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-012",
+      "predicted_status": {
+        "meal": "improved",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-013",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-014",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-015",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "worsened",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-016",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      }
+    },
+    {
+      "case_id": "eval-v1-017",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-018",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-019",
+      "predicted_status": {
+        "meal": "improved",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-020",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-021",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "improved",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-022",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "improved"
+      }
+    },
+    {
+      "case_id": "eval-v1-023",
+      "predicted_status": {
+        "meal": "improved",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-024",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-025",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-026",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-027",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unchanged",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-028",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unchanged",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-029",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unchanged"
+      }
+    },
+    {
+      "case_id": "eval-v1-030",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-031",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-032",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-033",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unchanged",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-034",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-035",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unchanged",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-036",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      }
+    },
+    {
+      "case_id": "eval-v1-037",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unchanged",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-038",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-039",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-040",
+      "predicted_status": {
+        "meal": "improved",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-041",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-042",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-043",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "worsened",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-044",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "improved",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-045",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      }
+    },
+    {
+      "case_id": "eval-v1-046",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "improved"
+      }
+    },
+    {
+      "case_id": "eval-v1-047",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-048",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unchanged",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-049",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unchanged",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-050",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unchanged"
+      }
+    },
+    {
+      "case_id": "eval-v1-051",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-052",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-053",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-054",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-055",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unchanged",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-056",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-057",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-058",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-059",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-060",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unchanged",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-061",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-062",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-063",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unchanged"
+      }
+    },
+    {
+      "case_id": "eval-v1-064",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unchanged",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-065",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-066",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-067",
+      "predicted_status": {
+        "meal": "improved",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-068",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-069",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-070",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "worsened",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-071",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "improved",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-072",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      }
+    },
+    {
+      "case_id": "eval-v1-073",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "improved"
+      }
+    },
+    {
+      "case_id": "eval-v1-074",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-075",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-076",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-077",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unchanged",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-078",
+      "predicted_status": {
+        "meal": "improved",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-079",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-080",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unchanged",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-081",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unchanged",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-082",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-083",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-084",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unchanged"
+      }
+    },
+    {
+      "case_id": "eval-v1-085",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-086",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "worsened",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-087",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "improved"
+      }
+    },
+    {
+      "case_id": "eval-v1-088",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-089",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-090",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-091",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      }
+    },
+    {
+      "case_id": "eval-v1-092",
+      "predicted_status": {
+        "meal": "improved",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-093",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "improved",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-094",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unchanged",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-095",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unchanged"
+      }
+    },
+    {
+      "case_id": "eval-v1-096",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-097",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-098",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-099",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "worsened",
+        "environment": "unknown"
+      }
+    },
+    {
+      "case_id": "eval-v1-100",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unchanged"
+      }
+    },
+    {
+      "case_id": "eval-v1-101",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unchanged",
+        "health": "unknown",
+        "environment": "unknown"
+      }
+    }
+  ]
+}

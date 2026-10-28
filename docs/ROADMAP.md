@@ -16,7 +16,7 @@
 | 4 | README/환경/아키텍처 정리 | 코드 반영 |
 | 5 | PR CI · 합성 placeholder E2E | `.github/workflows/ci.yml` 추가 |
 | 6 | 현장 인터뷰·기준선 측정 | **코드 밖** — 제품/현장 담당 |
-| 7 | 전문가 평가 세트·지표 | 하네스·fixture 12건 시드 (100~200은 미완) |
+| 7 | 전문가 평가 세트·지표 | v1 합성 100+건 + metrics/pipeline (`feat/ai-evaluation-foundation`); 전문·Live 실측은 미완 |
 | 8 | 검토 대기함·후속 업무 | CareGap Test에 004→004a→005b 적용됨; 원자성 트리거 가동. 14건 pre-005 고아는 백필 보류 |
 | — | unchanged 매칭 확장 | **거부·원복** — 상태값만으로 지속 필요 판정 불가 |
 | 9 | 기관 자료 처리·감사·백업 | 미착수 (SECURITY 후속) |
