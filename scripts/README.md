@@ -40,7 +40,13 @@ $env:CARE_GAP_REAL_AUTH_E2E="1"
 npx playwright test e2e/real-auth-flow.spec.ts
 ```
 
-Requires `TEST_USER_A/B_*` in `.env.local`. Default `npm run test:e2e` skips these tests.
+Requires `TEST_USER_A/B_*` in `.env.local`. Default `npm run test:e2e` skips these tests unless the opt-in env is set in the shell.
+
+## RC helpers
+
+- `rc-t08-concurrency.mjs` — processing same-key 202 / other-key 409 (no OpenAI)
+- `rc-presentation-pace.mjs` — ~4-minute DEMO_RUNBOOK pacing dry-run
+- `e2e/hackathon-rehearsal.spec.ts` — UI rehearsal ×3 with video when opt-in
 
 ## `phase4-integration.mjs`
 

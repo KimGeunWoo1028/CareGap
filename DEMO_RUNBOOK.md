@@ -5,16 +5,16 @@
 
 ## 1. Pre-demo checklist (day-of)
 
-- [ ] Node 24+, `npm run build` succeeds
-- [ ] `.env.local`: Supabase URL/publishable/secret present; `ANALYSIS_MODE=replay`
-- [ ] Dev/prod server reachable; request timeout ≥ 45s if Live ever enabled later
-- [ ] Test user A password login works (UI)
-- [ ] Case `합성-001` visible for A with notes dated **2026-09-10** and **2026-10-10**
-- [ ] Exact seed bodies (DEMO_GUIDE):
+- [x] Node 24+, `npm run build` succeeds *(RC 2026-10-28)*
+- [x] `.env.local`: Supabase URL/publishable/secret present; `ANALYSIS_MODE=replay`
+- [x] Dev/prod server reachable; request timeout ≥ 45s if Live ever enabled later
+- [x] Test user A password login works (UI)
+- [x] Case `합성-001` visible for A with notes dated **2026-09-10** and **2026-10-10**
+- [x] Exact seed bodies (DEMO_GUIDE):
   - 2026-09-10: `혼자 식사도 잘하시고 가까운 가게까지 걸어가 장을 볼 수 있음.`
   - 2026-10-10: `최근 다리가 불편해 장을 보기 어렵고 식사를 자주 거르심.`
-- [ ] Screen sharing hides `.env`, network Auth headers, password managers
-- [ ] Fresh browser session (memory session → refresh needs login)
+- [ ] Screen sharing hides `.env`, network Auth headers, password managers *(human on stage)*
+- [x] Fresh browser session (memory session → refresh needs login)
 
 ## 2. 4-minute script (operator actions)
 
@@ -58,9 +58,19 @@
 
 | Item | Status |
 |---|---|
-| Plan: 60–90s Replay flow with mode banner + timestamps visible | Planned |
-| Actual video file produced this Phase 6 session | **Not produced** |
-| Live-mode backup video | N/A (Live blocked this session) |
+| Plan: 60–90s Replay flow with mode banner + timestamps visible | Done |
+| Actual video files (RC) | Local `e2e/artifacts/hackathon-rc/videos/rehearsal-run-*.webm` (gitignored) |
+| Live-mode backup video | N/A (Live blocked; Replay-only RC) |
+
+### How to re-record if needed
+
+```powershell
+$env:CARE_GAP_REAL_AUTH_E2E="1"
+npx playwright test e2e/hackathon-rehearsal.spec.ts
+# Copy test-results/**/video.webm → e2e/artifacts/hackathon-rc/videos/
+```
+
+Do not show password managers or Network Auth headers while recording.
 
 ## 7. Judge Q&A (evidence-first)
 
@@ -69,6 +79,12 @@
 - **왜 공공 API 없나?** “해커톤은 고정 목록+공식 출처. API 연동은 후속.”  
 - **안전한가?** “합성 전용, JWT+RLS, 원문 근거 검증. 실도입 전 보안·개인정보 평가 필요.”  
 
-## 8. Timing note
+## 8. Timing note (RC measured)
 
-Replay create+review observed ~1.2–2.0s API-side in Phase 6 rehearsal; UI wall-clock depends on network. Do **not** guarantee Live latency without a measured Live smoke.
+| Path | Measured |
+|---|---|
+| API Replay create+review | ~1.5–1.9s |
+| UI click-through (login→review→logout) | mean **~4.7s** (3 runs) |
+| Narrated DEMO_RUNBOOK pacing dry-run | **248s (~4:08)** — within 4-minute stage budget |
+
+Do **not** guarantee Live latency without a measured Live smoke. On stage, speak to the section table above; do not rush the click-only path.

@@ -15,7 +15,7 @@ Legend for **This session** column:
 | T05 | PASS | Phase4 | Empty-ish case → 422 NOT_ENOUGH_RECORDS |
 | T06 | PASS | Phase6 rehearsal | Isolated case; third note flips is_current |
 | T07 | PASS | Phase4 | Same idempotency key → 200 same analysis id |
-| T08 | PARTIAL | Phase4 | IDEMPOTENCY_CONFLICT across cases PASS; full in-progress 202 / second-key 409 matrix not fully re-driven |
+| T08 | PASS | Phase4 + RC `rc-t08-concurrency.mjs` | Cross-case key conflict; processing same-key 202; other-key ANALYSIS_IN_PROGRESS 409 |
 | T09 | PASS | Vitest validate/replay | Exact substring quotes |
 | T10 | PASS | Vitest validate | Fabricated quotes / domain errors rejected |
 | T11 | PASS | Vitest validate | unknown + null evidence |

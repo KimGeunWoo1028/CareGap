@@ -40,11 +40,13 @@
 
 ## F. Remaining human actions before stage
 
-1. Optional: record 60–90s Replay backup video with mode badge visible  
+1. [x] Replay backup videos recorded locally under `e2e/artifacts/hackathon-rc/videos/`  
 2. Optional (explicit approval): Live smoke with cost cap + `ANALYSIS_MODE=live` restart  
 3. Confirm stage machine clock, network, and shared screen privacy  
-4. Confirm which Auth user owns `합성-001` for the live talk  
+4. Confirm Auth user A owns `합성-001` for the talk  
+5. [x] Tag `caregap-hackathon-rc1` on verified commit (no push/merge)
 
 ## Gate decision
 
-**PASS WITH WARNINGS** — see `PHASE6_TEST_REPORT.md`.
+**GO (Replay hackathon demo)** — see `HACKATHON_RC_REPORT.md`.  
+Warnings: Live OpenAI and T19 live quota remain unverified.
