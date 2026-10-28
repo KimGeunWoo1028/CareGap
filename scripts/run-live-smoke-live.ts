@@ -26,6 +26,10 @@ const ROOT = resolve(import.meta.dirname, "..");
 const args = process.argv.slice(2);
 const approve = args.includes("--i-approve-live-spend");
 const dryOnly = args.includes("--dry-run") || !approve;
+const artifactDirArg = args.find((a) => a.startsWith("--artifact-dir="));
+const artifactDirRel = artifactDirArg
+  ? artifactDirArg.slice("--artifact-dir=".length)
+  : "fixtures/eval/artifacts";
 
 /** Load selected keys from .env.local into process.env without logging values. */
 function loadEnvLocalQuiet(): void {
@@ -54,7 +58,7 @@ loadEnvLocalQuiet();
 
 const manifestPath = resolve(ROOT, "fixtures/eval/live-smoke.v1.manifest.json");
 const datasetPath = resolve(ROOT, "fixtures/eval/dataset.v1.json");
-const outDir = resolve(ROOT, "fixtures/eval/artifacts");
+const outDir = resolve(ROOT, artifactDirRel);
 
 function redactEnvPresence() {
   return {

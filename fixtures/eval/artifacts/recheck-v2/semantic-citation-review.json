@@ -1,0 +1,128 @@
+{
+  "schema_version": "caregap.eval.semantic_review.v1",
+  "source": "fixtures/eval/artifacts/recheck-v2/live-smoke-run-live-1eb98abc380d11a5.json",
+  "generated_at": "2026-10-28T23:32:12.825Z",
+  "items": [
+    {
+      "case_id": "eval-v1-001",
+      "domain": "meal",
+      "predicted_status": "worsened",
+      "evidence_source": "previous",
+      "evidence_quote": "혼자 식사도 잘하시고 가까운 가게까지 걸어가 장을 볼 수 있음.",
+      "note_id": "3e02565e-0b45-4dba-aed8-2cb1204ed86f",
+      "exact_substring_ok": true,
+      "semantic_review_status": "pending_manual_review",
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "eval-v1-001",
+      "domain": "meal",
+      "predicted_status": "worsened",
+      "evidence_source": "current",
+      "evidence_quote": "최근 다리가 불편해 장을 보기 어렵고 식사를 자주 거르심.",
+      "note_id": "925c3477-c88c-43d5-a0ab-454a1180c7f1",
+      "exact_substring_ok": true,
+      "semantic_review_status": "pending_manual_review",
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "eval-v1-001",
+      "domain": "mobility",
+      "predicted_status": "worsened",
+      "evidence_source": "previous",
+      "evidence_quote": "혼자 식사도 잘하시고 가까운 가게까지 걸어가 장을 볼 수 있음.",
+      "note_id": "3e02565e-0b45-4dba-aed8-2cb1204ed86f",
+      "exact_substring_ok": true,
+      "semantic_review_status": "pending_manual_review",
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "eval-v1-001",
+      "domain": "mobility",
+      "predicted_status": "worsened",
+      "evidence_source": "current",
+      "evidence_quote": "최근 다리가 불편해 장을 보기 어렵고 식사를 자주 거르심.",
+      "note_id": "925c3477-c88c-43d5-a0ab-454a1180c7f1",
+      "exact_substring_ok": true,
+      "semantic_review_status": "pending_manual_review",
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "eval-v1-001",
+      "domain": "health",
+      "predicted_status": "unknown",
+      "evidence_source": "current",
+      "evidence_quote": "최근 다리가 불편해 장을 보기 어렵고 식사를 자주 거르심.",
+      "note_id": "925c3477-c88c-43d5-a0ab-454a1180c7f1",
+      "exact_substring_ok": true,
+      "semantic_review_status": "pending_manual_review",
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "eval-v1-003",
+      "domain": "mobility",
+      "predicted_status": "improved",
+      "evidence_source": "previous",
+      "evidence_quote": "이전에는 다리가 불편해서 집 밖을 혼자 걸을 수 없었다고 말함.",
+      "note_id": "1657419d-b6c2-4b0c-ab05-ea6dfe1248b5",
+      "exact_substring_ok": true,
+      "semantic_review_status": "pending_manual_review",
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "eval-v1-003",
+      "domain": "mobility",
+      "predicted_status": "improved",
+      "evidence_source": "current",
+      "evidence_quote": "최근에는 혼자 걸어서 집 앞 가게까지 다녀왔다고 말함.",
+      "note_id": "2337ad93-dc84-4ee5-a991-080c350a34a9",
+      "exact_substring_ok": true,
+      "semantic_review_status": "pending_manual_review",
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "eval-v1-002",
+      "domain": "meal",
+      "predicted_status": "unchanged",
+      "evidence_source": "previous",
+      "evidence_quote": "하루 세 끼를 규칙적으로 먹고 있다고 말함.",
+      "note_id": "40c30802-5674-4fc9-abf6-55e3adbbced8",
+      "exact_substring_ok": true,
+      "semantic_review_status": "pending_manual_review",
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "eval-v1-002",
+      "domain": "meal",
+      "predicted_status": "unchanged",
+      "evidence_source": "current",
+      "evidence_quote": "하루 세 끼를 규칙적으로 먹고 있다고 말함.",
+      "note_id": "9b0b8098-3ed3-4c7e-a8e7-5a51a5ec5bd3",
+      "exact_substring_ok": true,
+      "semantic_review_status": "pending_manual_review",
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "eval-v1-016",
+      "domain": "environment",
+      "predicted_status": "worsened",
+      "evidence_source": "previous",
+      "evidence_quote": "주거가 건조하지 않다고 함.",
+      "note_id": "93a4518f-7ab9-4cb0-a6a1-302b19e4ee01",
+      "exact_substring_ok": true,
+      "semantic_review_status": "pending_manual_review",
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "eval-v1-016",
+      "domain": "environment",
+      "predicted_status": "worsened",
+      "evidence_source": "current",
+      "evidence_quote": "벽에 곰팡이가 생겨 냄새가 난다고 함.",
+      "note_id": "1930fea6-db0c-47aa-a5a7-b504aa5e22c0",
+      "exact_substring_ok": true,
+      "semantic_review_status": "pending_manual_review",
+      "reviewer_note": ""
+    }
+  ]
+}

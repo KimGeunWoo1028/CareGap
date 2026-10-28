@@ -1,0 +1,311 @@
+{
+  "fingerprint": "1eb98abc380d11a5",
+  "completed_case_ids": [
+    "eval-v1-001",
+    "eval-v1-003",
+    "eval-v1-002",
+    "eval-v1-004",
+    "eval-v1-016"
+  ],
+  "spent_usage_cost_usd": 0.011685,
+  "calls_made": 5,
+  "mode": "live",
+  "updated_at": "2026-10-28T23:31:20.496Z",
+  "results": [
+    {
+      "case_id": "eval-v1-001",
+      "split": "dev",
+      "family_id": "fam-meal-mob-worsen-01",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 696,
+      "output_tokens": 597,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.0032085,
+      "latency_ms": 3432,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:31:09.623Z",
+      "predicted_status": {
+        "meal": "worsened",
+        "mobility": "worsened",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "evidence_snapshots": [
+        {
+          "domain": "meal",
+          "status": "worsened",
+          "previous_quote": "혼자 식사도 잘하시고 가까운 가게까지 걸어가 장을 볼 수 있음.",
+          "current_quote": "최근 다리가 불편해 장을 보기 어렵고 식사를 자주 거르심.",
+          "previous_note_id": "3e02565e-0b45-4dba-aed8-2cb1204ed86f",
+          "current_note_id": "925c3477-c88c-43d5-a0ab-454a1180c7f1"
+        },
+        {
+          "domain": "mobility",
+          "status": "worsened",
+          "previous_quote": "혼자 식사도 잘하시고 가까운 가게까지 걸어가 장을 볼 수 있음.",
+          "current_quote": "최근 다리가 불편해 장을 보기 어렵고 식사를 자주 거르심.",
+          "previous_note_id": "3e02565e-0b45-4dba-aed8-2cb1204ed86f",
+          "current_note_id": "925c3477-c88c-43d5-a0ab-454a1180c7f1"
+        },
+        {
+          "domain": "health",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": "최근 다리가 불편해 장을 보기 어렵고 식사를 자주 거르심.",
+          "previous_note_id": null,
+          "current_note_id": "925c3477-c88c-43d5-a0ab-454a1180c7f1"
+        },
+        {
+          "domain": "environment",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        }
+      ],
+      "error_code": null,
+      "billing_uncertain": false
+    },
+    {
+      "case_id": "eval-v1-003",
+      "split": "dev",
+      "family_id": "fam-mob-improve-01",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 693,
+      "output_tokens": 408,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.00235575,
+      "latency_ms": 3735,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:31:13.362Z",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "improved",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "evidence_snapshots": [
+        {
+          "domain": "meal",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        },
+        {
+          "domain": "mobility",
+          "status": "improved",
+          "previous_quote": "이전에는 다리가 불편해서 집 밖을 혼자 걸을 수 없었다고 말함.",
+          "current_quote": "최근에는 혼자 걸어서 집 앞 가게까지 다녀왔다고 말함.",
+          "previous_note_id": "1657419d-b6c2-4b0c-ab05-ea6dfe1248b5",
+          "current_note_id": "2337ad93-dc84-4ee5-a991-080c350a34a9"
+        },
+        {
+          "domain": "health",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        },
+        {
+          "domain": "environment",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        }
+      ],
+      "error_code": null,
+      "billing_uncertain": false
+    },
+    {
+      "case_id": "eval-v1-002",
+      "split": "dev",
+      "family_id": "fam-meal-unchanged-01",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 689,
+      "output_tokens": 371,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.00218625,
+      "latency_ms": 2662,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:31:16.027Z",
+      "predicted_status": {
+        "meal": "unchanged",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "evidence_snapshots": [
+        {
+          "domain": "meal",
+          "status": "unchanged",
+          "previous_quote": "하루 세 끼를 규칙적으로 먹고 있다고 말함.",
+          "current_quote": "하루 세 끼를 규칙적으로 먹고 있다고 말함.",
+          "previous_note_id": "40c30802-5674-4fc9-abf6-55e3adbbced8",
+          "current_note_id": "9b0b8098-3ed3-4c7e-a8e7-5a51a5ec5bd3"
+        },
+        {
+          "domain": "mobility",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        },
+        {
+          "domain": "health",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        },
+        {
+          "domain": "environment",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        }
+      ],
+      "error_code": null,
+      "billing_uncertain": false
+    },
+    {
+      "case_id": "eval-v1-004",
+      "split": "val",
+      "family_id": "fam-insufficient-01",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 670,
+      "output_tokens": 277,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.0017490000000000001,
+      "latency_ms": 2195,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:31:18.224Z",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "unknown"
+      },
+      "evidence_snapshots": [
+        {
+          "domain": "meal",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        },
+        {
+          "domain": "mobility",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        },
+        {
+          "domain": "health",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        },
+        {
+          "domain": "environment",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        }
+      ],
+      "error_code": null,
+      "billing_uncertain": false
+    },
+    {
+      "case_id": "eval-v1-016",
+      "split": "dev",
+      "family_id": "fam-worsen-environment-3",
+      "request_attempts": 1,
+      "response_status": "success",
+      "response_class": "success",
+      "input_tokens": 682,
+      "output_tokens": 372,
+      "reasoning_tokens": 0,
+      "estimated_cost_usd": 0.019500000000000003,
+      "calculated_usage_cost_usd": 0.0021855,
+      "latency_ms": 2269,
+      "validation_result": "passed",
+      "checkpoint_status": "completed",
+      "execution_timestamp": "2026-10-28T23:31:20.496Z",
+      "predicted_status": {
+        "meal": "unknown",
+        "mobility": "unknown",
+        "health": "unknown",
+        "environment": "worsened"
+      },
+      "evidence_snapshots": [
+        {
+          "domain": "meal",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        },
+        {
+          "domain": "mobility",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        },
+        {
+          "domain": "health",
+          "status": "unknown",
+          "previous_quote": null,
+          "current_quote": null,
+          "previous_note_id": null,
+          "current_note_id": null
+        },
+        {
+          "domain": "environment",
+          "status": "worsened",
+          "previous_quote": "주거가 건조하지 않다고 함.",
+          "current_quote": "벽에 곰팡이가 생겨 냄새가 난다고 함.",
+          "previous_note_id": "93a4518f-7ab9-4cb0-a6a1-302b19e4ee01",
+          "current_note_id": "1930fea6-db0c-47aa-a5a7-b504aa5e22c0"
+        }
+      ],
+      "error_code": null,
+      "billing_uncertain": false
+    }
+  ]
+}

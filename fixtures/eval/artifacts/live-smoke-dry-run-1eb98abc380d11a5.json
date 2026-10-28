@@ -1,6 +1,6 @@
 {
   "schema_version": "caregap.eval.live_smoke.v1",
-  "generated_at": "2026-10-28T23:24:08.748Z",
+  "generated_at": "2026-10-28T23:30:37.006Z",
   "mode": "dry-run",
   "live_calls_executed": false,
   "model_id": "gpt-5.4-mini-2026-03-17",

@@ -654,7 +654,7 @@ export async function runSmokeLive(input: {
             side,
             note_id: ev.note_id,
             quote: ev.quote,
-            expected_note_id: `${c.id}-${side}`,
+            expected_note_id: syntheticNoteId(c.id, side),
           });
         }
       }
