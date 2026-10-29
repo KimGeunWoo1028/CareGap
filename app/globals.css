@@ -433,6 +433,11 @@ textarea {
     box-shadow var(--transition);
 }
 
+/* html is color-scheme: dark; a light date field then hides the native picker icon. */
+.field input[type="date"] {
+  color-scheme: light;
+}
+
 .field textarea {
   min-height: 11rem;
   resize: vertical;
@@ -1214,6 +1219,59 @@ table.data time {
   color: #b7c5d8;
   max-width: 42rem;
   font-size: 1.0625rem;
+}
+
+.detail-overview {
+  margin-bottom: var(--s3);
+}
+
+.detail-overview__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.75rem 1.25rem;
+  margin: 0.75rem 0 0;
+}
+
+.detail-overview__grid dt {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.detail-overview__grid dd {
+  margin: 0.2rem 0 0;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.detail-overview__actions {
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.detail-section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.85rem;
+  margin: 0 0 var(--s3);
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  position: sticky;
+  top: 0.35rem;
+  z-index: 2;
+}
+
+.detail-section-nav a {
+  color: var(--cobalt);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.detail-section-nav a:hover {
+  text-decoration: underline;
 }
 
 .detail-section-head {

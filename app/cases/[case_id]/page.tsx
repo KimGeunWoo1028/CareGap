@@ -27,6 +27,7 @@ import {
   submitAnalysisReview,
 } from "@/lib/cases/analysis-api";
 import { POLL_INTERVAL_MS } from "@/lib/cases/analysis-labels";
+import { buildCaseOverview } from "@/lib/cases/case-overview";
 import {
   analysisCurrencyLabel,
   analysisListCaption,
@@ -107,6 +108,13 @@ export function CaseDetailInner() {
   const hasProcessing = useMemo(
     () => (detail?.analyses ?? []).some((item) => item.status === "processing"),
     [detail],
+  );
+  const overview = useMemo(
+    () =>
+      detail
+        ? buildCaseOverview(detail, selectedAnalysis, guidance.ready)
+        : null,
+    [detail, selectedAnalysis, guidance.ready],
   );
 
   const handleAuthFailure = useCallback(
@@ -455,8 +463,7 @@ export function CaseDetailInner() {
               <h1 className="detail-title">{detail.case.alias}</h1>
               <p className="detail-lede">
                 생성 {formatSeoulDateTime(detail.case.created_at)} · 합성
-                상담 원문을 먼저 읽고, 이전·현재 노선이 만나는 지점에서 변화를
-                확인한 뒤 기록을 추가하세요.
+                상담 원문을 먼저 읽고 변화를 확인한 뒤 기록을 추가하세요.
               </p>
             </div>
             <span
@@ -467,6 +474,64 @@ export function CaseDetailInner() {
                 : `비교 준비 전 · 기록 ${guidance.count}건`}
             </span>
           </header>
+
+          {overview ? (
+            <section
+              className="panel detail-overview"
+              aria-labelledby="overview-heading"
+            >
+              <h2 id="overview-heading" className="panel__title">
+                사례 개요
+              </h2>
+              <dl className="detail-overview__grid">
+                <div>
+                  <dt>최근 상담</dt>
+                  <dd>
+                    {overview.latestConsultationOn
+                      ? formatSeoulDate(overview.latestConsultationOn)
+                      : "없음"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>상담 기록</dt>
+                  <dd>{overview.consultationCount}건</dd>
+                </div>
+                <div>
+                  <dt>최신 분석</dt>
+                  <dd>{overview.latestAnalysisStatusLabel}</dd>
+                </div>
+                <div>
+                  <dt>담당자 검토</dt>
+                  <dd>{overview.reviewStatusLabel}</dd>
+                </div>
+              </dl>
+              <div className="detail-overview__actions actions">
+                <a className="btn btn--ghost" href="#consult-form-heading">
+                  기록 등록
+                </a>
+                <a className="btn btn--ghost" href="#compare-heading">
+                  비교·분석
+                </a>
+                <a className="btn btn--ghost" href="#analysis-result-heading">
+                  분석 결과
+                </a>
+                <a className="btn btn--ghost" href="#history-heading">
+                  분석 이력
+                </a>
+                <Link className="btn btn--ghost" href="/follow-ups">
+                  후속 확인
+                </Link>
+              </div>
+            </section>
+          ) : null}
+
+          <nav className="detail-section-nav" aria-label="사례 상세 구역">
+            <a href="#compare-heading">비교</a>
+            <a href="#analysis-result-heading">결과</a>
+            <a href="#consult-form-heading">기록 등록</a>
+            <a href="#notes-heading">상담 목록</a>
+            <a href="#history-heading">이력</a>
+          </nav>
 
           <section
             className="panel detail-compare interchange-plaza"

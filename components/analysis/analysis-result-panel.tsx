@@ -97,45 +97,11 @@ export function AnalysisResultPanel({
 
       {analysis.status === "succeeded" && payload ? (
         <>
-          <div className="analysis-summary-block">
-            <h3 className="analysis-section-title">분석 요약</h3>
-            <p className="analysis-summary-text">{payload.analysis.summary}</p>
-            <p className="muted analysis-caveat">
-              AI는 기록상 변화를 정리할 뿐 의료 진단·자격 확정을 하지 않습니다.
-              각 주장은 원문 근거와 함께 판단하세요.
-            </p>
-          </div>
-
-          <div className="analysis-compare-notes">
-            <h3 className="analysis-section-title">분석에 사용된 상담 원문</h3>
-            <div className="analysis-compare-grid">
-              <article className="analysis-note-card analysis-note-card--previous">
-                <p className="compare-card__role">이전 상담</p>
-                <h4 className="compare-card__heading">
-                  {previous
-                    ? `${formatSeoulDate(previous.occurred_on)} · ${channelLabel(previous.channel)}`
-                    : "기록 없음"}
-                </h4>
-                <p className="compare-card__body analysis-note-body">
-                  {previous?.body ?? "—"}
-                </p>
-              </article>
-              <article className="analysis-note-card analysis-note-card--current">
-                <p className="compare-card__role">현재 상담</p>
-                <h4 className="compare-card__heading">
-                  {current
-                    ? `${formatSeoulDate(current.occurred_on)} · ${channelLabel(current.channel)}`
-                    : "기록 없음"}
-                </h4>
-                <p className="compare-card__body analysis-note-body">
-                  {current?.body ?? "—"}
-                </p>
-              </article>
-            </div>
-          </div>
-
-          <div className="analysis-domain-grid">
+          <div className="analysis-domain-grid" id="analysis-domains">
             <h3 className="analysis-section-title">상태 변화 (4범주)</h3>
+            <p className="muted analysis-caveat">
+              색상만으로 판단하지 말고 상태 문구와 원문 근거를 함께 확인하세요.
+            </p>
             {DOMAIN_ORDER.map((domain) => {
               const change = payload.analysis.changes.find(
                 (item) => item.domain === domain,
@@ -186,6 +152,43 @@ export function AnalysisResultPanel({
                 </article>
               );
             })}
+          </div>
+
+          <div className="analysis-summary-block">
+            <h3 className="analysis-section-title">분석 요약</h3>
+            <p className="analysis-summary-text">{payload.analysis.summary}</p>
+            <p className="muted analysis-caveat">
+              AI는 기록상 변화를 정리할 뿐 의료 진단·자격 확정을 하지 않습니다.
+              각 주장은 원문 근거와 함께 판단하세요.
+            </p>
+          </div>
+
+          <div className="analysis-compare-notes">
+            <h3 className="analysis-section-title">분석에 사용된 상담 원문</h3>
+            <div className="analysis-compare-grid">
+              <article className="analysis-note-card analysis-note-card--previous">
+                <p className="compare-card__role">이전 상담</p>
+                <h4 className="compare-card__heading">
+                  {previous
+                    ? `${formatSeoulDate(previous.occurred_on)} · ${channelLabel(previous.channel)}`
+                    : "기록 없음"}
+                </h4>
+                <p className="compare-card__body analysis-note-body">
+                  {previous?.body ?? "—"}
+                </p>
+              </article>
+              <article className="analysis-note-card analysis-note-card--current">
+                <p className="compare-card__role">현재 상담</p>
+                <h4 className="compare-card__heading">
+                  {current
+                    ? `${formatSeoulDate(current.occurred_on)} · ${channelLabel(current.channel)}`
+                    : "기록 없음"}
+                </h4>
+                <p className="compare-card__body analysis-note-body">
+                  {current?.body ?? "—"}
+                </p>
+              </article>
+            </div>
           </div>
 
           <div className="analysis-questions">
