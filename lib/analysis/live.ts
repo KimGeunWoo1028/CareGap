@@ -1,6 +1,10 @@
 import analysisSchema from "@/schemas/analysis.schema.json";
 import { ApiError } from "@/lib/api/errors";
 import {
+  isLiveMockEnabled,
+  runMockLiveAnalysis,
+} from "@/lib/analysis/live-mock";
+import {
   extractResponsesOutputText,
   type ResponsesApiPayload,
 } from "@/lib/analysis/live-response";
@@ -26,6 +30,8 @@ export type LiveOpenAiConfig = {
   apiKey: string;
   model: string;
   fetchImpl?: typeof fetch;
+  /** Explicit opt-in; also enabled when CARE_GAP_LIVE_MOCK=1. */
+  useMock?: boolean;
 };
 
 function isRetryableStatus(status: number): boolean {
@@ -157,6 +163,9 @@ export async function runLiveAnalysis(input: {
   openai: LiveOpenAiConfig;
 }): Promise<AnalysisEngineResult> {
   const { openai, previous, current, programs } = input;
+  if (openai.useMock === true || isLiveMockEnabled()) {
+    return runMockLiveAnalysis({ previous, current, programs });
+  }
   if (!openai.apiKey.trim() || !openai.model.trim()) {
     throw new ApiError("AI_UNAVAILABLE", undefined, {
       reason: "missing_openai_config",

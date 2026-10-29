@@ -16,8 +16,11 @@ const serverEnvSchema = publicEnvSchema.extend({
   ANALYSIS_MODE: analysisModeSchema,
   OPENAI_API_KEY: z.string().optional(),
   OPENAI_MODEL: z.string().optional(),
+  /** "1" = Live path without paid OpenAI (mock provider). Default off. */
+  CARE_GAP_LIVE_MOCK: z.enum(["0", "1"]).optional(),
 }).superRefine((value, ctx) => {
-  if (value.ANALYSIS_MODE === "live") {
+  const liveMock = value.CARE_GAP_LIVE_MOCK === "1";
+  if (value.ANALYSIS_MODE === "live" && !liveMock) {
     if (!value.OPENAI_API_KEY?.trim()) {
       ctx.addIssue({
         code: "custom",
@@ -53,6 +56,7 @@ function readServerRaw(): Record<string, string | undefined> {
     ANALYSIS_MODE: process.env.ANALYSIS_MODE,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     OPENAI_MODEL: process.env.OPENAI_MODEL,
+    CARE_GAP_LIVE_MOCK: process.env.CARE_GAP_LIVE_MOCK,
   };
 }
 

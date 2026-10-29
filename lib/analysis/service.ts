@@ -208,7 +208,8 @@ export async function createOrResumeAnalysis(
           mode === "live"
             ? {
                 apiKey: env.OPENAI_API_KEY ?? "",
-                model: env.OPENAI_MODEL ?? "",
+                model: env.OPENAI_MODEL ?? "caregap-live-mock",
+                useMock: env.CARE_GAP_LIVE_MOCK === "1",
               }
             : undefined,
       }),
