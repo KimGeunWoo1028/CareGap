@@ -43,6 +43,7 @@ describe("GET/POST /api/cases handlers", () => {
       id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
       alias: "합성-001",
       created_at: "2026-10-10T01:00:00Z",
+      consultation_count: 0,
     });
 
     const { POST } = await import("./route");

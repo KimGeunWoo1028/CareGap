@@ -2,6 +2,8 @@ export type CaseRecord = {
   id: string;
   alias: string;
   created_at: string;
+  /** Owned consultations for this case; list responses include the count. */
+  consultation_count: number;
 };
 
 export type ConsultationRecord = {

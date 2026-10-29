@@ -5,6 +5,7 @@ export type MockCase = {
   id: string;
   alias: string;
   created_at: string;
+  consultation_count: number;
 };
 
 export const MOCK_LOGIN_EMAIL = "mock-caseworker@example.invalid";
@@ -71,6 +72,7 @@ export function sixMockCases(): MockCase[] {
       id: `00000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
       alias: `합성-${n}`,
       created_at: `2026-10-${String(10 - index).padStart(2, "0")}T03:00:00.000Z`,
+      consultation_count: index === 0 ? 2 : index % 3,
     };
   });
 }
@@ -189,6 +191,7 @@ export async function installMockedAuthAndCasesApi(
             id: "00000000-0000-4000-8000-000000009999",
             alias,
             created_at: "2026-10-11T00:00:00.000Z",
+            consultation_count: 0,
           },
           meta: { request_id: "mock-request-create" },
         });
@@ -341,6 +344,7 @@ export function mockCaseShell(
     id,
     alias,
     created_at: "2026-10-01T03:00:00.000Z",
+    consultation_count: 0,
   };
 }
 

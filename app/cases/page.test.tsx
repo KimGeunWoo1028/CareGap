@@ -54,11 +54,13 @@ function sampleCases() {
       id: "case-1",
       alias: "합성-001",
       created_at: "2026-10-10T01:00:00.000Z",
+      consultation_count: 2,
     },
     {
       id: "case-2",
       alias: "합성-007",
       created_at: "2026-10-09T01:00:00.000Z",
+      consultation_count: 0,
     },
   ];
 }
@@ -120,6 +122,8 @@ describe("CasesPageInner", () => {
       (container.textContent ?? "").includes("아직 등록된 합성 사례가 없습니다."),
     );
     expect(container.querySelector(".case-table")).toBeNull();
+    expect(container.textContent).toContain("이전·현재 상담 기록 등록");
+    expect(container.textContent).toContain("비교 분석 · 담당자 검토 · 후속 확인");
   });
 
   it("renders loaded cases and filters locally by alias", async () => {
@@ -127,7 +131,7 @@ describe("CasesPageInner", () => {
     root.render(<CasesPageInner />);
     await waitFor(() => (container.textContent ?? "").includes("합성-007"));
 
-    expect(container.textContent).toContain("현재 불러온 사례에서 검색");
+    expect(container.textContent).toContain("목록에서 검색");
     expect(container.textContent).toContain("최대 100건");
 
     const search = container.querySelector("#case-search") as HTMLInputElement;
@@ -261,6 +265,7 @@ describe("CasesPageInner", () => {
             id: "new-case",
             alias: "합성-003",
             created_at: "2026-10-11T00:00:00.000Z",
+            consultation_count: 0,
           },
         };
       }

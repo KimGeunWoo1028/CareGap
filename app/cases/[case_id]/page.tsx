@@ -541,8 +541,8 @@ export function CaseDetailInner() {
               </button>
               <p className="detail-analyze-note">
                 {!guidance.ready
-                  ? "서로 다른 날짜의 상담 기록 2건이 필요합니다."
-                  : "분석 모드는 서버 설정을 따릅니다. Live 실패 시 Replay로 자동 전환되지 않습니다. 네트워크가 끊긴 재시도는 같은 요청 키를 유지합니다."}
+                  ? "서로 다른 날짜의 상담 기록 2건이 필요합니다. 조건을 충족하면 비교 분석을 시작할 수 있습니다."
+                  : "최근 서로 다른 날짜의 두 상담 기록을 비교합니다. 조건에 맞지 않으면 분석을 시작하지 않으며, 다른 방식으로 결과를 바꾸지 않습니다."}
               </p>
             </div>
             {analysisError ? (

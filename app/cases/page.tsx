@@ -157,8 +157,8 @@ export function CasesPageInner() {
           <div>
             <h1 className="cases-title">사례 목록</h1>
             <p className="cases-lede">
-              상담 기록을 확인할 합성 사례를 선택하세요. 각 행은 하나의 역(사례)
-              입니다.
+              내 합성 사례만 표시됩니다. 사례를 선택한 뒤 상담 기록을 등록하고
+              비교 분석을 진행하세요.
             </p>
           </div>
           <div className="cases-title-row__actions">
@@ -188,8 +188,8 @@ export function CasesPageInner() {
               합성 사례 추가
             </h2>
             <p className="panel__desc">
-              사례명은 합성-007처럼 입력합니다. 서버에 저장되며 본인 소유
-              사례만 목록에 나타납니다.
+              사례명은 합성-007처럼 입력합니다. 실제 개인정보는 사용하지
+              마세요.
             </p>
             <form className="cases-create__form" onSubmit={onCreate} noValidate>
               <div className="field">
@@ -258,20 +258,19 @@ export function CasesPageInner() {
             <div className="cases-toolbar__tools">
               <div className="cases-search">
                 <label className="visually-hidden" htmlFor="case-search">
-                  현재 불러온 사례에서 검색
+                  목록에서 검색
                 </label>
                 <input
                   id="case-search"
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="표시된 사례 검색"
+                  placeholder="목록에서 검색"
                   disabled={loading || !!error || cases.length === 0}
                   aria-describedby={searchHintId}
                 />
                 <p id={searchHintId} className="field__hint">
-                  현재 불러온 사례에서 검색 · 등록일 최신순 · 최대 100건
-                  조회(초과분은 보이지 않을 수 있음)
+                  목록에서 검색 · 등록일 최신순 · 최대 100건
                 </p>
               </div>
               <button
@@ -312,11 +311,19 @@ export function CasesPageInner() {
           ) : null}
 
           {!loading && !error && cases.length === 0 ? (
-            <div className="empty cases-state">
+            <div className="empty cases-state cases-empty">
               <p>
                 <strong>아직 등록된 합성 사례가 없습니다.</strong>
               </p>
-              <p className="muted">사례 추가로 새 합성 사례를 만들 수 있습니다.</p>
+              <p className="muted">
+                사례를 추가한 뒤 서로 다른 날짜의 상담 기록 두 건을 등록하면
+                비교 분석을 시작할 수 있습니다.
+              </p>
+              <ol className="cases-empty__steps muted">
+                <li>사례 추가</li>
+                <li>이전·현재 상담 기록 등록</li>
+                <li>비교 분석 · 담당자 검토 · 후속 확인</li>
+              </ol>
               <div className="actions" style={{ marginTop: "0.75rem" }}>
                 <button
                   type="button"
@@ -338,7 +345,7 @@ export function CasesPageInner() {
                 <strong>일치하는 사례가 없습니다.</strong>
               </p>
               <p className="muted">
-                현재 불러온 사례명 안에서만 검색합니다. 검색어를 다시 확인해
+                표시 중인 사례명 안에서만 검색합니다. 검색어를 다시 확인해
                 주세요.
               </p>
               <div className="actions" style={{ marginTop: "0.75rem" }}>
@@ -362,6 +369,7 @@ export function CasesPageInner() {
                 <thead>
                   <tr>
                     <th scope="col">사례명</th>
+                    <th scope="col">상담 기록</th>
                     <th scope="col">등록일</th>
                     <th scope="col">
                       <span className="visually-hidden">상세</span>
@@ -372,6 +380,7 @@ export function CasesPageInner() {
                   {filteredCases.map((item) => {
                     const registeredOn = formatSeoulDateTime(item.created_at);
                     const detailHref = `/cases/${item.id}`;
+                    const noteCount = item.consultation_count ?? 0;
                     return (
                       <tr key={item.id}>
                         <td>
@@ -379,9 +388,12 @@ export function CasesPageInner() {
                             <span className="station-tick" aria-hidden="true" />
                             {item.alias}
                             <span className="visually-hidden">
-                              {`, 등록일 ${registeredOn}, 상세 열기`}
+                              {`, 상담 기록 ${noteCount}건, 등록일 ${registeredOn}, 상세 열기`}
                             </span>
                           </Link>
+                        </td>
+                        <td>
+                          <span className="case-note-count">{noteCount}건</span>
                         </td>
                         <td>
                           <time dateTime={item.created_at}>{registeredOn}</time>

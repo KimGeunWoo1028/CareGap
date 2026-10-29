@@ -64,12 +64,16 @@ test.describe("cases list UI with mocked auth/API only", () => {
 
     await expect(page.getByText("표시 중 6건")).toBeVisible();
     await expect(
-      page.getByText(/현재 불러온 사례에서 검색 · 등록일 최신순 · 최대 100건/),
+      page.getByText(/목록에서 검색 · 등록일 최신순 · 최대 100건/),
     ).toBeVisible();
-    await expect(page.getByLabel("현재 불러온 사례에서 검색")).toBeVisible();
+    await expect(page.getByLabel("목록에서 검색")).toBeVisible();
     await expect(page.getByRole("columnheader", { name: "사례명" })).toBeVisible();
+    await expect(
+      page.getByRole("columnheader", { name: "상담 기록" }),
+    ).toBeVisible();
     await expect(page.getByRole("columnheader", { name: "등록일" })).toBeVisible();
     await expect(page.locator("a.case-link", { hasText: "합성-001" })).toBeVisible();
+    await expect(page.locator(".case-note-count").first()).toHaveText("2건");
     await expectSingleDetailLinkPerRow(page);
     await expectNoFirstRowEmphasis(page);
 
@@ -93,6 +97,9 @@ test.describe("cases list UI with mocked auth/API only", () => {
     await openCasesWithMock(page, { list: [] });
 
     await expect(page.getByText("아직 등록된 합성 사례가 없습니다.")).toBeVisible();
+    await expect(
+      page.getByText(/사례를 추가한 뒤 서로 다른 날짜의 상담 기록/),
+    ).toBeVisible();
     await expect(page.locator(".case-table")).toHaveCount(0);
     await shot(page, "empty-1280x800");
 
@@ -111,16 +118,14 @@ test.describe("cases list UI with mocked auth/API only", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await openCasesWithMock(page, { list: sixMockCases() });
 
-    await page.getByLabel("현재 불러온 사례에서 검색").fill("합성-999");
+    await page.getByLabel("목록에서 검색").fill("합성-999");
     await expect(page.getByText("일치하는 사례가 없습니다.")).toBeVisible();
-    await expect(page.getByLabel("현재 불러온 사례에서 검색")).toHaveValue(
-      "합성-999",
-    );
+    await expect(page.getByLabel("목록에서 검색")).toHaveValue("합성-999");
     await expectNoPageHorizontalOverflow(page);
     await shot(page, "search-empty-390x844");
 
     await page.getByRole("button", { name: "검색어 지우기" }).click();
-    await expect(page.getByLabel("현재 불러온 사례에서 검색")).toHaveValue("");
+    await expect(page.getByLabel("목록에서 검색")).toHaveValue("");
     await expect(page.locator("a.case-link", { hasText: "합성-001" })).toBeVisible();
     await expect(page.getByText("표시 중 6건")).toBeVisible();
   });

@@ -83,17 +83,15 @@ export function AnalysisResultPanel({
 
       {analysis.status === "processing" ? (
         <Alert tone="info" live title="분석 처리 중">
-          분석이 진행 중입니다. 잠시 후 상태가 자동으로 갱신됩니다. Live 실패 시
-          Replay로 자동 전환되지 않습니다.
+          분석이 진행 중입니다. 잠시 후 상태가 자동으로 갱신됩니다. 실패한
+          분석을 다른 방식으로 자동 바꾸지 않습니다.
         </Alert>
       ) : null}
 
       {analysis.status === "failed" ? (
         <Alert tone="error" title="분석 실패">
-          이 분석은 실패로 끝났습니다
-          {analysis.failure_code ? ` (${analysis.failure_code})` : ""}. 원문은
-          그대로 보관됩니다. 새 분석으로 다시 시도하거나 원문을 직접 검토해
-          주세요.
+          이 분석은 실패로 끝났습니다. 원문은 그대로 보관됩니다. 새 분석으로
+          다시 시도하거나 원문을 직접 검토해 주세요.
         </Alert>
       ) : null}
 

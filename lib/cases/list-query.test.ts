@@ -5,9 +5,24 @@ import {
 } from "@/lib/cases/list-query";
 
 const sample = [
-  { id: "a", alias: "합성-001", created_at: "2026-10-01T00:00:00.000Z" },
-  { id: "b", alias: "합성-007", created_at: "2026-10-02T00:00:00.000Z" },
-  { id: "c", alias: "합성-010", created_at: "2026-10-03T00:00:00.000Z" },
+  {
+    id: "a",
+    alias: "합성-001",
+    created_at: "2026-10-01T00:00:00.000Z",
+    consultation_count: 2,
+  },
+  {
+    id: "b",
+    alias: "합성-007",
+    created_at: "2026-10-02T00:00:00.000Z",
+    consultation_count: 0,
+  },
+  {
+    id: "c",
+    alias: "합성-010",
+    created_at: "2026-10-03T00:00:00.000Z",
+    consultation_count: 1,
+  },
 ];
 
 describe("filterCasesByAlias", () => {

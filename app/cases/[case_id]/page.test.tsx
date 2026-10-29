@@ -68,6 +68,7 @@ function sampleDetail(overrides?: Partial<CaseDetail>): CaseDetail {
       id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
       alias: "합성-001",
       created_at: "2026-10-01T00:00:00.000Z",
+      consultation_count: 0,
     },
     consultations: [],
     analyses: [],

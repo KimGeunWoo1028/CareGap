@@ -1,4 +1,5 @@
 import { ApiError, mapDatabaseError } from "@/lib/api/errors";
+import { mapCaseRecord } from "@/lib/cases/case-record";
 import { computeIsCurrent } from "@/lib/cases/is-current";
 import type {
   AnalysisSummary,
@@ -22,28 +23,16 @@ type AnalysisRow = {
   current_note_id: string;
 };
 
-function asCaseRecord(row: {
-  id: string;
-  alias: string;
-  created_at: string;
-}): CaseRecord {
-  return {
-    id: row.id,
-    alias: row.alias,
-    created_at: row.created_at,
-  };
-}
-
 export async function listCases(db: UserScopedClient): Promise<CaseRecord[]> {
   const { data, error } = await db
     .from("cases")
-    .select("id, alias, created_at")
+    .select("id, alias, created_at, consultations(count)")
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
     .limit(CASE_LIST_LIMIT);
 
   if (error) throw mapDatabaseError(error);
-  return (data ?? []).map(asCaseRecord);
+  return (data ?? []).map(mapCaseRecord);
 }
 
 export async function createCase(
@@ -59,7 +48,7 @@ export async function createCase(
 
   if (error) throw mapDatabaseError(error);
   if (!data) throw new ApiError("SERVICE_UNAVAILABLE");
-  return asCaseRecord(data);
+  return mapCaseRecord({ ...data, consultation_count: 0 });
 }
 
 export async function getCaseDetail(
@@ -101,7 +90,10 @@ export async function getCaseDetail(
   const analysisRows = (analyses ?? []) as AnalysisRow[];
 
   return {
-    case: asCaseRecord(caseRow),
+    case: mapCaseRecord({
+      ...caseRow,
+      consultation_count: consultationRows.length,
+    }),
     consultations: consultationRows,
     analyses: analysisRows.map((row) => ({
       id: row.id,

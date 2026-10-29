@@ -1,12 +1,15 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const PORT = Number(process.env.PLAYWRIGHT_PORT ?? 3001);
+/** Prefer a quiet port; orphaned `next start` on an old port + rebuild causes ChunkLoadError. */
+const PORT = Number(process.env.PLAYWRIGHT_PORT ?? 3451);
 const BASE_URL =
   process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORT}`;
 
 /**
  * Minimal E2E harness for Phase 2 UI smoke checks.
  * Uses a dedicated port so a local `npm run dev` on :3000 does not collide.
+ * Set PLAYWRIGHT_BASE_URL to attach to an already-running production server
+ * (skips webServer). Do not point at a stale process whose `.next` was rebuilt.
  */
 export default defineConfig({
   testDir: "./e2e",

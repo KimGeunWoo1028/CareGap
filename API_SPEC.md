@@ -31,10 +31,10 @@
 ### `GET /cases` → 200
 
 ```json
-{"data":[{"id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","alias":"합성-001","created_at":"2026-10-10T01:00:00Z"}],"meta":{"request_id":"d1111111-1111-4111-8111-111111111111"}}
+{"data":[{"id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","alias":"합성-001","created_at":"2026-10-10T01:00:00Z","consultation_count":2}],"meta":{"request_id":"d1111111-1111-4111-8111-111111111111"}}
 ```
 
-최신 생성 순. 입력 없음. 정렬 타이브레이커 id 내림차순.
+최신 생성 순. 입력 없음. 정렬 타이브레이커 id 내림차순. 각 항목에 소유 상담 기록 수 `consultation_count`(정수, 0 이상)를 포함한다. 사례 UUID·Replay 지원 여부·기술 오류 코드는 목록 전용 필드로 추가하지 않는다.
 
 ### `POST /cases` → 201
 

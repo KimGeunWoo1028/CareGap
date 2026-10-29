@@ -27,7 +27,8 @@ const USER_MESSAGES: Record<ApiErrorCode, string> = {
   ANALYSIS_IN_PROGRESS: "이 사례에서 다른 분석이 진행 중입니다.",
   ANALYSIS_FAILED: "이전 분석이 실패로 끝났습니다. 새 키로 다시 요청해 주세요.",
   NOT_ENOUGH_RECORDS: "서로 다른 날짜의 상담 기록이 2건 필요합니다.",
-  REPLAY_UNAVAILABLE: "replay에 사용할 수 있는 고정 예시와 일치하지 않습니다.",
+  REPLAY_UNAVAILABLE:
+    "이 시연 모드는 준비된 합성 사례에서만 사용할 수 있습니다.",
   RATE_LIMITED: "요청 한도를 초과했습니다. 잠시 후 다시 시도해 주세요.",
   AI_UNAVAILABLE: "분석 서비스에 연결할 수 없습니다.",
   INVALID_AI_OUTPUT: "분석 결과를 검증하지 못했습니다.",

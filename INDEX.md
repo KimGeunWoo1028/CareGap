@@ -13,14 +13,14 @@
 | 9 | [SECURITY](SECURITY.md) | 해커톤 안전 경계와 기관 도입 조건 |
 | 10 | [TEST_PLAN](TEST_PLAN.md) | 요구사항 추적과 재현 가능한 테스트 |
 | 11 | [DEMO_GUIDE](DEMO_GUIDE.md) | 시연 대본, 설정, 장애 대안 |
-| 12 | [환경 설정](ENVIRONMENT.md) | 버전·환경 변수와 초기화 |
+| 12 | [환경 설정](ENVIRONMENT.md) · [환경 분리](docs/ENVIRONMENT_SEPARATION.md) | 버전·환경 변수와 Test/Staging/Production 분리 |
 | 13 | [SOURCES](SOURCES.md) · [패키지 점검](PACKAGE_VERIFICATION.md) | 1차 출처와 문서 검증 범위 |
 | 14 | [AGENTS](AGENTS.md), [CLAUDE](CLAUDE.md) | 저장소 공통 작업 지침 |
 | 15 | [구현 단계 프롬프트](PROMPTS/IMPLEMENTATION_PHASES.md) | 모든 도구가 공유하는 단계별 작업 |
 | 16 | [Cursor](PROMPTS/CURSOR.md) · [Codex](PROMPTS/CODEX.md) · [Claude](PROMPTS/CLAUDE.md) | 도구별 시작·검토 지시문 |
 | 17 | [SQL](sql/001_schema.sql) · [사업 시드](sql/002_programs.sql) · [합성 시드](sql/003_demo_seed.sql) | Supabase 적용용 초안 |
 | 18 | [분석 JSON 스키마](schemas/analysis.schema.json) · [시연 결과](fixtures/replay-analysis.json) · [전체 응답 예시](fixtures/success-response.json) · [평가 사례](fixtures/evaluation-cases.json) | 검증 및 재현 자료 |
-| 19 | [고도화 로드맵](docs/ROADMAP.md) · [진행 현황](docs/PROJECT_PROGRESS.md) · [마이그레이션 감사](docs/POST_MIGRATION_AUDIT.md) · [AI 평가 계획](docs/AI_EVALUATION_PLAN.md) · [평가 보정](docs/AI_EVALUATION_CALIBRATION.md) · [Live 파일럿](docs/AI_LIVE_EVALUATION_PILOT.md) · [Smoke 하드닝](docs/AI_LIVE_SMOKE_HARDENING.md) | 검토·재현성·평가 기반 |
+| 19 | [고도화 로드맵](docs/ROADMAP.md) · [진행 현황](docs/PROJECT_PROGRESS.md) · [마이그레이션 감사](docs/POST_MIGRATION_AUDIT.md) · [환경 분리](docs/ENVIRONMENT_SEPARATION.md) · [AI 평가 계획](docs/AI_EVALUATION_PLAN.md) · [평가 보정](docs/AI_EVALUATION_CALIBRATION.md) · [Live 파일럿](docs/AI_LIVE_EVALUATION_PILOT.md) · [Smoke 하드닝](docs/AI_LIVE_SMOKE_HARDENING.md) | 검토·재현성·평가·환경 분리 |
 | 20 | [후속 확인](sql/004_follow_up_tasks.sql) · [004a](sql/004a_follow_up_terminal_immutable.sql) · [005 원자성](sql/005_review_follow_up_atomicity.sql) · [005b 교정](sql/005b_review_follow_up_atomicity_correct.sql) · [005 불일치 이력](sql/history/005_review_follow_up_atomicity.mismatched-applied-payload.sql) · CI `.github/workflows/ci.yml` | 후속 업무·원자성·이력 정합 |
 
 ## 충돌을 방지하는 읽기 순서

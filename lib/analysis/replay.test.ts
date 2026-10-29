@@ -85,7 +85,7 @@ describe("runReplayAnalysis (T09, T15)", () => {
         current,
         programs: DEMO_WELFARE_PROGRAMS,
       }),
-    ).toThrow(/REPLAY_UNAVAILABLE|고정 예시/);
+    ).toThrow(/REPLAY_UNAVAILABLE|시연 모드|고정 예시/);
 
     expect(() =>
       runReplayAnalysis({

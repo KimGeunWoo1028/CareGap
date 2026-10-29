@@ -17,7 +17,7 @@ npm run dev
 
 브라우저에서 `http://localhost:3000` → 로그인 → 사례 → 기록 → 분석 → 검토.
 
-SQL은 [DATABASE.md](DATABASE.md) 순서대로 `sql/001_schema.sql` → `002_programs.sql` → `003_demo_seed.sql`(시드 이메일을 본인 테스트 계정으로 교체)을 적용한다.
+SQL은 [DATABASE.md](DATABASE.md)를 따른다. CareGap Test·Replay 시연은 `001`→`002`→`003`(시드 이메일 교체) 후 후속 SQL. Staging 깨끗한 시작은 `003`을 생략하고 [docs/ENVIRONMENT_SEPARATION.md](docs/ENVIRONMENT_SEPARATION.md)를 본다.
 
 ## 검사
 
