@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { runLiveAnalysis } from "@/lib/analysis/live";
 import {
   exactQuoteSnippet,
   runMockLiveAnalysis,
@@ -18,6 +19,11 @@ const current = {
 };
 
 describe("live-mock", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    delete process.env.CARE_GAP_LIVE_MOCK;
+  });
+
   it("keeps quotes as exact substrings", () => {
     const snippet = exactQuoteSnippet(current.body, 10);
     expect(current.body.includes(snippet)).toBe(true);
@@ -35,5 +41,45 @@ describe("live-mock", () => {
     const meal = result.analysis.changes.find((c) => c.domain === "meal");
     expect(meal?.status).toBe("worsened");
     expect(result.recommendations.length).toBeGreaterThan(0);
+  });
+
+  it("runLiveAnalysis with useMock never hits OpenAI network", async () => {
+    const fetchSpy = vi.fn(async () => {
+      throw new Error("unexpected fetch");
+    });
+    vi.stubGlobal("fetch", fetchSpy);
+    const result = await runLiveAnalysis({
+      previous,
+      current,
+      programs: DEMO_WELFARE_PROGRAMS,
+      openai: {
+        apiKey: "must-not-be-used",
+        model: "must-not-be-used",
+        useMock: true,
+        fetchImpl: fetchSpy as unknown as typeof fetch,
+      },
+    });
+    expect(result.mode).toBe("live");
+    expect(result.model).toBe("caregap-live-mock");
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("CARE_GAP_LIVE_MOCK=1 short-circuits before OpenAI even with empty key", async () => {
+    process.env.CARE_GAP_LIVE_MOCK = "1";
+    const fetchSpy = vi.fn(async () => {
+      throw new Error("unexpected fetch");
+    });
+    const result = await runLiveAnalysis({
+      previous,
+      current,
+      programs: DEMO_WELFARE_PROGRAMS,
+      openai: {
+        apiKey: "",
+        model: "",
+        fetchImpl: fetchSpy as unknown as typeof fetch,
+      },
+    });
+    expect(result.model).toBe("caregap-live-mock");
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });
