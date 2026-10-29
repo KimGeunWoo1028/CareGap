@@ -37,8 +37,8 @@ ANALYSIS_MODE=live
 ## 4. 개발 시작 순서
 
 1. `npm ci`로 의존성을 설치한다 (`package-lock.json` 기준).
-2. Supabase 프로젝트에 SQL을 적용한다. **CareGap Test / Replay 시연**은 001→002→003(이메일 치환) 후 004→005 경로([DATABASE.md](DATABASE.md)). **Staging 깨끗한 UX**는 001→002→004→004a→005이며 **003 생략** — 상세는 [docs/ENVIRONMENT_SEPARATION.md](docs/ENVIRONMENT_SEPARATION.md). 공개 회원가입 해제와 A/B 계정 준비. 기존 Test를 Staging으로 재사용·초기화하지 않는다.
-3. `.env.example`을 복사해 `.env.local`(Test)을 만들고 필요한 값을 채운다. Staging은 **별도** env 파일·키. 키를 공유하거나 버전관리하지 않는다. 시연·기본 검증은 `ANALYSIS_MODE=replay`. Live는 자동 활성화하지 않는다.
+2. **해커톤:** 기존 CareGap Test 프로젝트만 사용한다. 이미 SQL·데이터가 있으면 재적용·초기화하지 않는다. 새 빈 프로젝트일 때만 [DATABASE.md](DATABASE.md) 신규 설치 순서를 따른다. 공개 회원가입 해제. 깨끗한 시연은 **같은 Test에 Auth 사용자만 추가**([docs/ENVIRONMENT_SEPARATION.md](docs/ENVIRONMENT_SEPARATION.md)). Staging/Production 프로젝트는 만들지 않는다.
+3. `.env.example`을 복사해 `.env.local`을 만들고 CareGap Test 값을 채운다. 키를 공유하거나 버전관리하지 않는다. 시연·기본 검증은 `ANALYSIS_MODE=replay`. Live는 자동 활성화하지 않으며 유료 호출은 별도 승인 후에만.
 4. `npm run dev`로 로컬 실행. 검사는 `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build`, `npm run test:e2e`.
 5. live로 전환할 때는 비용 한도·모델 권한과 외부 전송 데이터가 합성인지 확인한다. **실제 OpenAI 유료 호출은 별도 승인·예산 없이는 수행하지 않는다.**
 

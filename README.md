@@ -17,7 +17,7 @@ npm run dev
 
 브라우저에서 `http://localhost:3000` → 로그인 → 사례 → 기록 → 분석 → 검토.
 
-SQL은 [DATABASE.md](DATABASE.md)를 따른다. CareGap Test·Replay 시연은 `001`→`002`→`003`(시드 이메일 교체) 후 후속 SQL. Staging 깨끗한 시작은 `003`을 생략하고 [docs/ENVIRONMENT_SEPARATION.md](docs/ENVIRONMENT_SEPARATION.md)를 본다.
+해커톤은 **CareGap Test 단일 Supabase**만 사용한다([docs/ENVIRONMENT_SEPARATION.md](docs/ENVIRONMENT_SEPARATION.md)). 이미 적용된 SQL·데이터는 건드리지 않는다. 신규 빈 프로젝트일 때만 [DATABASE.md](DATABASE.md) 순서를 따른다.
 
 ## 검사
 

@@ -4,7 +4,7 @@
 
 1. 합성 데이터 전용 테스트 프로젝트를 만든다. Supabase Auth에서 공개 가입을 끄고 팀용 테스트 계정 A·B를 각각 만든다. 테스트 비밀번호와 키는 문서·저장소에 넣지 않는다.
 2. SQL Editor에서 [sql/001_schema.sql](sql/001_schema.sql) 전체를 **새 프로젝트에 한 번만** 실행한다. 이 파일은 재실행용 마이그레이션이 아니다. 운영 중 DB에 무심코 실행하지 않는다.
-3. [sql/002_programs.sql](sql/002_programs.sql)을 실행한다. 사업 시드는 ID 기준 갱신 가능하다. **CareGap Test / Replay 시연 DB**에만 [sql/003_demo_seed.sql](sql/003_demo_seed.sql)에서 이메일을 A의 테스트 이메일로 바꾸고 실행한다. B에도 시연 자료가 필요하면 별도 이메일로 반복한다. **Staging·Production 성격의 깨끗한 UX DB에서는 003을 기본 적용하지 않는다**(새 계정 사례 0건). 환경 분리는 [docs/ENVIRONMENT_SEPARATION.md](docs/ENVIRONMENT_SEPARATION.md)를 본다.
+3. [sql/002_programs.sql](sql/002_programs.sql)을 실행한다. 사업 시드는 ID 기준 갱신 가능하다. Replay 시연이 필요하면 [sql/003_demo_seed.sql](sql/003_demo_seed.sql)에서 이메일을 **해당 Auth 계정**으로 바꿔 실행한다(또는 UI에서 `합성-001`과 동일 원문을 직접 등록). B에도 시연 자료가 필요하면 별도 이메일로 반복한다. **해커톤은 CareGap Test 단일 프로젝트만 사용**하며, 이미 적용된 DB를 초기화하거나 Staging/Production을 새로 만들지 않는다 — [docs/ENVIRONMENT_SEPARATION.md](docs/ENVIRONMENT_SEPARATION.md).
 4. 후속 확인·원자성 SQL은 아래 **신규 설치** / **기존 업그레이드** 표를 따른다. CareGap Test에 이미 적용된 004~005b를 재실행하거나 `supabase_migrations` 이력을 수동 편집하지 않는다.
 5. 각 로그인 토큰으로 API와 Supabase 직접 호출을 시험한다. A의 사례를 B가 읽을 수 없고 분석 행 직접 쓰기가 거부되는지 [TEST_PLAN.md](TEST_PLAN.md)대로 확인한다. 스키마 적용이나 공급자 권한은 실제 프로젝트마다 확인해야 한다.
 6. `needs_followup` 검토 저장 시 후속 업무는 005 트리거가 **같은 트랜잭션**에서 만든다. 005 이전 고아 검토는 승인 후 `POST /follow-ups` 또는 `createFollowUpFromReview`로 수동 복구한다(자동 백필 금지).
@@ -25,11 +25,11 @@
 ### 신규 설치 (빈 프로젝트)
 
 1. `001_schema.sql` → `002_programs.sql`
-2. **선택** `003_demo_seed.sql`(이메일 치환) — CareGap Test·Replay 시연용만. Staging 기본 경로에서는 생략
+2. **선택** `003_demo_seed.sql`(이메일 치환) — Replay 시연용. 깨끗한 계정은 시드 없이 UI로만 시작해도 됨
 3. `004_follow_up_tasks.sql` → `004a_follow_up_terminal_immutable.sql`
 4. **`005_review_follow_up_atomicity.sql` 1회** (의도 SQL)
 5. `sql/history/*mismatched*` 및 **`005b`는 적용하지 않음**
-6. 기존 CareGap Test 데이터·001~005b 이력을 초기화하거나 Staging으로 재사용하지 않음
+6. **이미 운영 중인 CareGap Test**에는 위 SQL을 재적용·초기화하지 않음. 해커톤은 이 Test만 사용
 
 ### 기존 설치 업그레이드
 
