@@ -100,4 +100,18 @@ describe("follow-up service", () => {
       "done",
     );
   });
+
+  it("cancels open tasks via terminal status", async () => {
+    const { completeFollowUpTask } = await import("./service");
+    updateFollowUpTaskStatus.mockResolvedValue({
+      id: "task-1",
+      status: "cancelled",
+    });
+    await completeFollowUpTask(auth, "task-1", "cancelled");
+    expect(updateFollowUpTaskStatus).toHaveBeenCalledWith(
+      auth.db,
+      "task-1",
+      "cancelled",
+    );
+  });
 });
