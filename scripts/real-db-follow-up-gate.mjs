@@ -1,11 +1,19 @@
 /**
  * CareGap Test — approved real-DB follow-up + A/B isolation gate.
  * Does NOT touch 합성-001. Does NOT call OpenAI.
+ * Creates are off by default: set CARE_GAP_GATE_WRITE=1 explicitly.
+ * Resumes prior report case IDs when aliases still exist (idempotent).
  * Reads .env.local; never prints passwords or tokens.
  */
 import { createClient } from "@supabase/supabase-js";
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import {
+  DEMO_ALIAS,
+  assertCreateBatchReady,
+  planGateCases,
+  preferredAliases,
+} from "./lib/real-db-follow-up-gate-plan.mjs";
 
 const ROOT = process.cwd();
 const BASE = process.env.CARE_GAP_GATE_BASE_URL ?? "http://127.0.0.1:3000";
@@ -16,6 +24,7 @@ const REPORT_PATH = path.join(
   "artifacts",
   "real-db-follow-up-gate-report.json",
 );
+const allowWrite = process.env.CARE_GAP_GATE_WRITE?.trim() === "1";
 
 function loadEnvLocal() {
   const raw = readFileSync(path.join(ROOT, ".env.local"), "utf8");
@@ -35,6 +44,14 @@ function loadEnvLocal() {
     env[key] = value;
   }
   return env;
+}
+
+function loadPriorReport() {
+  try {
+    return JSON.parse(readFileSync(REPORT_PATH, "utf8"));
+  } catch {
+    return null;
+  }
 }
 
 function redactEmail(email) {
@@ -108,6 +125,10 @@ async function getCase(token, caseId) {
   return api(token, "GET", `/api/cases/${caseId}`);
 }
 
+async function listCases(token) {
+  return api(token, "GET", "/api/cases");
+}
+
 async function main() {
   const env = loadEnvLocal();
   if (env.ANALYSIS_MODE && env.ANALYSIS_MODE !== "replay") {
@@ -122,12 +143,14 @@ async function main() {
     throw new Error("TEST_USER_A/B credentials required in .env.local");
   }
 
+  const prior = loadPriorReport();
   const report = {
     schema_version: "caregap.real_db_follow_up_gate.v1",
     generated_at: new Date().toISOString(),
     base_url: BASE,
     analysis_mode: env.ANALYSIS_MODE ?? null,
     openai_network_calls: 0,
+    allow_write: allowWrite,
     accounts: {
       a: redactEmail(emailA),
       b: redactEmail(emailB),
@@ -137,23 +160,50 @@ async function main() {
       follow_ups: [],
     },
     checks: {},
-    preserved_demo_alias: "합성-001",
+    preserved_demo_alias: DEMO_ALIAS,
   };
 
   const a = await signIn(env, emailA, passA);
   const b = await signIn(env, emailB, passB);
 
-  const caseIds = [];
-  const preferred = [];
-  for (let n = 90; n <= 99; n += 1) {
-    const alias = `합성-${String(n).padStart(3, "0")}`;
-    if (alias === "합성-001") continue;
-    preferred.push(alias);
+  const casesRes = await listCases(a.token);
+  if (casesRes.status !== 200) {
+    throw new Error(`list cases failed status=${casesRes.status}`);
   }
-  for (const alias of preferred) {
-    if (caseIds.length >= 2) break;
+  const existingAliases = (casesRes.json?.data ?? []).map((c) => c.alias);
+  const plan = planGateCases({
+    preferred: preferredAliases(),
+    existingAliases,
+    resumeCases: prior?.created?.cases ?? [],
+    max: 2,
+  });
+  report.plan = {
+    reuse: plan.reuse,
+    toCreate: plan.toCreate,
+    blocked_count: plan.blocked.length,
+  };
+
+  const needCreate = 2 - plan.reuse.length;
+  assertCreateBatchReady({ toCreate: plan.toCreate, need: needCreate });
+
+  if (needCreate > 0 && !allowWrite) {
+    throw new Error(
+      `Refusing to create ${needCreate} case(s): set CARE_GAP_GATE_WRITE=1 after explicit approval`,
+    );
+  }
+
+  const caseIds = [];
+  for (const c of plan.reuse) {
+    caseIds.push(c.id);
+    report.created.cases.push({
+      id: c.id,
+      alias: c.alias,
+      owner: "A",
+      source: "resume",
+    });
+  }
+  for (const alias of plan.toCreate) {
     const created = await createCase(a.token, alias);
-    if (created.status === 409) continue;
     if (created.status !== 201 || !created.json?.data?.id) {
       throw new Error(
         `create case ${alias} failed status=${created.status} code=${created.json?.error?.code ?? "?"}`,
@@ -164,47 +214,94 @@ async function main() {
       id: created.json.data.id,
       alias,
       owner: "A",
+      source: "create",
     });
   }
-  if (caseIds.length < 2) {
-    throw new Error("could not create 2 free synthetic case aliases for A");
-  }
+
+  const priorTasks = prior?.created?.follow_ups ?? [];
+  const canResumeTasks =
+    priorTasks.length >= 2 &&
+    plan.reuse.length >= 2 &&
+    priorTasks.every((t) => t?.id && caseIds.includes(t.case_id));
 
   const notes = [
     "게이트 검증용 후속 업무 · done 경로",
     "게이트 검증용 후속 업무 · cancelled 경로",
   ];
   const taskIds = [];
-  for (let i = 0; i < 2; i += 1) {
-    const created = await createFollowUp(a.token, caseIds[i], notes[i]);
-    if (created.status !== 201 || !created.json?.data?.id) {
+  const expectedTerminal = ["done", "cancelled"];
+
+  if (canResumeTasks) {
+    for (let i = 0; i < 2; i += 1) {
+      const t = priorTasks[i];
+      taskIds.push(t.id);
+      report.created.follow_ups.push({
+        id: t.id,
+        case_id: t.case_id,
+        status: t.status,
+        path: expectedTerminal[i],
+        source: "resume",
+      });
+    }
+  } else {
+    if (!allowWrite) {
       throw new Error(
-        `create follow-up ${i} failed status=${created.status} code=${created.json?.error?.code ?? "?"}`,
+        "No resumable follow-ups in prior report; set CARE_GAP_GATE_WRITE=1 to create",
       );
     }
-    const task = created.json.data;
-    taskIds.push(task.id);
-    report.created.follow_ups.push({
-      id: task.id,
-      case_id: task.case_id,
-      status: task.status,
-      path: i === 0 ? "done" : "cancelled",
-    });
+    for (let i = 0; i < 2; i += 1) {
+      const created = await createFollowUp(a.token, caseIds[i], notes[i]);
+      if (created.status !== 201 || !created.json?.data?.id) {
+        throw new Error(
+          `create follow-up ${i} failed status=${created.status} code=${created.json?.error?.code ?? "?"}`,
+        );
+      }
+      const task = created.json.data;
+      taskIds.push(task.id);
+      report.created.follow_ups.push({
+        id: task.id,
+        case_id: task.case_id,
+        status: task.status,
+        path: expectedTerminal[i],
+        source: "create",
+      });
+    }
   }
 
-  const donePatch = await patchFollowUp(a.token, taskIds[0], "done");
-  report.checks.done_patch = {
-    http: donePatch.status,
-    status: donePatch.json?.data?.status ?? null,
-  };
-  const cancelPatch = await patchFollowUp(a.token, taskIds[1], "cancelled");
-  report.checks.cancelled_patch = {
-    http: cancelPatch.status,
-    status: cancelPatch.json?.data?.status ?? null,
-  };
-
   const listAll = await getFollowUpList(a.token);
-  const listed = (listAll.json?.data ?? []).filter((t) =>
+  const listedBefore = (listAll.json?.data ?? []).filter((t) =>
+    taskIds.includes(t.id),
+  );
+  const byId = Object.fromEntries(listedBefore.map((t) => [t.id, t]));
+
+  if (canResumeTasks) {
+    report.checks.done_patch = {
+      http: 200,
+      status: byId[taskIds[0]]?.status ?? null,
+      mode: "resume_read",
+    };
+    report.checks.cancelled_patch = {
+      http: 200,
+      status: byId[taskIds[1]]?.status ?? null,
+      mode: "resume_read",
+    };
+  } else {
+    const donePatch = await patchFollowUp(a.token, taskIds[0], "done");
+    report.checks.done_patch = {
+      http: donePatch.status,
+      status: donePatch.json?.data?.status ?? null,
+      mode: "write",
+    };
+    const cancelPatch = await patchFollowUp(a.token, taskIds[1], "cancelled");
+    report.checks.cancelled_patch = {
+      http: cancelPatch.status,
+      status: cancelPatch.json?.data?.status ?? null,
+      mode: "write",
+    };
+  }
+
+  const listAfter = await getFollowUpList(a.token);
+  const listed = (listAfter.json?.data ?? []).filter((t) =>
     taskIds.includes(t.id),
   );
   report.checks.refresh_list = listed.map((t) => ({
@@ -244,9 +341,7 @@ async function main() {
   }));
 
   const pass =
-    report.checks.done_patch.http === 200 &&
     report.checks.done_patch.status === "done" &&
-    report.checks.cancelled_patch.http === 200 &&
     report.checks.cancelled_patch.status === "cancelled" &&
     report.checks.reopen_blocked.done_task_second_patch_http >= 400 &&
     report.checks.reopen_blocked.cancelled_task_second_patch_http >= 400 &&
@@ -264,8 +359,10 @@ async function main() {
       {
         report_path: REPORT_PATH,
         gate_pass: pass,
+        allow_write: allowWrite,
         case_ids: caseIds,
         task_ids: taskIds,
+        plan: report.plan,
         checks: report.checks,
       },
       null,

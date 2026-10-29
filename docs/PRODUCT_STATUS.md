@@ -1,6 +1,8 @@
 # CareGap AI — 제품 구현 상태 (해커톤)
 
-발표 자료·대본·리허설은 이 문서 범위가 아니다. 기능·실행·검증만 정리한다.
+발표 자료·대본·리허설·영상은 이 문서 범위가 아니다. 기능·실행·검증만 정리한다.
+
+**기능 동결 (로컬 RC):** 브랜치 `feat/hackathon-product-hardening`, 태그 `caregap-hackathon-rc2-local` (push·main·`caregap-hackathon-rc1` 이동 없음).
 
 ## 환경
 
@@ -24,6 +26,19 @@
 | 후속 확인(생성 트리거·완료·취소) | 구현 · UI Mock E2E 포함 |
 | 분석 이력 | 구현 |
 
+## 실제 검증 범위 (동결 기준)
+
+| 항목 | 결과 | 비고 |
+|---|---|---|
+| typecheck / lint / vitest / build / mock E2E | PASS | 동결 커밋 기준 재실행 |
+| Replay UI·시연(합성-001) | PASS | mock E2E + 옵트인 rehearsal |
+| Live Mock (OpenAI 0회) | PASS | 단위 테스트 |
+| Live Recheck / AI eval 코드 포함 | PASS | `05544b8` 등이 본 브랜치 ancestor |
+| 후속 PATCH `open→done` / `open→cancelled` · 재개방 차단 · A/B 404 | PASS | 실DB 게이트(승인분). `analysis_id=null` 수동 POST |
+| 인증 후 반응형(사례·상세·후속 × 4 viewport) | PASS | 옵트인 `viewport-auth-gate` |
+| 검토 저장 → 후속 **자동 생성** | 미입증 | Mock UI만. 실DB 게이트 범위 밖 |
+| 웹 Live **유료** OpenAI E2E | 미검증 | 호출 금지 유지 |
+
 ## 실행
 
 ```bash
@@ -45,8 +60,12 @@ npm run dev
 - 상담·분석·검토 수정/삭제 UI 없음(명세)
 - Replay는 고정 시연 한 쌍만
 - 웹 Live 실유료 E2E는 기본 스위트에 없음
-- real-auth / hackathon-rehearsal E2E는 환경 변수 없으면 skip
-- 실DB A/B 격리는 모의 테스트와 구분(미실행 시 PASS 표기 금지)
+- real-auth / hackathon-rehearsal / viewport-auth-gate E2E는 `CARE_GAP_REAL_AUTH_E2E=1` 없으면 skip
+- 실DB A/B·후속 PATCH는 승인된 게이트로만 검증. 미실행 시 PASS 표기 금지
+- 게이트 첫 실패로 남은 orphan `합성-097`(상담·분석·후속 0). 삭제 금지 정책으로 유지
+- `scripts/real-db-follow-up-gate.mjs`는 기본 생성 금지(`CARE_GAP_GATE_WRITE=1` 필요). 재실행은 리포트 resume
+- `design/full-redesign` 등 미병합 브랜치는 본 RC에 포함되지 않음
+- 미커밋 live-smoke dry-run/checkpoint 타임스탬프 노이즈는 RC 산출물 아님
 
 ## 오류 대응 (사용자 문구)
 

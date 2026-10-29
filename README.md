@@ -1,6 +1,6 @@
 # 돌봄틈새 AI (CareGap AI) — 해커톤 MVP
 
-기준일: 2026-10-29 (한국시간) · 상태: **해커톤용 웹 MVP (Replay 기본 · Live Mock 검증 가능)**. 실서비스·실제 상담 기록·자동 자격 판정은 범위 밖이다. 기능 목록·제한은 [docs/PRODUCT_STATUS.md](docs/PRODUCT_STATUS.md).
+기준일: 2026-10-29 (한국시간) · 상태: **기능 동결 로컬 RC** (`feat/hackathon-product-hardening`, 태그 `caregap-hackathon-rc2-local`). Replay 기본 · Live Mock 검증 가능. 실서비스·실제 상담 기록·자동 자격 판정은 범위 밖이다. 검증 범위·제한은 [docs/PRODUCT_STATUS.md](docs/PRODUCT_STATUS.md).
 
 담당자가 **합성** 상담 기록 두 건을 비교해 식사·거동·건강·생활환경 변화와 원문 근거를 보고, 고정 복지사업 후보를 검토하는 보조 웹 앱이다. 진단·수급 자격 확정·자동 신청은 하지 않는다.
 
