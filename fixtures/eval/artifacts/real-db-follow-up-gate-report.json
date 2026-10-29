@@ -1,0 +1,86 @@
+{
+  "schema_version": "caregap.real_db_follow_up_gate.v1",
+  "generated_at": "2026-10-29T01:00:06.413Z",
+  "base_url": "http://127.0.0.1:3000",
+  "analysis_mode": "replay",
+  "openai_network_calls": 0,
+  "accounts": {
+    "a": "ca…@example.com",
+    "b": "ca…@example.com"
+  },
+  "created": {
+    "cases": [
+      {
+        "id": "39c84cbf-a1bc-4d42-8af4-3cc70223c2dd",
+        "alias": "합성-093",
+        "owner": "A"
+      },
+      {
+        "id": "89f8e5a5-94da-46f7-83f0-01cc1515f591",
+        "alias": "합성-094",
+        "owner": "A"
+      }
+    ],
+    "follow_ups": [
+      {
+        "id": "25c7541c-37c5-456d-b85c-8b86ebdbf98d",
+        "case_id": "39c84cbf-a1bc-4d42-8af4-3cc70223c2dd",
+        "status": "open",
+        "path": "done"
+      },
+      {
+        "id": "b43032a1-c46a-405c-b513-6b6321f57169",
+        "case_id": "89f8e5a5-94da-46f7-83f0-01cc1515f591",
+        "status": "open",
+        "path": "cancelled"
+      }
+    ]
+  },
+  "checks": {
+    "done_patch": {
+      "http": 200,
+      "status": "done"
+    },
+    "cancelled_patch": {
+      "http": 200,
+      "status": "cancelled"
+    },
+    "refresh_list": [
+      {
+        "id": "b43032a1-c46a-405c-b513-6b6321f57169",
+        "status": "cancelled",
+        "completed_at": "2026-10-29T01:00:09.112+00:00"
+      },
+      {
+        "id": "25c7541c-37c5-456d-b85c-8b86ebdbf98d",
+        "status": "done",
+        "completed_at": "2026-10-29T01:00:08.89+00:00"
+      }
+    ],
+    "reopen_blocked": {
+      "done_task_second_patch_http": 404,
+      "done_task_second_patch_code": "NOT_FOUND",
+      "cancelled_task_second_patch_http": 404,
+      "cancelled_task_second_patch_code": "NOT_FOUND"
+    },
+    "cross_user": {
+      "b_get_a_case_http": 404,
+      "b_get_a_case_code": "NOT_FOUND",
+      "b_patch_a_follow_up_http": 404,
+      "b_patch_a_follow_up_code": "NOT_FOUND",
+      "b_list_contains_a_tasks": false
+    },
+    "a_data_unchanged_after_b": [
+      {
+        "id": "b43032a1-c46a-405c-b513-6b6321f57169",
+        "status": "cancelled"
+      },
+      {
+        "id": "25c7541c-37c5-456d-b85c-8b86ebdbf98d",
+        "status": "done"
+      }
+    ]
+  },
+  "preserved_demo_alias": "합성-001",
+  "gate_pass": true
+}
