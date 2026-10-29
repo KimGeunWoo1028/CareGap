@@ -24,8 +24,9 @@ export function AnalysisReviewForm({
 }: Props) {
   const noteId = useId();
   const errorId = useId();
-  const [decision, setDecision] =
-    useState<AnalysisReviewRecord["decision"]>("needs_followup");
+  const [decision, setDecision] = useState<
+    AnalysisReviewRecord["decision"] | null
+  >(null);
   const [note, setNote] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
 
@@ -35,6 +36,10 @@ export function AnalysisReviewForm({
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setLocalError(null);
+    if (!decision) {
+      setLocalError("검토 결정을 선택해 주세요.");
+      return;
+    }
     if (noteLength > 500) {
       setLocalError("검토 메모는 최대 500자입니다.");
       return;
@@ -50,6 +55,9 @@ export function AnalysisReviewForm({
     <form className="stack analysis-review-form" onSubmit={handleSubmit} noValidate>
       <fieldset className="analysis-review-form__choices" disabled={busy}>
         <legend className="analysis-section-title">담당자 검토 결정</legend>
+        <p className="muted analysis-caveat">
+          기본 선택이 없습니다. 담당자가 직접 결정한 뒤에만 저장됩니다.
+        </p>
         {(
           [
             "confirmed",
@@ -103,7 +111,7 @@ export function AnalysisReviewForm({
       <button
         type="submit"
         className="btn btn--primary"
-        disabled={busy || noteLength > 500}
+        disabled={busy || noteLength > 500 || decision === null}
         aria-busy={submitting}
       >
         {submitting ? "저장 중…" : "검토 저장"}

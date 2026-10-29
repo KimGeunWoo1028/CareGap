@@ -374,6 +374,19 @@ textarea {
   color: var(--button-primary-fg);
 }
 
+.btn--danger {
+  background: var(--error);
+  color: #fff;
+  border-color: var(--error);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: #a61f1a;
+  border-color: #a61f1a;
+  color: #fff;
+}
+
 .btn--ghost {
   background: transparent;
   color: #e8eef7;
@@ -646,9 +659,10 @@ textarea {
 }
 
 .chip--change-unknown {
-  background: var(--info-bg);
-  border-color: var(--info-line);
-  color: var(--info-ink);
+  /* Uncertainty is cautionary, not "info / OK" (UX-009). Text label still required. */
+  background: var(--warning-bg);
+  border-color: var(--warn-line);
+  color: var(--warning);
 }
 
 .chip--unverified {
@@ -1251,16 +1265,28 @@ table.data time {
 
 .detail-section-nav {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 0.85rem;
+  flex-direction: column;
+  gap: 0.35rem;
   margin: 0 0 var(--s3);
   padding: 0.55rem 0.75rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
   position: sticky;
   top: 0.35rem;
-  z-index: 2;
+  z-index: 4;
+  backdrop-filter: blur(6px);
+}
+
+.detail-section-nav__hint {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.detail-section-nav__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.85rem;
 }
 
 .detail-section-nav a {
@@ -1272,6 +1298,28 @@ table.data time {
 
 .detail-section-nav a:hover {
   text-decoration: underline;
+}
+
+.detail-section-nav a[aria-current="true"] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.detail-return-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+  margin: 0 0 var(--s3);
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--surface) 92%, var(--cobalt) 8%);
+}
+
+.detail-notes-toggle {
+  margin-top: 0.75rem;
 }
 
 .detail-section-head {
@@ -2049,4 +2097,76 @@ table.data time {
     grid-template-columns: 1fr auto;
     align-items: start;
   }
+}
+
+/* —— Confirm / modal dialog (UX-002) —— */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--shell-pad);
+  background: rgba(7, 18, 33, 0.55);
+}
+
+.dialog-panel {
+  width: min(100%, 26rem);
+  max-height: min(90dvh, 40rem);
+  overflow: auto;
+  padding: 1.25rem 1.35rem;
+  border-radius: var(--radius);
+  background: var(--porcelain-pure);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.dialog-panel--form {
+  width: min(100%, 28rem);
+}
+
+.dialog-panel__chrome {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.dialog-panel__title {
+  margin: 0;
+  flex: 1;
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.dialog-panel__close {
+  flex-shrink: 0;
+  min-width: 2.25rem;
+  padding: 0.2rem 0.45rem;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.dialog-panel__lede {
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.dialog-panel__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.1rem;
+  line-height: 1.55;
+}
+
+.dialog-panel__body p {
+  margin: 0;
+}
+
+.dialog-panel__actions {
+  justify-content: flex-end;
 }

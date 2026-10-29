@@ -53,12 +53,42 @@ import {
   formatSeoulDateTime,
   seoulTodayIsoDate,
 } from "@/lib/format";
+import { readQueryParam } from "@/lib/url-state";
+
+function safeFollowUpsReturn(raw: string | null): string | null {
+  if (!raw) return null;
+  let decoded = raw;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch {
+    return null;
+  }
+  if (!decoded.startsWith("/follow-ups")) return null;
+  if (decoded.startsWith("//") || decoded.includes("://")) return null;
+  return decoded;
+}
+
+const DETAIL_SECTION_IDS = [
+  "compare-heading",
+  "analysis-result-heading",
+  "consult-form-heading",
+  "notes-heading",
+  "history-heading",
+] as const;
 
 export function CaseDetailInner() {
   const params = useParams<{ case_id: string }>();
   const caseId = params.case_id;
   const { accessToken, clearSession, signOut } = useAuthSession();
   const router = useRouter();
+  const [returnHref] = useState(() =>
+    typeof window !== "undefined"
+      ? safeFollowUpsReturn(readQueryParam("return"))
+      : null,
+  );
+  const [activeSection, setActiveSection] = useState<string>("compare-heading");
+  const [notesExpanded, setNotesExpanded] = useState(false);
+  const NOTES_PREVIEW = 3;
 
   const dateHintId = useId();
   const dateErrorId = useId();
@@ -318,6 +348,41 @@ export function CaseDetailInner() {
   }, [stopPolling]);
 
   useEffect(() => {
+    if (!detail || typeof IntersectionObserver === "undefined") return;
+
+    const elements = DETAIL_SECTION_IDS.map((id) =>
+      document.getElementById(id),
+    ).filter((el): el is HTMLElement => el != null);
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (a, b) =>
+              (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0) ||
+              a.boundingClientRect.top - b.boundingClientRect.top,
+          );
+        const top = visible[0]?.target;
+        if (top?.id) {
+          setActiveSection(top.id);
+        }
+      },
+      {
+        root: null,
+        rootMargin: "-20% 0px -55% 0px",
+        threshold: [0, 0.25, 0.5, 1],
+      },
+    );
+
+    for (const el of elements) {
+      observer.observe(el);
+    }
+    return () => observer.disconnect();
+  }, [detail]);
+
+  useEffect(() => {
     if (!detail || !accessToken) return;
     const processing = detail.analyses.find(
       (item) => item.status === "processing",
@@ -425,6 +490,17 @@ export function CaseDetailInner() {
         ) : null}
       </nav>
 
+      {returnHref ? (
+        <p className="detail-return-banner">
+          <Link href={returnHref} className="btn btn--ghost">
+            ← 후속 확인으로 돌아가기
+          </Link>
+          <span className="muted">
+            필터·목록 맥락을 유지한 채 이어서 처리할 수 있습니다.
+          </span>
+        </p>
+      ) : null}
+
       {loading ? (
         <section className="panel detail-state" aria-busy="true">
           <div className="skeleton" />
@@ -526,11 +602,29 @@ export function CaseDetailInner() {
           ) : null}
 
           <nav className="detail-section-nav" aria-label="사례 상세 구역">
-            <a href="#compare-heading">비교</a>
-            <a href="#analysis-result-heading">결과</a>
-            <a href="#consult-form-heading">기록 등록</a>
-            <a href="#notes-heading">상담 목록</a>
-            <a href="#history-heading">이력</a>
+            <p className="detail-section-nav__hint muted">
+              긴 화면입니다. 아래 링크로 구역을 바로 이동하세요. 현재 보이는
+              구역은 강조됩니다.
+            </p>
+            <div className="detail-section-nav__links">
+              {(
+                [
+                  ["compare-heading", "비교"],
+                  ["analysis-result-heading", "결과"],
+                  ["consult-form-heading", "기록 등록"],
+                  ["notes-heading", "상담 목록"],
+                  ["history-heading", "이력"],
+                ] as const
+              ).map(([id, label]) => (
+                <a
+                  key={id}
+                  href={`#${id}`}
+                  aria-current={activeSection === id ? "true" : undefined}
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
           </nav>
 
           <section
@@ -818,26 +912,44 @@ export function CaseDetailInner() {
                     </p>
                   </div>
                 ) : (
-                  <ul className="note-list note-route__stops">
-                    {detail.consultations.map((note) => (
-                      <li key={note.id}>
-                        <article className="note-card">
-                          <div className="note-card__meta">
-                            <span>
-                              상담일 {formatSeoulDate(note.occurred_on)}
-                            </span>
-                            <span className="chip">
-                              {channelLabel(note.channel)}
-                            </span>
-                            <span>
-                              저장 {formatSeoulDateTime(note.created_at)}
-                            </span>
-                          </div>
-                          <p className="note-card__body">{note.body}</p>
-                        </article>
-                      </li>
-                    ))}
-                  </ul>
+                  <>
+                    <ul className="note-list note-route__stops">
+                      {(notesExpanded ||
+                      detail.consultations.length <= NOTES_PREVIEW
+                        ? detail.consultations
+                        : detail.consultations.slice(0, NOTES_PREVIEW)
+                      ).map((note) => (
+                        <li key={note.id}>
+                          <article className="note-card">
+                            <div className="note-card__meta">
+                              <span>
+                                상담일 {formatSeoulDate(note.occurred_on)}
+                              </span>
+                              <span className="chip">
+                                {channelLabel(note.channel)}
+                              </span>
+                              <span>
+                                저장 {formatSeoulDateTime(note.created_at)}
+                              </span>
+                            </div>
+                            <p className="note-card__body">{note.body}</p>
+                          </article>
+                        </li>
+                      ))}
+                    </ul>
+                    {detail.consultations.length > NOTES_PREVIEW ? (
+                      <button
+                        type="button"
+                        className="btn btn--ghost detail-notes-toggle"
+                        aria-expanded={notesExpanded}
+                        onClick={() => setNotesExpanded((v) => !v)}
+                      >
+                        {notesExpanded
+                          ? "상담 기록 접기"
+                          : `나머지 상담 기록 ${detail.consultations.length - NOTES_PREVIEW}건 펼치기`}
+                      </button>
+                    ) : null}
+                  </>
                 )}
               </section>
 

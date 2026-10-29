@@ -9,6 +9,62 @@ import type {
 const SELECT_COLS =
   "id, owner_id, case_id, analysis_id, kind, status, due_on, note, created_at, completed_at";
 
+const LIST_SELECT = `${SELECT_COLS}, cases(alias), analyses(completed_at, mode, status, result)`;
+
+type FollowUpRow = FollowUpTask & {
+  cases?: { alias: string } | { alias: string }[] | null;
+  analyses?:
+    | {
+        completed_at: string | null;
+        mode: string | null;
+        status: string | null;
+        result: unknown;
+      }
+    | {
+        completed_at: string | null;
+        mode: string | null;
+        status: string | null;
+        result: unknown;
+      }[]
+    | null;
+};
+
+function firstNested<T>(value: T | T[] | null | undefined): T | null {
+  if (!value) return null;
+  return Array.isArray(value) ? (value[0] ?? null) : value;
+}
+
+function extractSummary(result: unknown): string | null {
+  if (!result || typeof result !== "object") return null;
+  const analysis = (result as { analysis?: { summary?: unknown } }).analysis;
+  const summary = analysis?.summary;
+  return typeof summary === "string" && summary.trim()
+    ? summary.trim()
+    : null;
+}
+
+function mapFollowUpRow(row: FollowUpRow): FollowUpTask {
+  const caseRow = firstNested(row.cases);
+  const analysisRow = firstNested(row.analyses);
+  return {
+    id: row.id,
+    owner_id: row.owner_id,
+    case_id: row.case_id,
+    analysis_id: row.analysis_id,
+    kind: row.kind,
+    status: row.status,
+    due_on: row.due_on,
+    note: row.note,
+    created_at: row.created_at,
+    completed_at: row.completed_at,
+    case_alias: caseRow?.alias ?? null,
+    analysis_completed_at: analysisRow?.completed_at ?? null,
+    analysis_mode: analysisRow?.mode ?? null,
+    analysis_status: analysisRow?.status ?? null,
+    analysis_summary: extractSummary(analysisRow?.result),
+  };
+}
+
 export async function listFollowUpTasks(
   db: UserScopedClient,
   options: { status?: FollowUpStatus; limit?: number } = {},
@@ -16,7 +72,7 @@ export async function listFollowUpTasks(
   const limit = Math.min(Math.max(options.limit ?? 50, 1), 100);
   let query = db
     .from("follow_up_tasks")
-    .select(SELECT_COLS)
+    .select(LIST_SELECT)
     .order("created_at", { ascending: false })
     .limit(limit);
   if (options.status) {
@@ -24,7 +80,7 @@ export async function listFollowUpTasks(
   }
   const { data, error } = await query;
   if (error) throw mapDatabaseError(error);
-  return (data ?? []) as FollowUpTask[];
+  return ((data ?? []) as FollowUpRow[]).map(mapFollowUpRow);
 }
 
 export async function findOpenFollowUpForAnalysis(

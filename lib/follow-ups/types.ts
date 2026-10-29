@@ -14,6 +14,13 @@ export type FollowUpTask = {
   owner_id: string;
   case_id: string;
   analysis_id: string | null;
+  /** Present on list responses when the owned case row is joinable. */
+  case_alias?: string | null;
+  /** Present when analysis_id joins an owned analysis row (no new AI call). */
+  analysis_completed_at?: string | null;
+  analysis_mode?: string | null;
+  analysis_status?: string | null;
+  analysis_summary?: string | null;
   kind: FollowUpKind;
   status: FollowUpStatus;
   due_on: string | null;

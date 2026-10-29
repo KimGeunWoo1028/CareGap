@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense, useEffect, useState, type FormEvent, type ReactNode } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { Alert } from "@/components/alert";
 import { BrandMark } from "@/components/brand-mark";
 import { useAuthSession } from "@/lib/auth/session-context";
+import { readQueryParam } from "@/lib/url-state";
 
 /** Fixed synthetic illustration for the login intro only — not live case data. */
 const SAMPLE_PREVIOUS =
@@ -102,8 +103,12 @@ function LoginIntro() {
 function LoginForm() {
   const { signIn, accessToken, ready } = useAuthSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const nextPath = safeNextPath(searchParams.get("next"));
+  /** Avoid useSearchParams Suspense hangs on some Turbopack/dev clients (UX-010). */
+  const [nextPath] = useState(() =>
+    typeof window !== "undefined"
+      ? safeNextPath(readQueryParam("next"))
+      : "/cases",
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -238,15 +243,5 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
-  return (
-    <Suspense
-      fallback={
-        <main className="auth-shell auth-shell--loading">
-          <p className="muted">로그인 화면을 준비하는 중…</p>
-        </main>
-      }
-    >
-      <LoginForm />
-    </Suspense>
-  );
+  return <LoginForm />;
 }

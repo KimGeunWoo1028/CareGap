@@ -100,6 +100,7 @@ describe("CasesPageInner", () => {
   let root: Root;
 
   beforeEach(() => {
+    window.history.replaceState(null, "", "/cases");
     container = document.createElement("div");
     document.body.appendChild(container);
     root = createRoot(container);
@@ -113,6 +114,7 @@ describe("CasesPageInner", () => {
   afterEach(() => {
     root.unmount();
     container.remove();
+    window.history.replaceState(null, "", "/cases");
   });
 
   it("shows empty state when the loaded list has zero cases", async () => {
@@ -198,16 +200,17 @@ describe("CasesPageInner", () => {
       (b) => b.textContent?.trim() === "사례 추가",
     ) as HTMLButtonElement;
     open.click();
-    await waitFor(() => Boolean(container.querySelector("#alias")));
+    // Modal portals to document.body
+    await waitFor(() => Boolean(document.body.querySelector("#alias")));
 
-    const alias = container.querySelector("#alias") as HTMLInputElement;
+    const alias = document.body.querySelector("#alias") as HTMLInputElement;
     setInputValue(alias, "잘못된별칭");
-    const submit = Array.from(container.querySelectorAll("button")).find((b) =>
-      b.textContent?.includes("사례 만들기"),
+    const submit = Array.from(document.body.querySelectorAll("button")).find(
+      (b) => b.textContent?.includes("사례 만들기"),
     ) as HTMLButtonElement;
     submit.click();
     await waitFor(() =>
-      (container.textContent ?? "").includes(
+      (document.body.textContent ?? "").includes(
         "별칭은 합성-001 형식으로 입력해 주세요.",
       ),
     );
@@ -239,16 +242,16 @@ describe("CasesPageInner", () => {
       (b) => b.textContent?.trim() === "사례 추가",
     ) as HTMLButtonElement;
     open.click();
-    await waitFor(() => Boolean(container.querySelector("#alias")));
+    await waitFor(() => Boolean(document.body.querySelector("#alias")));
 
-    const alias = container.querySelector("#alias") as HTMLInputElement;
+    const alias = document.body.querySelector("#alias") as HTMLInputElement;
     setInputValue(alias, "합성-001");
-    const submit = Array.from(container.querySelectorAll("button")).find((b) =>
-      b.textContent?.includes("사례 만들기"),
+    const submit = Array.from(document.body.querySelectorAll("button")).find(
+      (b) => b.textContent?.includes("사례 만들기"),
     ) as HTMLButtonElement;
     submit.click();
     await waitFor(() =>
-      (container.textContent ?? "").includes("같은 별칭이 있습니다."),
+      (document.body.textContent ?? "").includes("같은 별칭이 있습니다."),
     );
     expect(alias.value).toBe("합성-001");
     expect(push).not.toHaveBeenCalled();
@@ -280,12 +283,12 @@ describe("CasesPageInner", () => {
       (b) => b.textContent?.trim() === "사례 추가",
     ) as HTMLButtonElement;
     open.click();
-    await waitFor(() => Boolean(container.querySelector("#alias")));
+    await waitFor(() => Boolean(document.body.querySelector("#alias")));
 
-    const alias = container.querySelector("#alias") as HTMLInputElement;
+    const alias = document.body.querySelector("#alias") as HTMLInputElement;
     setInputValue(alias, "합성-003");
-    const submit = Array.from(container.querySelectorAll("button")).find((b) =>
-      b.textContent?.includes("사례 만들기"),
+    const submit = Array.from(document.body.querySelectorAll("button")).find(
+      (b) => b.textContent?.includes("사례 만들기"),
     ) as HTMLButtonElement;
     submit.click();
     await waitFor(() => push.mock.calls.length > 0);

@@ -26,6 +26,23 @@ describe("AnalysisReviewForm", () => {
     container.remove();
   });
 
+  it("does not submit until a decision is explicitly selected", async () => {
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+    const onSubmit = vi.fn();
+    root.render(<AnalysisReviewForm onSubmit={onSubmit} />);
+    await waitFor(() => container.querySelector("form") != null);
+
+    (container.querySelector("form") as HTMLFormElement).dispatchEvent(
+      new Event("submit", { bubbles: true, cancelable: true }),
+    );
+    await waitFor(
+      () => container.textContent?.includes("검토 결정을 선택") === true,
+    );
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
   it("requires a note when rejected before calling onSubmit", async () => {
     container = document.createElement("div");
     document.body.appendChild(container);
@@ -47,13 +64,20 @@ describe("AnalysisReviewForm", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it("submits needs_followup with note", async () => {
+  it("submits needs_followup only after explicit choice", async () => {
     container = document.createElement("div");
     document.body.appendChild(container);
     root = createRoot(container);
     const onSubmit = vi.fn(async () => undefined);
     root.render(<AnalysisReviewForm onSubmit={onSubmit} />);
     await waitFor(() => container.querySelector("textarea") != null);
+
+    const follow = Array.from(
+      container.querySelectorAll('input[type="radio"]'),
+    ).find(
+      (el) => (el as HTMLInputElement).value === "needs_followup",
+    ) as HTMLInputElement;
+    follow.click();
 
     const note = container.querySelector("textarea") as HTMLTextAreaElement;
     const proto = Object.getOwnPropertyDescriptor(

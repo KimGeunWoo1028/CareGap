@@ -130,6 +130,36 @@ test.describe("cases list UI with mocked auth/API only", () => {
     await expect(page.getByText("표시 중 6건")).toBeVisible();
   });
 
+  test("create dialog traps focus, Escape closes, and restores trigger focus", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await openCasesWithMock(page, { list: sixMockCases() });
+
+    const trigger = page.getByRole("button", { name: "사례 추가" });
+    await trigger.click();
+    const dialog = page.getByRole("dialog", { name: "합성 사례 추가" });
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveAttribute("aria-modal", "true");
+    await expect(page.getByLabel("사례명")).toBeFocused();
+
+    // DOM order: 닫기 → 사례명 → 취소 → 사례 만들기
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "취소" })).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "사례 만들기" })).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "닫기" })).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(page.getByLabel("사례명")).toBeFocused();
+    await page.keyboard.press("Shift+Tab");
+    await expect(page.getByRole("button", { name: "닫기" })).toBeFocused();
+
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+  });
+
   test("create panel shows format and duplicate errors without clearing input", async ({
     page,
   }) => {

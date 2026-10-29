@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Alert } from "@/components/alert";
 import { AppHeader } from "@/components/app-header";
+import { ModalDialog } from "@/components/modal-dialog";
 import { RequireAuth } from "@/components/require-auth";
 import {
   apiRequest,
@@ -26,6 +27,7 @@ import {
 } from "@/lib/cases/list-query";
 import type { CaseRecord } from "@/lib/cases/types";
 import { formatSeoulDateTime } from "@/lib/format";
+import { readQueryParam, writeQueryParam } from "@/lib/url-state";
 
 export function CasesPageInner() {
   const { accessToken, clearSession, signOut } = useAuthSession();
@@ -42,7 +44,9 @@ export function CasesPageInner() {
   const [creating, setCreating] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [alias, setAlias] = useState("");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(() =>
+    typeof window !== "undefined" ? (readQueryParam("q") ?? "") : "",
+  );
   const [error, setError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -51,6 +55,19 @@ export function CasesPageInner() {
     [cases, query],
   );
   const searchActive = query.trim().length > 0;
+
+  useEffect(() => {
+    function onPopState() {
+      setQuery(readQueryParam("q") ?? "");
+    }
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  function setSearchQuery(next: string) {
+    setQuery(next);
+    writeQueryParam("q", next.trim() || null);
+  }
 
   const handleAuthFailure = useCallback(
     async (failure: ApiFailure) => {
@@ -106,17 +123,16 @@ export function CasesPageInner() {
   function openCreatePanel() {
     setCreateOpen(true);
     setFormError(null);
-    queueMicrotask(() => aliasInputRef.current?.focus());
   }
 
   function closeCreatePanel() {
+    if (creating) return;
     setCreateOpen(false);
     setFormError(null);
-    queueMicrotask(() => createToggleRef.current?.focus());
   }
 
   function clearSearch() {
-    setQuery("");
+    setSearchQuery("");
   }
 
   async function onCreate(event: FormEvent<HTMLFormElement>) {
@@ -166,78 +182,79 @@ export function CasesPageInner() {
               ref={createToggleRef}
               type="button"
               className="btn btn--primary"
+              aria-haspopup="dialog"
               aria-expanded={createOpen}
-              aria-controls={createPanelId}
+              aria-controls={createOpen ? createPanelId : undefined}
               onClick={() => {
                 if (createOpen) closeCreatePanel();
                 else openCreatePanel();
               }}
             >
-              {createOpen ? "추가 닫기" : "사례 추가"}
+              사례 추가
             </button>
           </div>
         </div>
 
-        {createOpen ? (
-          <section
-            className="panel cases-create line-board__bay"
+        <ModalDialog
+          open={createOpen}
+          title="합성 사례 추가"
+          description="사례명은 합성-007처럼 입력합니다. 실제 개인정보는 사용하지 마세요."
+          busy={creating}
+          onClose={closeCreatePanel}
+          initialFocusRef={aliasInputRef}
+          panelClassName="dialog-panel--form"
+        >
+          <form
             id={createPanelId}
-            aria-labelledby="create-title"
+            className="cases-create__form"
+            onSubmit={onCreate}
+            noValidate
           >
-            <h2 id="create-title" className="panel__title">
-              합성 사례 추가
-            </h2>
-            <p className="panel__desc">
-              사례명은 합성-007처럼 입력합니다. 실제 개인정보는 사용하지
-              마세요.
-            </p>
-            <form className="cases-create__form" onSubmit={onCreate} noValidate>
-              <div className="field">
-                <label htmlFor="alias">사례명</label>
-                <input
-                  ref={aliasInputRef}
-                  id="alias"
-                  name="alias"
-                  value={alias}
-                  onChange={(e) => setAlias(e.target.value)}
-                  placeholder="합성-007"
-                  autoComplete="off"
-                  disabled={creating}
-                  aria-invalid={formError ? true : undefined}
-                  aria-describedby={
-                    formError ? `${aliasHintId} ${aliasErrorId}` : aliasHintId
-                  }
-                />
-                <p id={aliasHintId} className="field__hint">
-                  형식 합성-001 · 같은 별칭 중복 불가
+            <div className="field">
+              <label htmlFor="alias">사례명</label>
+              <input
+                ref={aliasInputRef}
+                id="alias"
+                name="alias"
+                value={alias}
+                onChange={(e) => setAlias(e.target.value)}
+                placeholder="합성-007"
+                autoComplete="off"
+                disabled={creating}
+                aria-invalid={formError ? true : undefined}
+                aria-describedby={
+                  formError ? `${aliasHintId} ${aliasErrorId}` : aliasHintId
+                }
+              />
+              <p id={aliasHintId} className="field__hint">
+                형식 합성-001 · 같은 별칭 중복 불가
+              </p>
+              {formError ? (
+                <p id={aliasErrorId} className="field__error" role="alert">
+                  {formError}
                 </p>
-                {formError ? (
-                  <p id={aliasErrorId} className="field__error" role="alert">
-                    {formError}
-                  </p>
-                ) : null}
-              </div>
-              <div className="actions">
-                <button
-                  type="submit"
-                  className="btn btn--primary"
-                  disabled={creating}
-                  aria-busy={creating}
-                >
-                  {creating ? "만드는 중…" : "사례 만들기"}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn--ghost"
-                  onClick={closeCreatePanel}
-                  disabled={creating}
-                >
-                  취소
-                </button>
-              </div>
-            </form>
-          </section>
-        ) : null}
+              ) : null}
+            </div>
+            <div className="dialog-panel__actions actions">
+              <button
+                type="button"
+                className="btn btn--ghost"
+                onClick={closeCreatePanel}
+                disabled={creating}
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                className="btn btn--primary"
+                disabled={creating}
+                aria-busy={creating}
+              >
+                {creating ? "만드는 중…" : "사례 만들기"}
+              </button>
+            </div>
+          </form>
+        </ModalDialog>
 
         <section
           className="panel cases-list line-board__index"
@@ -264,7 +281,7 @@ export function CasesPageInner() {
                   id="case-search"
                   type="search"
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="목록에서 검색"
                   disabled={loading || !!error || cases.length === 0}
                   aria-describedby={searchHintId}
